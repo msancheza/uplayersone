@@ -1,0 +1,8 @@
+Crear una pagina tipo Vue,
+Diseno como se describe en la imagen adjunta.
+Fuentes, diseno y colores.
+
+Efectos parallax
+todo en ingles.
+usarmos esta imagen para las imagenes en la gallerya vertical del home.
+en el folder public esta el logo y el video que deberia ir 
