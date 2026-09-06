@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { ChevronUp, ChevronDown, ChevronRight, Gamepad2, Users, Truck, Phone, Tv } from 'lucide-vue-next'
+import { ChevronUp, ChevronDown, ChevronRight, Gamepad2, Users, Truck, Phone, Tv, Wind, Sparkles } from 'lucide-vue-next'
 import siteConfig from '../config/siteConfig.js'
 
 const videoRef = ref(null)
@@ -17,7 +17,7 @@ const vehicles = [
     subtitle: 'GAMING TRUCK',
     displays: '6 DISPLAYS',
     detail: '4 INSIDE / 2 OUTSIDE',
-    image: '/galleries/875.jpg'
+    image: '/trucks/01.jpg'
   },
   {
     id: 2,
@@ -26,7 +26,7 @@ const vehicles = [
     subtitle: 'GAMING TRUCK',
     displays: '6 DISPLAYS',
     detail: 'ALL INSIDE',
-    image: '/galleries/88.jpg'
+    image: '/trucks/02.jpg'
   },
   {
     id: 3,
@@ -35,7 +35,7 @@ const vehicles = [
     subtitle: 'GAMING TRUCK',
     displays: '10 DISPLAYS',
     detail: 'ALL INSIDE',
-    image: '/galleries/884.jpg'
+    image: '/trucks/04.jpg'
   },
   {
     id: 4,
@@ -44,7 +44,7 @@ const vehicles = [
     subtitle: 'MOBILE GAMING BUS',
     displays: '6 DISPLAYS',
     detail: 'ALL INSIDE',
-    image: '/galleries/970.jpg'
+    image: '/trucks/04.jpg'
   }
 ]
 
@@ -195,7 +195,7 @@ const navigateToTrucks = () => {
 
 <template>
   <section id="hero" class="home-hero-mockup-section">
-    <!-- Full-Width Background Video (vid000.mp4) with Parallax Overlay -->
+    <!-- Full-Width Background Video (vid01.mp4) with Parallax Overlay -->
     <div 
       class="hero-bg-wrapper"
       :style="{ transform: `translate3d(${parallaxX * -0.6}px, ${parallaxY * -0.6}px, 0)` }"
@@ -211,7 +211,7 @@ const navigateToTrucks = () => {
         poster="/galleries/88.jpg"
         class="hero-bg-video"
       >
-        <source src="/vid000.mp4" type="video/mp4" />
+        <source src="/vid01.mp4" type="video/mp4" />
         <source src="https://assets.mixkit.co/videos/preview/mixkit-gaming-room-with-neon-lights-42998-large.mp4" type="video/mp4" />
       </video>
       <div class="hero-bg-dark-overlay"></div>
@@ -257,7 +257,7 @@ const navigateToTrucks = () => {
         </div>
 
         <div class="vehicle-selector-footer" @click="navigateToTrucks">
-          <span class="footer-label">VIEW ALL TRUCKS</span>
+          <span class="footer-label">VIEW ALL GAMING UNITS</span>
           <ChevronRight :size="14" class="text-red" />
         </div>
       </div>
@@ -307,7 +307,6 @@ const navigateToTrucks = () => {
             Top consoles. Epic setups. <br />
             Unforgettable parties.
           </p>
-
         </div>
 
         <!-- Scroll Indicator -->
@@ -384,17 +383,35 @@ const navigateToTrucks = () => {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: brightness(0.45) contrast(1.2);
+  filter: brightness(0.95) contrast(1.12) saturate(1.15);
 }
 
+/* Dynamic Multi-Stop Gradient Overlay (task.txt: Left = Darker, Center = Medium, Right = Video Highlight) */
 .hero-bg-dark-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at 75% 50%, rgba(255, 0, 43, 0.18) 0%, transparent 65%),
-              linear-gradient(90deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.6) 45%, rgba(0, 0, 0, 0.75) 100%);
+  background: 
+    /* 1. Horizontal gradient: Left (Dark) -> Center (Medium) -> Right (Visible) */
+    linear-gradient(
+      90deg, 
+      rgba(0, 0, 0, 0.92) 0%, 
+      rgba(0, 0, 0, 0.84) 28%, 
+      rgba(0, 0, 0, 0.52) 58%, 
+      rgba(0, 0, 0, 0.18) 82%, 
+      rgba(0, 0, 0, 0.05) 100%
+    ),
+    /* 2. Vertical top & bottom vignette to blend with navbar and bottom bar */
+    linear-gradient(
+      180deg, 
+      rgba(0, 0, 0, 0.88) 0%, 
+      rgba(0, 0, 0, 0.15) 16%, 
+      transparent 35%, 
+      transparent 72%, 
+      rgba(0, 0, 0, 0.90) 100%
+    );
+  pointer-events: none;
 }
 
 /* Dashboard Workspace Layout (Floating higher up, scaled to viewport height) */
@@ -441,6 +458,16 @@ const navigateToTrucks = () => {
   top: -2px;
   right: -2px;
   border-width: 2px 2px 0 0;
+}
+.panel-tech-corner.bottom-left {
+  bottom: -2px;
+  left: -2px;
+  border-width: 0 0 2px 2px;
+}
+.panel-tech-corner.bottom-right {
+  bottom: -2px;
+  right: -2px;
+  border-width: 0 2px 2px 0;
 }
 
 /* 1. Left Vehicle Selector Panel */
@@ -549,18 +576,24 @@ const navigateToTrucks = () => {
 }
 
 .vehicle-card-img-box {
-  width: 85px;
-  height: 60px;
+  width: 90px;
+  height: 64px;
   border-radius: 5px;
   overflow: hidden;
   border: 1.5px solid rgba(255, 255, 255, 0.2);
   background: #000000;
+  flex-shrink: 0;
 }
 
 .v-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center center;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 .v-arrow {
@@ -657,20 +690,20 @@ const navigateToTrucks = () => {
 }
 
 .thumbnail-box {
-  width: 150px;
-  height: 125px;
+  width: 160px;
+  height: 130px;
   border-radius: 4px;
   overflow: hidden;
   border: 1.5px solid rgba(255, 255, 255, 0.22);
   cursor: pointer;
   position: relative;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: border-color 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   background: #000000;
 }
 
 .thumbnail-box:hover {
   border-color: rgba(255, 0, 43, 0.7);
-  transform: scale(1.03);
 }
 
 .thumbnail-box.active {
@@ -681,9 +714,15 @@ const navigateToTrucks = () => {
 }
 
 .thumb-img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center center;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 .thumb-target-dot {
@@ -727,8 +766,10 @@ const navigateToTrucks = () => {
   font-size: 0.85rem;
   font-weight: 800;
   letter-spacing: 0.18em;
-  color: var(--white);
+  color: #ffffff;
   margin-bottom: 0.8rem;
+  display: block;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95), 0 0 20px rgba(0, 0, 0, 0.9);
 }
 
 .hero-headline {
@@ -739,19 +780,27 @@ const navigateToTrucks = () => {
   letter-spacing: -0.02em;
   color: #ffffff;
   margin-bottom: 1.4rem;
-  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.9);
+  text-shadow: 
+    0 4px 30px rgba(0, 0, 0, 0.98), 
+    0 2px 12px rgba(0, 0, 0, 0.95), 
+    0 0 45px rgba(0, 0, 0, 0.85);
 }
 
 .text-red-glow {
   color: #ff002b !important;
-  text-shadow: none !important;
+  text-shadow: 
+    0 0 25px rgba(255, 0, 43, 0.8), 
+    0 4px 30px rgba(0, 0, 0, 0.98), 
+    0 2px 10px rgba(0, 0, 0, 0.95) !important;
 }
 
 .hero-subtext {
-  font-size: 1.1rem;
-  color: var(--text-muted);
+  font-size: 1.15rem;
+  color: #f0f0f5;
   margin-bottom: 2.2rem;
   line-height: 1.6;
+  text-shadow: 0 2px 15px rgba(0, 0, 0, 0.98), 0 1px 6px rgba(0, 0, 0, 0.9);
+  max-width: 480px;
 }
 
 .btn-tech-inquire {

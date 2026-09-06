@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+
 import { 
   Gamepad2, 
   Flame, 
@@ -13,7 +13,7 @@ import {
 } from 'lucide-vue-next'
 import siteConfig from '../config/siteConfig.js'
 
-const activeCategory = ref(null)
+
 
 const gameCategories = [
   {
@@ -85,7 +85,7 @@ const scrollToContact = () => {
     <div class="container">
       
       <!-- Section Header -->
-      <div class="section-header">
+      <div class="section-header scroll-reveal">
         <div class="eyebrow-badge">
           <Gamepad2 :size="14" class="text-red" />
           <span>TOP TIER TITLES</span>
@@ -104,10 +104,7 @@ const scrollToContact = () => {
         <div 
           v-for="cat in gameCategories" 
           :key="cat.id"
-          class="game-card"
-          :class="{ active: activeCategory === cat.id }"
-          @mouseenter="activeCategory = cat.id"
-          @mouseleave="activeCategory = null"
+          class="game-card scroll-reveal"
         >
           <!-- Cyber Corner Accents -->
           <div class="corner-bracket top-left"></div>
@@ -318,7 +315,8 @@ const scrollToContact = () => {
 
 .game-card:hover {
   border-color: #ff002b;
-  transform: translateY(-6px);
+  transform: translateY(-6px) !important;
+  opacity: 1 !important;
   box-shadow: 
     0 0 35px rgba(255, 0, 43, 0.25),
     0 20px 45px rgba(0, 0, 0, 0.95),

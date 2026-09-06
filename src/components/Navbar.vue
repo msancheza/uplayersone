@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { X, Sparkles, DollarSign, HelpCircle, Mail, ChevronRight, Instagram, Facebook, Youtube, Gamepad2, Tag } from 'lucide-vue-next'
+import { X, Sparkles, DollarSign, HelpCircle, Mail, ChevronRight, Instagram, Facebook, Youtube, Gamepad2, Tag, FileText, Camera } from 'lucide-vue-next'
 import siteConfig from '../config/siteConfig.js'
 
 const router = useRouter()
@@ -13,11 +13,14 @@ const isScrolled = ref(false)
 const menuItems = [
   { id: 'hero', name: 'Home', subtitle: 'Main Showcase', icon: Sparkles, type: 'hash', hash: 'hero' },
   { id: 'pricing-page', name: 'Pricing & Packages', subtitle: 'Official Rates & Add-ons', icon: DollarSign, type: 'route', path: '/pricing' },
+  { id: 'contact-page', name: 'Contact Us', subtitle: 'Direct Dispatch & Custom Quotes', icon: Mail, type: 'route', path: '/contact' },
+  { id: 'policies-page', name: 'Our Policies', subtitle: 'Cancellation & Guidelines', icon: FileText, type: 'route', path: '/policies' },
   { id: 'prices', name: 'Our Fleet', subtitle: 'Gaming Trucks', icon: Sparkles, type: 'hash', hash: 'prices' },
   { id: 'events', name: 'Events We Host', subtitle: 'Birthdays & Special Occasions', icon: Sparkles, type: 'hash', hash: 'events' },
+  { id: 'gallery', name: 'Live Gallery', subtitle: 'Real Party Photos', icon: Camera, type: 'hash', hash: 'gallery' },
   { id: 'games', name: 'Our Games', subtitle: 'Fortnite, Racing, Sports & FPS', icon: Gamepad2, type: 'hash', hash: 'games' },
   { id: 'faq', name: 'FAQ', subtitle: 'Frequently Asked Questions', icon: HelpCircle, type: 'hash', hash: 'faq' },
-  { id: 'contact', name: 'Contact Us', subtitle: 'Book Your Truck', icon: Mail, type: 'hash', hash: 'contact' },
+  { id: 'contact', name: 'Start Your Request', subtitle: 'Custom Quote · No Payment Required', icon: Mail, type: 'hash', hash: 'contact' },
 ]
 
 const handleScroll = () => {
@@ -83,10 +86,10 @@ onUnmounted(() => {
 <template>
   <header class="navbar-top-bar">
     <div class="top-bar-content">
-      <!-- Left Slot: INQUIRE NOW > Button -->
+      <!-- Left Slot: Ready to Play? Start Your Request> Button -->
       <div class="header-left">
         <button class="btn-tech-red" @click="navigateToContact">
-          <span>INQUIRE NOW</span>
+          <span>START YOUR REQUEST</span>
           <ChevronRight :size="14" class="btn-icon" />
         </button>
       </div>
@@ -107,20 +110,20 @@ onUnmounted(() => {
       <!-- Right Slot: Social Icons + Separator + Phone + Hamburger Icon -->
       <div class="header-right">
         <div class="social-icons-bar desktop-only">
-          <a :href="siteConfig.socials.instagram" target="_blank" rel="noopener" class="social-circle" title="Instagram"><Instagram :size="20" /></a>
-          <a :href="siteConfig.socials.facebook" target="_blank" rel="noopener" class="social-circle" title="Facebook"><Facebook :size="20" /></a>
+          <a :href="siteConfig.socials.instagram" target="_blank" rel="noopener" class="social-circle" title="Instagram"><Instagram :size="22" /></a>
+          <a :href="siteConfig.socials.facebook" target="_blank" rel="noopener" class="social-circle" title="Facebook"><Facebook :size="22" /></a>
           <a :href="siteConfig.socials.tiktok" target="_blank" rel="noopener" class="social-circle" title="TikTok">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
               <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 1 1-5.2-1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V5.86a6.37 6.37 0 0 0-1-.08A6.34 6.34 0 1 0 15.82 12V8.9a8.28 8.28 0 0 0 4.77 1.52V7a4.81 4.81 0 0 1-1-.31z"/>
             </svg>
           </a>
-          <a :href="siteConfig.socials.youtube" target="_blank" rel="noopener" class="social-circle" title="YouTube"><Youtube :size="20" /></a>
+          <a :href="siteConfig.socials.youtube" target="_blank" rel="noopener" class="social-circle" title="YouTube"><Youtube :size="22" /></a>
         </div>
 
         <div class="header-divider desktop-only"></div>
 
         <a :href="siteConfig.phoneTel" class="phone-link desktop-only">
-          <Phone :size="16" class="phone-icon text-red" />
+          <Phone :size="20" class="phone-icon text-red" />
           <span class="phone-number">{{ siteConfig.phone }}</span>
         </a>
 
@@ -336,15 +339,15 @@ onUnmounted(() => {
 .social-icons-bar {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.85rem;
 }
 
 .social-circle {
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1.5px solid rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1.5px solid rgba(255, 255, 255, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -356,36 +359,52 @@ onUnmounted(() => {
 .social-circle:hover {
   background: #ff002b;
   border-color: #ff002b;
-  box-shadow: 0 0 14px rgba(255, 0, 43, 0.75);
+  box-shadow: 0 0 18px rgba(255, 0, 43, 0.85);
   transform: translateY(-2px);
 }
 
 .header-divider {
   width: 1px;
-  height: 18px;
-  background-color: rgba(255, 255, 255, 0.25);
-  margin: 0 0.3rem;
+  height: 24px;
+  background-color: rgba(255, 255, 255, 0.3);
+  margin: 0 0.5rem;
 }
 
 .phone-link {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.6rem;
   text-decoration: none;
   font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: 0.88rem;
+  font-weight: 900;
+  font-size: 1.15rem;
+  letter-spacing: 0.04em;
   color: #ffffff;
-  transition: color 0.2s ease;
+  background: rgba(255, 0, 43, 0.12);
+  border: 1.5px solid rgba(255, 0, 43, 0.45);
+  padding: 0.45rem 1rem;
+  border-radius: 4px;
+  box-shadow: 0 0 16px rgba(255, 0, 43, 0.25);
+  transition: all 0.25s ease;
 }
 
 .phone-link:hover {
-  color: #ff002b;
+  background: #ff002b;
+  border-color: #ff002b;
+  color: #ffffff;
+  box-shadow: 0 0 24px rgba(255, 0, 43, 0.75);
+  transform: translateY(-1px);
+}
+
+.phone-link:hover .phone-icon {
+  color: #ffffff;
+  fill: #ffffff;
 }
 
 .phone-icon {
   color: #ff002b;
   fill: #ff002b;
+  transition: all 0.25s ease;
 }
 
 .hamburger-trigger {
@@ -445,12 +464,14 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  overflow: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 5rem 0 4rem;
 }
 
 /* Subtle grid texture */
 .cyber-grid-pattern {
-  position: absolute;
+  position: fixed;
   inset: 0;
   background-image:
     linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
@@ -462,15 +483,15 @@ onUnmounted(() => {
 
 /* Close button — fixed top-right */
 .close-curtain-btn {
-  position: absolute;
-  top: 2rem;
-  right: 2.2rem;
+  position: fixed;
+  top: 1.8rem;
+  right: 2rem;
   z-index: 10;
-  background: transparent;
-  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.85);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
   color: #ffffff;
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -482,8 +503,8 @@ onUnmounted(() => {
 .close-curtain-btn:hover {
   border-color: #ff002b;
   color: #ff002b;
-  background: rgba(255, 0, 43, 0.1);
-  box-shadow: 0 0 20px rgba(255, 0, 43, 0.4);
+  background: rgba(255, 0, 43, 0.15);
+  box-shadow: 0 0 20px rgba(255, 0, 43, 0.5);
   transform: rotate(90deg);
 }
 
@@ -493,14 +514,17 @@ onUnmounted(() => {
   z-index: 2;
   display: flex;
   flex-direction: column;
-  padding: 0 8vw;
+  padding: 0 6vw;
   gap: 0;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 /* Left vertical red rule */
 .curtain-rule {
   position: absolute;
-  left: 6.5vw;
+  left: 4.5vw;
   top: 0;
   bottom: 0;
   width: 2px;
@@ -511,9 +535,9 @@ onUnmounted(() => {
 /* Each menu row */
 .curtain-link {
   display: flex;
-  align-items: baseline;
-  gap: 2rem;
-  padding: 1.1rem 0;
+  align-items: center;
+  gap: 1.5rem;
+  padding: clamp(0.45rem, 1.2vh, 0.75rem) 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   text-decoration: none;
   cursor: pointer;
@@ -522,7 +546,7 @@ onUnmounted(() => {
   transition: padding-left 0.3s ease;
 
   /* Stagger-in animation */
-  animation: link-slide-in 0.5s ease both;
+  animation: link-slide-in 0.4s ease both;
   animation-delay: var(--delay, 0s);
 }
 
@@ -557,14 +581,14 @@ onUnmounted(() => {
   padding-left: 0.6rem;
 }
 
-/* Number  —  big, faded red */
+/* Number — faded red */
 .link-idx {
   font-family: var(--font-heading);
-  font-size: clamp(1rem, 2vw, 1.3rem);
+  font-size: clamp(0.9rem, 1.5vw, 1.1rem);
   font-weight: 900;
   color: rgba(255, 0, 43, 0.55);
   letter-spacing: 0.08em;
-  min-width: 3rem;
+  min-width: 2.2rem;
   transition: color 0.25s ease;
   flex-shrink: 0;
 }
@@ -582,30 +606,38 @@ onUnmounted(() => {
   flex-grow: 1;
 }
 
-/* Section name — HUGE */
+/* Section name — responsive fit */
 .link-name {
   font-family: var(--font-heading);
-  font-size: clamp(2rem, 5vw, 3.8rem);
+  font-size: clamp(1.25rem, 3.2vw, 2.1rem);
   font-weight: 900;
   color: #ffffff;
-  line-height: 1;
-  letter-spacing: -0.02em;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
   text-transform: uppercase;
   transition: color 0.25s ease, text-shadow 0.25s ease;
+  white-space: nowrap;
+}
+
+@media (max-width: 650px) {
+  .link-name {
+    white-space: normal;
+    font-size: 1.2rem;
+  }
 }
 
 .curtain-link:hover .link-name {
   color: #ffffff;
-  text-shadow: 0 0 40px rgba(255, 255, 255, 0.12);
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.15);
 }
 
 /* Subtitle */
 .link-sub {
   font-family: var(--font-body);
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 600;
-  letter-spacing: 0.2em;
-  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.35);
   text-transform: uppercase;
   transition: color 0.25s ease;
 }

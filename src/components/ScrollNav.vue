@@ -6,9 +6,10 @@ const sections = [
   { id: 'hero',        label: 'HOME' },
   { id: 'prices',      label: 'FLEET' },
   { id: 'events',      label: 'EVENTS' },
+  { id: 'gallery',     label: 'GALLERY' },
   { id: 'games',       label: 'GAMES' },
   { id: 'faq',         label: 'FAQ' },
-  { id: 'contact',     label: 'INQUIRE' },
+  { id: 'contact',     label: 'REQUEST' },
 ]
 
 const activeSection = ref('hero')

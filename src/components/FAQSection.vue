@@ -105,7 +105,7 @@ const scrollToSection = (id) => {
     <div class="container">
       
       <!-- Section Header -->
-      <div class="section-header">
+      <div class="section-header scroll-reveal">
         <div class="eyebrow-badge">
           <HelpCircle :size="14" class="text-red" />
           <span>HELP & INFORMATION</span>
@@ -123,7 +123,7 @@ const scrollToSection = (id) => {
         <div 
           v-for="(faq, index) in faqs" 
           :key="faq.id"
-          class="faq-item"
+          class="faq-item scroll-reveal"
           :class="{ active: activeIndex === index }"
         >
           <!-- Question Header -->

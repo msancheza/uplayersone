@@ -1,0 +1,300 @@
+{
+  "categories": [
+    { "id": "all", "name": "ALL EVENTS" },
+    { "id": "birthdays", "name": "BIRTHDAYS" },
+    { "id": "corporate", "name": "CORPORATE & ADULTS" },
+    { "id": "tournaments", "name": "TOURNAMENTS" }
+  ],
+  "photos": [
+    {
+      "id": 1,
+      "url": "/galleries/01.jpg",
+      "category": "birthdays",
+      "title": "LIVE_EVENT // DELUXE TRUCK SETUP",
+      "location": "LOS ANGELES, CA",
+      "tag": "BIRTHDAY PARTY",
+      "specs": "6 TVs Inside · Stadium Seating",
+      "description": "Full interior stadium seating with custom neon lighting and climate control for the ultimate birthday celebration."
+    },
+    {
+      "id": 2,
+      "url": "/galleries/02.jpg",
+      "category": "tournaments",
+      "title": "ESPORTS_ARENA // FORTNITE DUOS",
+      "location": "PASADENA, CA",
+      "tag": "TOURNAMENT",
+      "specs": "Multi-Display Battle Royale",
+      "description": "High-octane tournament gaming setup with synchronized displays and pro controllers."
+    },
+    {
+      "id": 3,
+      "url": "/galleries/03.jpg",
+      "category": "birthdays",
+      "title": "GAMING_BUS // MOBILE ARENA",
+      "location": "BURBANK, CA",
+      "tag": "BIRTHDAY PARTY",
+      "specs": "Mobile Gaming Bus · 6 TVs",
+      "description": "Spacious walk-through luxury gaming bus setup delivering curb-side birthday party entertainment."
+    },
+    {
+      "id": 4,
+      "url": "/galleries/04.jpg",
+      "category": "corporate",
+      "title": "CORP_EVENT // TEAM BUILDING",
+      "location": "GLENDALE, CA",
+      "tag": "CORPORATE",
+      "specs": "Executive VIP Experience",
+      "description": "Engaging corporate celebration and team bonding with multiplayer party games and dual exterior screens."
+    },
+    {
+      "id": 5,
+      "url": "/galleries/05.jpg",
+      "category": "birthdays",
+      "title": "STADIUM_SEATING // 10 TV SETUP",
+      "location": "LONG BEACH, CA",
+      "tag": "VIP PARTY",
+      "specs": "10 TVs · Elite Gaming Truck",
+      "description": "Our premier 10-screen setup accommodating massive groups with simultaneous multiplayer action."
+    },
+    {
+      "id": 6,
+      "url": "/galleries/875.jpg",
+      "category": "tournaments",
+      "title": "MARIO_KART // 8-PLAYER ARENA",
+      "location": "TORRANCE, CA",
+      "tag": "COMPETITIVE",
+      "specs": "8-Player Local Multiplayer",
+      "description": "Side-by-side racing battles on 4K high-refresh displays with vibrant neon backlighting."
+    },
+    {
+      "id": 7,
+      "url": "/galleries/876.jpg",
+      "category": "birthdays",
+      "title": "LED_ARENA // NIGHT GAMING",
+      "location": "SANTA MONICA, CA",
+      "tag": "NIGHT PARTY",
+      "specs": "Surround Sound + Neon Glow",
+      "description": "Dynamic RGB LED ambient lighting and powerful audio systems for immersive evening gaming."
+    },
+    {
+      "id": 8,
+      "url": "/galleries/877.jpg",
+      "category": "corporate",
+      "title": "SCHOOL_FESTIVAL // REWARD DAY",
+      "location": "IRVINE, CA",
+      "tag": "COMMUNITY",
+      "specs": "All-Age Supervised Gaming",
+      "description": "Certified Game Coaches managing rotations for school carnivals, fundraisers, and reward days."
+    },
+    {
+      "id": 9,
+      "url": "/galleries/878.jpg",
+      "category": "tournaments",
+      "title": "SMASH_BROS // HEAD TO HEAD",
+      "location": "ANAHEIM, CA",
+      "tag": "TOURNAMENT",
+      "specs": "Pro Gaming Bracket Setup",
+      "description": "Competitive Super Smash Bros tournament setup with zero-lag monitors and tournament brackets."
+    },
+    {
+      "id": 10,
+      "url": "/galleries/88.jpg",
+      "category": "birthdays",
+      "title": "INTERIOR_SETUP // A/C ARENA",
+      "location": "ALHAMBRA, CA",
+      "tag": "BIRTHDAY",
+      "specs": "Climate Controlled Interior",
+      "description": "Comfortable, climate-controlled trailer interior equipped with the latest PlayStation 5 and Xbox consoles."
+    },
+    {
+      "id": 11,
+      "url": "/galleries/881.jpg",
+      "category": "corporate",
+      "title": "COMPANY_PICNIC // VIP TRUCK",
+      "location": "DOWNTOWN LA, CA",
+      "tag": "CORPORATE",
+      "specs": "Corporate Event Setup",
+      "description": "Delivering high-end mobile entertainment for company picnics, product launches, and employee appreciation."
+    },
+    {
+      "id": 12,
+      "url": "/galleries/882.jpg",
+      "category": "birthdays",
+      "title": "NEON_LOUNGE // VIP CELEBRATION",
+      "location": "BEVERLY HILLS, CA",
+      "tag": "VIP BIRTHDAY",
+      "specs": "Custom Ambient LEDs · PS5 & Switch",
+      "description": "Sleek cyberpunk-inspired interior with custom leather seating and top-tier gaming hardware."
+    },
+    {
+      "id": 13,
+      "url": "/galleries/883.jpg",
+      "category": "birthdays",
+      "title": "KIDS_PARTY // FULL COACHING",
+      "location": "PASADENA, CA",
+      "tag": "BIRTHDAY",
+      "specs": "Dedicated Game Coach on Site",
+      "description": "Stress-free party experience with enthusiastic coaches guiding gameplay, switching titles, and managing players."
+    },
+    {
+      "id": 14,
+      "url": "/galleries/884.jpg",
+      "category": "tournaments",
+      "title": "ROCKET_LEAGUE // 3V3 BATTLE",
+      "location": "WEST HOLLYWOOD, CA",
+      "tag": "TOURNAMENT",
+      "specs": "High-Refresh 4K Displays",
+      "description": "Adrenaline-pumping Rocket League 3v3 team competitions on ultra-responsive displays."
+    },
+    {
+      "id": 15,
+      "url": "/galleries/90.jpg",
+      "category": "corporate",
+      "title": "FESTIVAL_ZONE // EXTERIOR SCREENS",
+      "location": "SAN GABRIEL, CA",
+      "tag": "COMMUNITY & CORP",
+      "specs": "Dual Weatherproof Outdoor Displays",
+      "description": "External entertainment station featuring Just Dance and outdoor multiplayer titles under awning cover."
+    },
+    {
+      "id": 16,
+      "url": "/galleries/92.jpg",
+      "category": "birthdays",
+      "title": "EXTERIOR_ACTION // JUST DANCE HUB",
+      "location": "ARCADIA, CA",
+      "tag": "BIRTHDAY",
+      "specs": "Outdoor TV Station + Wireless Audio",
+      "description": "Active outdoor party gaming allowing larger crowds to participate simultaneously in rhythm and party games."
+    },
+    {
+      "id": 17,
+      "url": "/galleries/94.jpg",
+      "category": "tournaments",
+      "title": "PRO_SETUP // CONSOLE MATRIX",
+      "location": "MONTEREY PARK, CA",
+      "tag": "TOURNAMENT",
+      "specs": "Network Linked Consoles",
+      "description": "Locally networked console matrix enabling seamless LAN-party style gaming competitions."
+    },
+    {
+      "id": 18,
+      "url": "/galleries/96.jpg",
+      "category": "corporate",
+      "title": "BRAND_ACTIVATION // VIP EXPERIENCE",
+      "location": "CULVER CITY, CA",
+      "tag": "CORPORATE",
+      "specs": "Custom Branding & Media Capable",
+      "description": "Mobile gaming activation ideal for media events, studio promotions, and corporate marketing."
+    },
+    {
+      "id": 19,
+      "url": "/galleries/960.jpg",
+      "category": "birthdays",
+      "title": "MINECRAFT_BUILD // SQUAD PLAY",
+      "location": "EL MONTE, CA",
+      "tag": "BIRTHDAY PARTY",
+      "specs": "Co-op Multiplayer World",
+      "description": "Collaborative crafting and adventure sessions tailored for younger kids and creative squads."
+    },
+    {
+      "id": 20,
+      "url": "/galleries/961.jpg",
+      "category": "tournaments",
+      "title": "MADDEN_BOWL // FOOTBALL ARENA",
+      "location": "INGLEWOOD, CA",
+      "tag": "TOURNAMENT",
+      "specs": "4K Sports Simulation Display",
+      "description": "Gridiron showdowns on huge 4K screens with immersive stadium sound."
+    },
+    {
+      "id": 21,
+      "url": "/galleries/962.jpg",
+      "category": "birthdays",
+      "title": "ROBLOX_PARTY // CUSTOM ARENA",
+      "location": "WALNUT, CA",
+      "tag": "BIRTHDAY",
+      "specs": "Fast Action Group Gaming",
+      "description": "Exciting group gameplay featuring favorite fan-made minigames and obstacle courses."
+    },
+    {
+      "id": 22,
+      "url": "/galleries/964.jpg",
+      "category": "corporate",
+      "title": "COMMUNITY_FAIR // MULTI-UNIT FLEET",
+      "location": "DIAMOND BAR, CA",
+      "tag": "COMMUNITY EVENT",
+      "specs": "Multi-Trailer Deployment",
+      "description": "Deploying our fleet across city parks, block parties, and large-scale charity gatherings."
+    },
+    {
+      "id": 23,
+      "url": "/galleries/965.jpg",
+      "category": "birthdays",
+      "title": "WARZONE_SQUAD // TACTICAL LOUNGE",
+      "location": "ROWLAND HEIGHTS, CA",
+      "tag": "TEEN BIRTHDAY",
+      "specs": "High-Definition Headsets & Screens",
+      "description": "Squad-based battle arena with surround sound and customized party playlists."
+    },
+    {
+      "id": 24,
+      "url": "/galleries/966.jpg",
+      "category": "tournaments",
+      "title": "NBA2K_CHAMPIONSHIP // CLUTCH PLAYS",
+      "location": "MONROVIA, CA",
+      "tag": "TOURNAMENT",
+      "specs": "Multi-Console Basketball League",
+      "description": "Fast-paced basketball tournaments with instant replay and spectator cheering areas."
+    },
+    {
+      "id": 25,
+      "url": "/galleries/967.jpg",
+      "category": "corporate",
+      "title": "TECH_SUMMIT // INTERACTIVE BOOTH",
+      "location": "SANTA CLARITA, CA",
+      "tag": "CORPORATE",
+      "specs": "Tech & VR Showcase Unit",
+      "description": "High-tech lounge offering attendees a break with cutting-edge gaming and virtual reality."
+    },
+    {
+      "id": 26,
+      "url": "/galleries/968.jpg",
+      "category": "birthdays",
+      "title": "SUPER_MARIO_PARTY // FAMILY FUN",
+      "location": "GLENDORA, CA",
+      "tag": "FAMILY BIRTHDAY",
+      "specs": "Nintendo Switch All-Stars",
+      "description": "Family-friendly minigames keeping kids, parents, and friends laughing and competing together."
+    },
+    {
+      "id": 27,
+      "url": "/galleries/971.jpg",
+      "category": "tournaments",
+      "title": "APEX_LEGENDS // PRO CHALLENGE",
+      "location": "CHINO HILLS, CA",
+      "tag": "TOURNAMENT",
+      "specs": "Synchronized Displays & Pro Audio",
+      "description": "Tactical trio competitions with crisp visual clarity and lag-free gameplay."
+    },
+    {
+      "id": 28,
+      "url": "/galleries/972.jpg",
+      "category": "corporate",
+      "title": "CHURCH_RETREAT // YOUTH NIGHT",
+      "location": "WHITTIER, CA",
+      "tag": "COMMUNITY & YOUTH",
+      "specs": "Curated Family-Safe Game Library",
+      "description": "Safe, wholesome, and thrilling mobile gaming experience curated strictly to host preferences."
+    },
+    {
+      "id": 29,
+      "url": "/galleries/98.jpg",
+      "category": "birthdays",
+      "title": "VR_EXPERIENCE // OCULUS IMMERSION",
+      "location": "COVINA, CA",
+      "tag": "BIRTHDAY & VR",
+      "specs": "Oculus Quest 2 VR Headsets Included",
+      "description": "Step into the virtual world with immersive 360-degree VR gaming guided by experienced game coaches."
+    }
+  ]
+}

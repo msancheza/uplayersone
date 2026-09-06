@@ -83,7 +83,7 @@ const scrollToContact = () => {
     <div class="container">
       
       <!-- Section Header -->
-      <div class="section-header">
+      <div class="section-header scroll-reveal">
         <div class="eyebrow-badge">
           <Sparkles :size="14" class="text-red" />
           <span>EVENTS WE HOST</span>
@@ -102,7 +102,7 @@ const scrollToContact = () => {
         <div 
           v-for="event in eventTypes" 
           :key="event.num"
-          class="event-card"
+          class="event-card scroll-reveal tilt-card"
         >
           <!-- Card Top Bar: Icon + Num -->
           <div class="event-card-top">
@@ -128,7 +128,7 @@ const scrollToContact = () => {
       </div>
 
       <!-- Bottom Banner / Action -->
-      <div class="custom-event-banner">
+      <div class="custom-event-banner scroll-reveal">
         <div class="banner-content">
           <h4 class="banner-title">Planning a Custom or Large-Scale Event?</h4>
           <p class="banner-desc">

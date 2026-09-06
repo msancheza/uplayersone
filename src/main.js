@@ -3,6 +3,10 @@ import './style.css'
 import App from './App.vue'
 import router from './router'
 
+if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {
+  window.history.scrollRestoration = 'manual'
+}
+
 const app = createApp(App)
 app.use(router)
 app.mount('#app')

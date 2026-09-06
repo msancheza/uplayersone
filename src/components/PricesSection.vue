@@ -1,9 +1,17 @@
 <script setup>
+import { onMounted, nextTick } from 'vue'
 import { Tv, Wind, Volume2, Gamepad2, Plus, ChevronRight, Tag } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 import siteConfig from '../config/siteConfig.js'
+import { initScrollObserver } from '../utils/scrollObserver.js'
 
 const router = useRouter()
+
+onMounted(() => {
+  nextTick(() => {
+    initScrollObserver()
+  })
+})
 
 const trucks = [
   {
@@ -91,10 +99,10 @@ const scrollToContact = () => {
     <div class="container">
 
       <!-- Section Header -->
-      <div class="section-header">
+      <div class="section-header scroll-reveal">
         <span class="section-eyebrow">OUR FLEET</span>
-        <h2>CHOOSE YOUR <span class="text-red-glow">TRUCK</span></h2>
-        <p>Every truck is fully equipped with premium consoles, surround sound, and LED lighting. We come to you.</p>
+        <h2>GAMING UNITS  </h2>
+        <p>Every gaming unit is fully equipped with premium consoles, surround sound, and LED lighting. We come to you.</p>
       </div>
 
       <!-- Truck Cards Grid -->
@@ -102,7 +110,7 @@ const scrollToContact = () => {
         <div
           v-for="truck in trucks"
           :key="truck.id"
-          class="truck-card"
+          class="truck-card scroll-reveal tilt-card"
           :class="{ highlight: truck.highlight }"
         >
           <!-- Popular badge -->
@@ -128,76 +136,82 @@ const scrollToContact = () => {
             <!-- TV Setup -->
             <div class="spec-row">
               <div class="spec-icon-wrap">
-                <Tv :size="15" />
+                <Tv :size="18" class="spec-icon" />
               </div>
-              <div class="spec-content">
+              <div class="spec-text">
                 <span class="spec-label">TV SETUP</span>
-                <span class="spec-value">{{ truck.tvSetup }}</span>
+                <span class="spec-val">{{ truck.tvSetup }}</span>
               </div>
             </div>
 
             <!-- Amenities -->
             <div class="spec-row">
               <div class="spec-icon-wrap">
-                <Wind :size="15" />
+                <Wind :size="18" class="spec-icon" />
               </div>
-              <div class="spec-content">
+              <div class="spec-text">
                 <span class="spec-label">AMENITIES</span>
-                <span class="spec-value">{{ truck.amenities.join(' · ') }}</span>
+                <div class="pill-group">
+                  <span
+                    v-for="(item, idx) in truck.amenities"
+                    :key="idx"
+                    class="amenity-pill"
+                  >{{ item }}</span>
+                </div>
               </div>
             </div>
 
-            <!-- Audio/Visual (optional) -->
+            <!-- Audio & Lights -->
             <div v-if="truck.audio" class="spec-row">
               <div class="spec-icon-wrap">
-                <Volume2 :size="15" />
+                <Volume2 :size="18" class="spec-icon" />
               </div>
-              <div class="spec-content">
-                <span class="spec-label">AUDIO / VISUAL</span>
-                <span class="spec-value">{{ truck.audio }}</span>
+              <div class="spec-text">
+                <span class="spec-label">AUDIO & LIGHTS</span>
+                <span class="spec-val">{{ truck.audio }}</span>
               </div>
             </div>
 
             <!-- Consoles -->
-            <div class="spec-row consoles-row">
+            <div class="spec-row">
               <div class="spec-icon-wrap">
-                <Gamepad2 :size="15" />
+                <Gamepad2 :size="18" class="spec-icon" />
               </div>
-              <div class="spec-content">
+              <div class="spec-text">
                 <span class="spec-label">CONSOLES INCLUDED</span>
-                <ul class="consoles-list">
-                  <li v-for="(c, i) in truck.consoles" :key="i">{{ c }}</li>
+                <ul class="console-list">
+                  <li v-for="(c, cIdx) in truck.consoles" :key="cIdx">{{ c }}</li>
                 </ul>
               </div>
             </div>
 
-            <!-- Optional Add-on -->
+            <!-- Optional Addon -->
             <div class="spec-row addon-row">
-              <div class="spec-icon-wrap addon-icon">
-                <Plus :size="14" />
+              <div class="spec-icon-wrap addon-icon-wrap">
+                <Plus :size="16" class="spec-icon" />
               </div>
-              <div class="spec-content">
-                <span class="spec-label">OPTIONAL ADD-ON</span>
-                <span class="spec-value addon-value">{{ truck.addon }} <em>— available for an additional price</em></span>
+              <div class="spec-text">
+                <span class="spec-label addon-label">OPTIONAL ADD-ON</span>
+                <span class="spec-val addon-val">{{ truck.addon }}</span>
               </div>
             </div>
 
           </div>
 
-          <!-- CTA -->
+          <!-- Card Action Button -->
           <button
-            class="truck-cta"
+            class="btn-card-cta"
             :class="{ 'cta-highlight': truck.highlight }"
             @click="scrollToContact"
           >
-            <span>INQUIRE ABOUT THIS TRUCK</span>
-            <ChevronRight :size="16" />
+            <span>INQUIRE NOW</span>
+            <ChevronRight :size="16" class="btn-icon" />
           </button>
         </div>
       </div>
 
       <!-- Pricing Page Action Banner -->
-      <div class="pricing-banner-action">
+      <div class="pricing-banner-action scroll-reveal">
         <div class="banner-text-block">
           <h4>Looking for detailed rates, hour packages & VR add-ons?</h4>
           <p>Check out our complete transparent pricing table and optional upgrades.</p>
@@ -531,41 +545,55 @@ const scrollToContact = () => {
 /* ============================================================
    CTA BUTTON
    ============================================================ */
-.truck-cta {
-  display: flex;
+.btn-card-cta {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.7rem;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 1.1rem 1.4rem;
+  min-height: 52px;
+  background: #000000;
+  color: #ffffff;
+  border: 1.5px solid #ff002b;
+  box-shadow: 0 0 16px rgba(255, 0, 43, 0.45);
   font-family: var(--font-heading);
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 900;
   letter-spacing: 0.1em;
-  padding: 0.9rem 1.5rem;
-  background: transparent;
-  color: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.15);
   cursor: pointer;
-  transition: all 0.25s ease;
-  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  transition: all 0.3s ease;
+  margin-top: 1.4rem;
 }
 
-.truck-cta:hover {
-  border-color: #ff002b;
-  color: #ffffff;
-  background: rgba(255, 0, 43, 0.1);
-  box-shadow: 0 0 20px rgba(255, 0, 43, 0.25);
+.btn-card-cta .btn-icon {
+  color: #ff002b;
+  transition: transform 0.25s ease, color 0.25s ease;
 }
 
-.truck-cta.cta-highlight {
-  background: rgba(255, 0, 43, 0.15);
-  border-color: #ff002b;
-  color: #ffffff;
-  box-shadow: 0 0 20px rgba(255, 0, 43, 0.3);
-}
-
-.truck-cta.cta-highlight:hover {
+.btn-card-cta:hover {
   background: #ff002b;
-  box-shadow: 0 0 30px rgba(255, 0, 43, 0.6);
+  color: #ffffff;
+  box-shadow: 0 0 25px rgba(255, 0, 43, 0.85);
+  transform: translateY(-2px);
+}
+
+.btn-card-cta:hover .btn-icon {
+  color: #ffffff;
+  transform: translateX(4px);
+}
+
+.btn-card-cta.cta-highlight {
+  background: #ff002b;
+  color: #ffffff;
+  box-shadow: 0 0 24px rgba(255, 0, 43, 0.65);
+}
+
+.btn-card-cta.cta-highlight:hover {
+  background: #d40024;
+  box-shadow: 0 0 34px rgba(255, 0, 43, 0.95);
+  transform: translateY(-2px);
 }
 
 /* ============================================================

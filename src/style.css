@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
 
 @font-face {
   font-family: 'Ethnocentric';
@@ -17,8 +17,8 @@
 }
 
 :root {
-  --font-heading: 'Ethnocentric', 'Orbitron', 'Rajdhani', sans-serif;
-  --font-body: 'Rajdhani', 'Orbitron', 'Plus Jakarta Sans', sans-serif;
+  --font-heading: 'Ethnocentric', 'Orbitron', sans-serif;
+  --font-body: 'Plus Jakarta Sans', 'Orbitron', sans-serif;
   --color-bg: #000000;
   --color-surface: #0a0a0c;
   --color-card: #121216;
@@ -35,6 +35,19 @@
   --border-red: rgba(255, 0, 43, 0.4);
 }
 
+/* ============================================================
+   UNIVERSAL FONT SHARPNESS
+   Applied via * so it is never overridden by component scoped styles
+   ============================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-synthesis: none;
+}
+
 .text-red-glow {
   color: #ff002b !important;
   text-shadow: none !important;
@@ -44,16 +57,19 @@
   color: #ff002b !important;
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+html {
+  font-size: 16px;
+  text-rendering: optimizeLegibility;
+  -webkit-text-size-adjust: 100%;
 }
 
-html, body {
+body {
   background-color: var(--color-bg);
   color: var(--color-white);
   font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.65;
   overflow-x: hidden;
   scroll-behavior: smooth;
 }
@@ -61,7 +77,14 @@ html, body {
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   text-transform: uppercase;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+p, span, a, li, label, input, textarea, select, button {
+  font-family: var(--font-body);
+  letter-spacing: 0.01em;
 }
 
 button {
@@ -69,6 +92,14 @@ button {
   cursor: pointer;
   border: none;
   outline: none;
+}
+
+/* Isolate text inside glass/blur panels from compositor blurriness */
+[style*="backdrop-filter"],
+[class*="glass"],
+[class*="hud"],
+[class*="floating"] {
+  isolation: isolate;
 }
 
 ::-webkit-scrollbar {
@@ -109,3 +140,38 @@ button {
     padding-right: 1.25rem;
   }
 }
+
+/* ============================================================
+   SCROLL DOWN REVEAL ANIMATIONS
+   ============================================================ */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(50px) scale(0.96);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.scroll-reveal.reveal-left {
+  transform: translateX(-60px) scale(0.96);
+}
+
+.scroll-reveal.reveal-right {
+  transform: translateX(60px) scale(0.96);
+}
+
+.scroll-reveal.reveal-scale {
+  transform: scale(0.92);
+}
+
+.scroll-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0) translateX(0) scale(1);
+  transition-delay: calc(var(--stagger, 0) * 0.12s);
+}
+
+/* Once visible, clear transition-delay on hover */
+.scroll-reveal.is-visible:hover {
+  transition-delay: 0s;
+}
+
