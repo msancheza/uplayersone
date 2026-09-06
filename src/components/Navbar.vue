@@ -899,7 +899,8 @@ onUnmounted(() => {
 }
 
 .mobile-only {
-  display: none;
+  display: none !important; /* !important needed so component-level .mobile-brand-logo
+                              { display:flex } doesn't override the desktop hide */
 }
 
 /* Mobile Brand Logo in header-left */
