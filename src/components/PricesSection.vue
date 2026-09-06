@@ -101,7 +101,9 @@ const scrollToContact = () => {
       <!-- Section Header -->
       <div class="section-header scroll-reveal">
         <span class="section-eyebrow">OUR FLEET</span>
-        <h2>GAMING UNITS  </h2>
+        <h2>GAMING UNITS</h2>
+        <!-- Mobile impact statement -->
+        <div class="mobile-impact-headline">CHOOSE YOUR RIDE.</div>
         <p>Every gaming unit is fully equipped with premium consoles, surround sound, and LED lighting. We come to you.</p>
       </div>
 
@@ -338,6 +340,18 @@ const scrollToContact = () => {
   line-height: 1.6;
 }
 
+/* Mobile impact headline (hidden on desktop) */
+.mobile-impact-headline {
+  display: none;
+  font-family: var(--font-heading);
+  font-size: clamp(2.2rem, 9vw, 3.5rem);
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  margin: 0.5rem 0 1rem;
+}
+
 /* ============================================================
    GRID — 4 trucks, 2-column on desktop (Full Width)
    ============================================================ */
@@ -353,6 +367,192 @@ const scrollToContact = () => {
     grid-template-columns: 1fr;
   }
 }
+
+/* Mobile: horizontal snap-scroll carousel */
+@media (max-width: 600px) {
+  .prices-section {
+    padding: 5rem 0 4.5rem;
+  }
+
+  .mobile-impact-headline {
+    display: block;
+  }
+
+  .section-header h2 {
+    display: none;
+  }
+
+  .section-header {
+    margin-bottom: 2.5rem;
+    padding: 0 0.5rem;
+  }
+
+  .section-header p {
+    font-size: 0.92rem;
+    padding: 0 0.5rem;
+  }
+
+  .trucks-grid {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 0.9rem;
+    padding-bottom: 1.2rem;
+    /* Hide scrollbar but keep functionality */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    margin-left: -1.25rem;
+    /* Reserve space on the right for the ScrollNav indicator (right: 4px, ~28px wide) */
+    margin-right: -2.5rem;
+    padding-left: 1.25rem;
+    padding-right: 2.5rem;
+  }
+
+  .trucks-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .truck-card {
+    scroll-snap-align: start;
+    flex-shrink: 0;
+    /* Leave ~32px of room on the right edge so the card never sits under the ScrollNav */
+    width: calc(100vw - 3.5rem);
+    max-width: 300px;
+    padding: 1.5rem 1.3rem;
+  }
+
+  .card-header {
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+  }
+
+  .truck-num {
+    font-size: 2.2rem;
+  }
+
+  .truck-name {
+    font-size: 1.35rem;
+  }
+
+  .popular-badge {
+    right: 1rem;
+    font-size: 0.55rem;
+    padding: 0.22rem 0.7rem;
+  }
+
+  .specs-list {
+    gap: 0.85rem;
+    margin-bottom: 1.4rem;
+  }
+
+  .spec-icon-wrap {
+    width: 26px;
+    height: 26px;
+  }
+
+  /* Force label + value to stack vertically (override inline-span default) */
+  .spec-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .spec-label {
+    display: block;
+    line-height: 1.2;
+  }
+
+  .spec-val {
+    font-size: 0.82rem;
+    line-height: 1.4;
+    display: block;
+    word-break: break-word;
+  }
+
+  .console-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    margin-top: 0.15rem;
+  }
+
+  .console-list li {
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.78);
+    font-weight: 600;
+    padding-left: 0.85rem;
+    position: relative;
+    line-height: 1.4;
+  }
+
+  .console-list li::before {
+    content: '·';
+    position: absolute;
+    left: 0;
+    color: #ff002b;
+    font-weight: 900;
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+
+  /* Amenity pills */
+  .pill-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.2rem;
+  }
+
+  .amenity-pill {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.82);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.22rem 0.55rem;
+    border-radius: 3px;
+    line-height: 1.3;
+  }
+
+  .btn-card-cta {
+    font-size: 0.75rem;
+    padding: 0.95rem 1.2rem;
+    min-height: 48px;
+    margin-top: 1.2rem;
+  }
+
+  /* Pricing banner action */
+  .pricing-banner-action {
+    margin: 2.5rem 0.5rem 0;
+    padding: 1.3rem 1.1rem;
+  }
+
+  .banner-text-block h4 {
+    font-size: 1rem;
+  }
+
+  .banner-text-block p {
+    font-size: 0.85rem;
+  }
+
+  .btn-view-pricing {
+    font-size: 0.7rem;
+    padding: 0.8rem 1.2rem;
+  }
+
+  .bottom-note {
+    font-size: 0.78rem;
+    padding: 0 1rem;
+  }
+}
+
 
 /* ============================================================
    TRUCK CARD
@@ -463,6 +663,19 @@ const scrollToContact = () => {
   display: flex;
   align-items: flex-start;
   gap: 0.85rem;
+}
+
+.spec-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.spec-label {
+  display: block;
+  line-height: 1.2;
 }
 
 .spec-icon-wrap {

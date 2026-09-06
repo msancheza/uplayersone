@@ -53,4 +53,11 @@
   );
   pointer-events: none;
 }
+
+@media (max-width: 768px) {
+  .video-section__player {
+    max-height: 55vw;
+    min-height: 220px;
+  }
+}
 </style>

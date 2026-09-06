@@ -1,20 +1,21 @@
 <script setup>
 import { ref } from 'vue'
-import { 
-  Send, 
-  CheckCircle2, 
-  Calendar, 
-  Clock, 
-  MapPin, 
-  Truck, 
-  Glasses, 
-  Sparkles, 
-  ChevronRight, 
-  ShieldCheck, 
+import {
+  Send,
+  CheckCircle2,
+  Calendar,
+  Clock,
+  MapPin,
+  Truck,
+  Glasses,
+  Sparkles,
+  ChevronRight,
+  ShieldCheck,
   Phone,
   FileCheck2,
   Lock
 } from 'lucide-vue-next'
+import CustomSelect from './CustomSelect.vue'
 import siteConfig from '../config/siteConfig.js'
 
 const form = ref({
@@ -52,7 +53,7 @@ const handleSubmit = () => {
           </div>
           
           <h2 class="section-heading">
-            START YOUR <span class="text-red-glow">EVENT REQUEST</span>
+            START YOUR<br/><span class="text-red-glow">EVENT REQUEST</span>
           </h2>
           
           <p class="section-lead">
@@ -136,12 +137,15 @@ const handleSubmit = () => {
 
                   <div class="form-group">
                     <label>Preferred Time Frame</label>
-                    <select v-model="form.timeFrame">
-                      <option>Morning (10:00 AM – 1:00 PM)</option>
-                      <option>Afternoon (1:00 PM – 5:00 PM)</option>
-                      <option>Evening (5:00 PM – 9:00 PM)</option>
-                      <option>Flexible / All Day Event</option>
-                    </select>
+                    <CustomSelect
+                      v-model="form.timeFrame"
+                      :options="[
+                        'Morning (10:00 AM – 1:00 PM)',
+                        'Afternoon (1:00 PM – 5:00 PM)',
+                        'Evening (5:00 PM – 9:00 PM)',
+                        'Flexible / All Day Event'
+                      ]"
+                    />
                   </div>
 
                   <div class="form-group">
@@ -161,27 +165,34 @@ const handleSubmit = () => {
                 <div class="form-row">
                   <div class="form-group">
                     <label>Vehicle Preference</label>
-                    <select v-model="form.truckType" class="highlight-select">
-                      <option>Standard Gaming Truck (4 In / 2 Out · 6 TVs)</option>
-                      <option>Deluxe Gaming Truck (6 TVs Inside · Most Popular)</option>
-                      <option>Elite Gaming Truck (10 TVs Inside · 10 Displays)</option>
-                      <option>Gaming Bus (6 TVs Inside)</option>
-                      <option>Help Me Choose / Recommend Best Option</option>
-                    </select>
+                    <CustomSelect
+                      v-model="form.truckType"
+                      highlight
+                      :options="[
+                        'Standard Gaming Truck (4 In / 2 Out · 6 TVs)',
+                        'Deluxe Gaming Truck (6 TVs Inside · Most Popular)',
+                        'Elite Gaming Truck (10 TVs Inside · 10 Displays)',
+                        'Gaming Bus (6 TVs Inside)',
+                        'Help Me Choose / Recommend Best Option'
+                      ]"
+                    />
                   </div>
 
                   <div class="form-group">
                     <label>Event Type</label>
-                    <select v-model="form.eventType">
-                      <option>Birthday Party</option>
-                      <option>School Function / STEM / Carnival</option>
-                      <option>Graduation Celebration</option>
-                      <option>Block Party / Community Event</option>
-                      <option>Corporate Event / Team Building</option>
-                      <option>Church / Youth Ministry</option>
-                      <option>Gaming Tournament</option>
-                      <option>Other Special Event</option>
-                    </select>
+                    <CustomSelect
+                      v-model="form.eventType"
+                      :options="[
+                        'Birthday Party',
+                        'School Function / STEM / Carnival',
+                        'Graduation Celebration',
+                        'Block Party / Community Event',
+                        'Corporate Event / Team Building',
+                        'Church / Youth Ministry',
+                        'Gaming Tournament',
+                        'Other Special Event'
+                      ]"
+                    />
                   </div>
                 </div>
 
@@ -832,5 +843,316 @@ const handleSubmit = () => {
 .btn-start-another:hover {
   border-color: #ff002b;
   color: #ffffff;
+}
+
+/* ============================================================
+   MOBILE FIXES — prevent overflow under the ScrollNav
+   indicator and tighten typography for narrow viewports.
+   ============================================================ */
+@media (max-width: 768px) {
+  .request-builder-section {
+    padding: 5rem 0 6rem;
+    overflow-x: hidden;
+  }
+
+  /* Reserve right space so content never sits under the ScrollNav
+     (ScrollNav is at right: 4px, ~24-28px wide) */
+  .request-builder-section .container {
+    padding-right: 2.8rem !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .request-info-column,
+  .form-card-wrapper {
+    max-width: 100%;
+    min-width: 0; /* critical: prevents grid 1fr track from expanding past container */
+    margin-right: 0;
+    width: 100%;
+  }
+
+  .request-grid {
+    min-width: 0;
+  }
+
+  /* Mobile-only: hide descriptive cards so the section is just title + subtitle + form.
+     On desktop, the full 3-step flow + guarantee pill + phone helper are still visible. */
+  .steps-flow,
+  .no-commitment-pill,
+  .phone-helper-card {
+    display: none !important;
+  }
+
+  /* Add right padding to all children that could overflow */
+  .eyebrow-badge,
+  .section-heading,
+  .section-lead,
+  .steps-flow,
+  .step-card,
+  .no-commitment-pill,
+  .phone-helper-card,
+  .builder-form-inner,
+  .form-header-bar,
+  .form-section-block,
+  .configurator-form,
+  .submit-wrapper,
+  .post-submit-success,
+  .summary-details-box,
+  .success-official-msg {
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  .step-content,
+  .step-content h4,
+  .step-content p,
+  .phone-helper-card span,
+  .no-commitment-pill,
+  .builder-subtitle,
+  .block-step-title,
+  .submit-micro-reassurance {
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  .request-grid {
+    gap: 2.2rem;
+  }
+
+  /* Header / Left Column */
+  .eyebrow-badge {
+    font-size: 0.58rem;
+    letter-spacing: 0.15em;
+    padding: 0.35rem 0.8rem;
+    max-width: 100%;
+  }
+
+  .section-heading {
+    font-size: clamp(1.5rem, 7vw, 2.2rem);
+    line-height: 1.08;
+    padding: 0 2.6rem 0 0.25rem;
+    word-break: break-all;
+    overflow-wrap: anywhere;
+    max-width: 100%;
+  }
+
+  .section-lead {
+    font-size: 0.88rem;
+    padding: 0 2.6rem 0 0.25rem;
+    line-height: 1.5;
+    overflow-wrap: break-word;
+    max-width: 100%;
+  }
+
+  /* Step cards */
+  .steps-flow {
+    gap: 0.7rem;
+    padding: 0 2.6rem 0 0.25rem;
+  }
+
+  .step-card {
+    padding: 0.9rem 1rem 0.9rem 1rem;
+    gap: 0.8rem;
+  }
+
+  .step-num-badge {
+    width: 34px;
+    height: 34px;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+
+  .step-content h4 {
+    font-size: 0.82rem;
+    line-height: 1.25;
+  }
+
+  .step-content p {
+    font-size: 0.76rem;
+    line-height: 1.4;
+  }
+
+  /* No-commitment pill */
+  .no-commitment-pill {
+    font-size: 0.76rem;
+    padding: 0.7rem 2.6rem 0.7rem 0.9rem;
+    gap: 0.5rem;
+    line-height: 1.4;
+    margin: 0 0 1.2rem;
+  }
+
+  /* Phone helper card */
+  .phone-helper-card {
+    padding: 0.9rem 2.6rem 0.9rem 1rem;
+    gap: 0.7rem;
+    font-size: 0.8rem;
+    margin: 0;
+  }
+
+  .phone-helper-card strong {
+    font-size: 0.8rem;
+  }
+
+  .phone-helper-card span {
+    font-size: 0.76rem;
+  }
+
+  /* Form wrapper */
+  .form-card-wrapper {
+    padding: 0;
+  }
+
+  .builder-form-inner {
+    padding: 1.4rem 1.1rem;
+  }
+
+  .form-header-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+    text-align: left;
+  }
+
+  .builder-title {
+    font-size: 1.05rem;
+  }
+
+  .builder-subtitle {
+    font-size: 0.78rem;
+  }
+
+  .free-quote-badge {
+    font-size: 0.6rem;
+    padding: 0.3rem 0.6rem;
+  }
+
+  .configurator-form {
+    gap: 1.2rem;
+  }
+
+  .form-section-block {
+    padding: 1rem 0.8rem;
+  }
+
+  .block-label-row {
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .block-step-tag {
+    font-size: 0.58rem;
+  }
+
+  .block-step-title {
+    font-size: 0.85rem;
+  }
+
+  .form-group label {
+    font-size: 0.55rem;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 0.75rem 0.85rem;
+    font-size: 0.88rem;
+  }
+
+  /* Native <select> auto-sizes to the widest option text, which makes
+     the Step 2 selects blow past the viewport (e.g. "Elite Gaming Truck
+     (10 TVs Inside · 10 Displays)" ≈ 391px). Constrain them and let
+     the closed select show an ellipsis. */
+  .form-group {
+    min-width: 0;
+  }
+
+  .form-group select {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .addon-toggle-box {
+    padding: 0.75rem 0.85rem;
+  }
+
+  .addon-header-line {
+    font-size: 0.78rem;
+    flex-wrap: wrap;
+  }
+
+  .optional-tag {
+    font-size: 0.5rem;
+  }
+
+  .addon-note {
+    font-size: 0.7rem;
+  }
+
+  .btn-submit-request {
+    font-size: 0.75rem;
+    padding: 0.95rem 1.2rem;
+    width: 100%;
+  }
+
+  .submit-micro-reassurance {
+    font-size: 0.7rem;
+    padding: 0 0.25rem;
+  }
+
+  /* Success state */
+  .post-submit-success {
+    padding: 2rem 1rem;
+  }
+
+  .success-header-title {
+    font-size: 1.3rem;
+  }
+
+  .success-official-msg {
+    font-size: 0.9rem;
+    padding: 1rem 1.2rem;
+  }
+
+  .summary-details-box {
+    padding: 1rem 1.2rem;
+  }
+
+  .summary-row {
+    font-size: 0.78rem;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+
+  .btn-start-another {
+    font-size: 0.7rem;
+    padding: 0.7rem 1.2rem;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .section-heading {
+    font-size: clamp(1.4rem, 7vw, 1.9rem);
+  }
+
+  .step-card {
+    padding: 0.8rem 0.85rem;
+    gap: 0.75rem;
+  }
+
+  .step-num-badge {
+    width: 32px;
+    height: 32px;
+    font-size: 0.82rem;
+  }
+
+  .builder-form-inner {
+    padding: 1.2rem 0.9rem;
+  }
 }
 </style>

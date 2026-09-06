@@ -373,6 +373,8 @@ const goToBooking = () => {
   padding-top: 5rem;
   padding-bottom: 6rem;
   position: relative;
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 /* ============================================================
@@ -383,6 +385,8 @@ const goToBooking = () => {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   background: radial-gradient(circle at 50% 0%, rgba(255, 0, 43, 0.12) 0%, transparent 70%);
   text-align: center;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .back-link {
@@ -1151,5 +1155,182 @@ const goToBooking = () => {
   border-color: #ff002b;
   color: #ffffff;
   background: rgba(255, 0, 43, 0.1);
+}
+
+/* ============================================================
+   MOBILE FIXES — prevent horizontal overflow that hides the
+   navbar hamburger and truncates the fixed dock buttons.
+   ============================================================ */
+@media (max-width: 768px) {
+  .pricing-page {
+    padding-top: 4.5rem;
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  .pricing-hero {
+    padding: 1.5rem 0 2rem;
+    overflow: hidden;
+  }
+
+  .pricing-hero .container,
+  .pricing-body .container {
+    max-width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .back-link {
+    font-size: 0.65rem;
+  }
+
+  .hero-badge {
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    padding: 0.35rem 0.8rem;
+    max-width: calc(100vw - 2rem);
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.4;
+    word-break: break-word;
+  }
+
+  .hero-title {
+    font-size: clamp(1.4rem, 7.5vw, 2.2rem);
+    line-height: 1.08;
+    padding: 0 0.25rem;
+    word-break: break-word;
+    max-width: 100%;
+  }
+
+  .hero-lead {
+    font-size: 0.9rem;
+    padding: 0 0.25rem;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    max-width: 100%;
+  }
+
+  .pricing-notes-card {
+    padding: 1.4rem 1.2rem;
+  }
+
+  .notes-header {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .notes-title {
+    font-size: 1rem;
+  }
+
+  .notes-sub {
+    font-size: 0.88rem;
+  }
+
+  .note-pill {
+    font-size: 0.82rem;
+    padding: 0.8rem 0.9rem;
+  }
+
+  .section-title-wrap h2 {
+    font-size: clamp(1.4rem, 5vw, 2rem);
+    padding: 0 0.5rem;
+  }
+
+  .pricing-card {
+    padding: 1.8rem 1.3rem 1.5rem;
+  }
+
+  .card-pop-badge,
+  .card-tag-badge {
+    right: 0.8rem;
+    font-size: 0.5rem;
+  }
+
+  .pkg-name {
+    font-size: 1.05rem;
+  }
+
+  .amount {
+    font-size: 2.3rem;
+  }
+
+  /* Pricing table: force horizontal scroll inside its own container */
+  .table-container {
+    margin: 0 -0.5rem;
+    border-radius: 0;
+  }
+
+  .pricing-table {
+    font-size: 0.78rem;
+    min-width: 600px;
+  }
+
+  .pricing-table th,
+  .pricing-table td {
+    padding: 0.8rem 0.7rem;
+  }
+
+  /* Addon card */
+  .addon-card {
+    padding: 1.5rem 1.2rem;
+  }
+
+  .addon-name {
+    font-size: 1.15rem;
+  }
+
+  .addon-pricing-boxes {
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  /* CTA footer */
+  .pricing-cta-footer {
+    padding: 1.5rem 1.2rem;
+  }
+
+  .cta-left h3 {
+    font-size: 1.15rem;
+  }
+
+  .cta-left p {
+    font-size: 0.88rem;
+  }
+
+  .cta-phone-btn,
+  .cta-online-btn {
+    font-size: 0.72rem;
+    padding: 0.75rem 1rem;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-badge {
+    font-size: 0.52rem;
+    letter-spacing: 0.08em;
+    padding: 0.3rem 0.6rem;
+    gap: 0.35rem;
+  }
+
+  .hero-title {
+    font-size: clamp(1.3rem, 6.5vw, 1.7rem);
+  }
+
+  .hero-lead {
+    font-size: 0.85rem;
+  }
+
+  .pricing-notes-card {
+    padding: 1.2rem 1rem;
+  }
+
+  .pricing-card {
+    padding: 1.5rem 1.1rem 1.3rem;
+  }
 }
 </style>

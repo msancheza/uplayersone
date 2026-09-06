@@ -91,6 +91,8 @@ const scrollToContact = () => {
         <h2 class="events-title">
           WELCOME TO <span class="text-red">ULTIMATE PLAYERS</span>
         </h2>
+        <!-- Mobile impact statement -->
+        <div class="mobile-impact-headline">YOUR PARTY<br/><span class="text-red">JUST LEVELED UP.</span></div>
         <p class="events-lead">
           Ultimate Players will make your event perfect with its surround sound and LED lights. 
           You and your guests will definitely have the <strong>Ultimate</strong> experience.
@@ -225,6 +227,18 @@ const scrollToContact = () => {
   font-weight: 700;
 }
 
+/* Mobile impact headline */
+.mobile-impact-headline {
+  display: none;
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 9vw, 3.2rem);
+  font-weight: 900;
+  color: #0c0c12;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  margin: 0.8rem 0 1.2rem;
+}
+
 /* ============================================================
    EVENTS GRID — 4 columns on wide screens, 2 on tablet, 1 on mobile
    ============================================================ */
@@ -243,8 +257,35 @@ const scrollToContact = () => {
 }
 
 @media (max-width: 650px) {
+  .mobile-impact-headline {
+    display: block;
+  }
+  .events-title {
+    display: none;
+  }
   .events-grid {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 1rem;
+    padding-bottom: 1.2rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    margin-left: -1.4rem;
+    margin-right: -1.4rem;
+    padding-left: 1.4rem;
+    padding-right: 1.4rem;
+  }
+  .events-grid::-webkit-scrollbar {
+    display: none;
+  }
+  .event-card {
+    scroll-snap-align: start;
+    flex-shrink: 0;
+    width: 80vw;
+    max-width: 280px;
   }
 }
 

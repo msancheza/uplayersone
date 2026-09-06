@@ -61,6 +61,7 @@ html {
   font-size: 16px;
   text-rendering: optimizeLegibility;
   -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -134,10 +135,14 @@ button {
 }
 
 @media (max-width: 768px) {
-  /* ScrollNav is hidden on mobile — symmetric padding */
+  /* ScrollNav is visible on mobile at right: 4px (~24-28px wide).
+     Reserve right space so content never sits under it. */
   .container {
     padding-left: 1.25rem;
-    padding-right: 1.25rem;
+    padding-right: 2.8rem;
+    max-width: 100vw;
+    overflow-x: hidden;
+    box-sizing: border-box;
   }
 }
 
@@ -164,14 +169,16 @@ button {
   transform: scale(0.92);
 }
 
-.scroll-reveal.is-visible {
-  opacity: 1;
-  transform: translateY(0) translateX(0) scale(1);
+.scroll-reveal.is-visible,
+.scroll-reveal[data-visible="true"] {
+  opacity: 1 !important;
+  transform: translateY(0) translateX(0) scale(1) !important;
   transition-delay: calc(var(--stagger, 0) * 0.12s);
 }
 
 /* Once visible, clear transition-delay on hover */
-.scroll-reveal.is-visible:hover {
+.scroll-reveal.is-visible:hover,
+.scroll-reveal[data-visible="true"]:hover {
   transition-delay: 0s;
 }
 

@@ -48,16 +48,38 @@ const vehicles = [
   }
 ]
 
-// Dynamically load all photos from /public/galleries/ directory
-const galleryModules = import.meta.glob('/public/galleries/*.{jpg,jpeg,png,webp,gif,JPG,JPEG,PNG,WEBP,GIF}', { eager: true })
-const dynamicGalleryImages = Object.keys(galleryModules)
-  .map(path => path.replace('/public', ''))
-  .sort((a, b) => {
-    // Custom sort so numeric filenames order properly (e.g., 88.jpg, 875.jpg, 960.jpg)
-    const numA = parseInt(a.replace(/[^0-9]/g, '')) || 0
-    const numB = parseInt(b.replace(/[^0-9]/g, '')) || 0
-    return numA - numB
-  })
+// Gallery image list from public/galleries
+const dynamicGalleryImages = [
+  '/galleries/01.jpg',
+  '/galleries/02.jpg',
+  '/galleries/03.jpg',
+  '/galleries/04.jpg',
+  '/galleries/05.jpg',
+  '/galleries/88.jpg',
+  '/galleries/90.jpg',
+  '/galleries/92.jpg',
+  '/galleries/94.jpg',
+  '/galleries/96.jpg',
+  '/galleries/98.jpg',
+  '/galleries/875.jpg',
+  '/galleries/876.jpg',
+  '/galleries/877.jpg',
+  '/galleries/878.jpg',
+  '/galleries/881.jpg',
+  '/galleries/882.jpg',
+  '/galleries/883.jpg',
+  '/galleries/884.jpg',
+  '/galleries/960.jpg',
+  '/galleries/961.jpg',
+  '/galleries/962.jpg',
+  '/galleries/964.jpg',
+  '/galleries/965.jpg',
+  '/galleries/966.jpg',
+  '/galleries/967.jpg',
+  '/galleries/968.jpg',
+  '/galleries/971.jpg',
+  '/galleries/972.jpg'
+]
 
 const fallbackGalleryImages = [
   '/galleries/88.jpg', '/galleries/90.jpg', '/galleries/92.jpg', '/galleries/94.jpg',
@@ -295,6 +317,11 @@ const navigateToTrucks = () => {
         :style="{ transform: `translate3d(${parallaxX * 0.5}px, ${parallaxY * 0.5}px, 0)` }"
       >
         <div class="showcase-content">
+          <!-- Location badge (visible on mobile) -->
+          <div class="mobile-location-badge">
+            <span>📍 LOS ANGELES, CA</span>
+          </div>
+
           <span class="tagline-sub">WE DON'T JUST BRING GAMES.</span>
           
           <h1 class="hero-headline">
@@ -309,13 +336,27 @@ const navigateToTrucks = () => {
           </p>
         </div>
 
-        <!-- Scroll Indicator -->
+        <!-- Scroll Indicator (desktop) -->
         <div class="scroll-explore-indicator">
           <span class="scroll-text">SCROLL TO EXPLORE</span>
           <div class="mouse-icon">
             <span class="mouse-dot"></span>
           </div>
           <ChevronDown :size="14" class="text-red scroll-down-arrow" />
+        </div>
+
+        <!-- Mobile scroll hint (HUD-style interface indicator) -->
+        <div class="mobile-scroll-hint">
+          <div class="scroll-counter">
+            <span class="counter-num">01</span>
+            <span class="counter-sep">/</span>
+            <span class="counter-total">07</span>
+          </div>
+          <div class="scroll-divider"></div>
+          <div class="scroll-label-group">
+            <span class="scroll-label">SCROLL</span>
+            <ChevronDown :size="16" class="mobile-scroll-arrow" />
+          </div>
         </div>
       </div>
     </div>
@@ -359,7 +400,8 @@ const navigateToTrucks = () => {
 
 <style scoped>
 .home-hero-mockup-section {
-  width: 100vw;
+  width: 100%;
+  max-width: 100%;
   height: 100vh;
   position: relative;
   overflow: hidden;
@@ -946,6 +988,33 @@ const navigateToTrucks = () => {
   flex-shrink: 0;
 }
 
+/* Mobile Location Badge */
+.mobile-location-badge {
+  display: none;
+}
+
+/* Mobile Scroll Hint */
+.mobile-scroll-hint {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  position: absolute;
+  bottom: 0.8rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-heading);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.mobile-scroll-arrow {
+  color: #ff002b;
+  animation: bounce 2s infinite;
+}
+
 @media (max-width: 1200px) {
   .hero-dashboard-container {
     grid-template-columns: 240px 110px 1fr;
@@ -956,6 +1025,7 @@ const navigateToTrucks = () => {
   }
 }
 
+/* ── TABLET (900px): hide side panels ── */
 @media (max-width: 900px) {
   .hero-dashboard-container {
     grid-template-columns: 1fr;
@@ -973,4 +1043,209 @@ const navigateToTrucks = () => {
     gap: 1rem;
   }
 }
+
+/* ── MOBILE (<768px): Full immersive hero at 88vh ── */
+@media (max-width: 768px) {
+  /* Section height is calculated so the 4 bottom feature cards sit
+     fully visible above the mobile app dock (90px). The section starts
+     at y=66 (below the 66px navbar offset in App.vue), so on a 375x812
+     viewport: 812svh - 66 (navbar) - 90 (dock) = 656px. The dashboard
+     fills the remaining space and the feature bar (~180px) anchors
+     at the bottom. */
+  .home-hero-mockup-section {
+    height: calc(100svh - 156px);
+    min-height: 500px;
+  }
+
+  /* On mobile, parallax can cause jitter — disable */
+  .hero-bg-wrapper {
+    transform: none !important;
+  }
+
+  .hero-dashboard-container {
+    grid-template-columns: 1fr;
+    padding: 3.5rem 1.4rem 1.2rem 1.4rem;
+    /* Use flex:1 instead of height:100% so the .bottom-features-bar
+       stays inside the section bounds (height:100% pushes the bar
+       below the section and gets clipped by overflow:hidden). */
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    gap: 0;
+  }
+
+  .vehicle-selector-panel,
+  .interior-carousel-panel {
+    display: none;
+  }
+
+  .hero-main-showcase {
+    padding-left: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: auto;
+    padding-bottom: 1.2rem;
+  }
+
+  .tagline-sub {
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    margin-bottom: 0.6rem;
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  .hero-headline {
+    font-size: clamp(2rem, 8.5vw, 3rem);
+    line-height: 1.05;
+    margin-bottom: 1rem;
+  }
+
+  .hero-subtext {
+    display: none;
+  }
+
+  /* Mobile CTA Button — show via the scroll indicator reuse or add here */
+  .scroll-explore-indicator {
+    position: static;
+    margin-top: 1.2rem;
+    align-self: flex-start;
+    padding: 0.7rem 1.2rem;
+    border-radius: 4px;
+    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  }
+
+  .scroll-text {
+    font-size: 0.72rem;
+  }
+
+  /* Bottom features bar — 2 cols on mobile */
+  .bottom-features-bar {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 0.7rem 1rem;
+    gap: 0;
+  }
+
+  .feature-col {
+    padding: 0.4rem 0.6rem;
+    gap: 0.55rem;
+  }
+
+  .feat-title {
+    font-size: 0.7rem;
+  }
+
+  .feat-desc {
+    font-size: 0.62rem;
+  }
+
+  /* Stronger mobile overlay to ensure text contrast */
+  .hero-bg-dark-overlay {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0.6) 0%,
+        rgba(0, 0, 0, 0.2) 30%,
+        rgba(0, 0, 0, 0.25) 55%,
+        rgba(0, 0, 0, 0.88) 100%
+      );
+  }
+
+  /* Show mobile-only elements */
+  .mobile-location-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-heading);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0.6rem;
+  }
+
+  .mobile-scroll-hint {
+    position: static;
+    transform: none;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.7rem;
+    margin-top: 1.1rem;
+    margin-bottom: 0.4rem;
+    /* Keep the HUD pill at its content width so it doesn't stretch
+       to the full container (which would make its right edge touch
+       the ScrollNav at right:4px). */
+    align-self: flex-start;
+    width: fit-content;
+    max-width: calc(100vw - 80px); /* leave room for ScrollNav (~30px) + breathing room */
+    padding: 0.5rem 0.8rem 0.5rem 0.85rem;
+    background: rgba(6, 6, 10, 0.7);
+    border: 1px solid rgba(255, 0, 43, 0.4);
+    border-radius: 3px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    font-family: var(--font-heading);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6), inset 0 0 12px rgba(255, 0, 43, 0.06);
+  }
+
+  .scroll-counter {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.12rem;
+    font-family: var(--font-heading);
+    font-size: 0.78rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: 0.06em;
+  }
+
+  .counter-num {
+    color: #ff002b;
+    text-shadow: 0 0 8px rgba(255, 0, 43, 0.6);
+  }
+
+  .counter-sep {
+    color: rgba(255, 255, 255, 0.35);
+    margin: 0 0.05rem;
+  }
+
+  .counter-total {
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  .scroll-divider {
+    width: 1px;
+    height: 14px;
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .scroll-label-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .scroll-label {
+    font-size: 0.6rem;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  .mobile-scroll-arrow {
+    color: #ff002b;
+    animation: bounce 2s infinite;
+  }
+
+  /* Hide desktop scroll indicator on mobile */
+  .scroll-explore-indicator {
+    display: none;
+  }
+}
+
 </style>

@@ -17,6 +17,7 @@ export function initScrollObserver() {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         entry.target.classList.add('is-visible')
+        entry.target.setAttribute('data-visible', 'true')
       }
     })
   }, observerOptions)

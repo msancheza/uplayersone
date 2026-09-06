@@ -93,6 +93,10 @@ const scrollToContact = () => {
         <h2 class="section-title">
           OUR <span class="text-red-glow">GAMES</span>
         </h2>
+        <!-- Mobile impact statement -->
+        <div class="mobile-impact-headline">
+          MORE SCREENS.<br/>MORE PLAYERS.<br/><span class="text-red-glow">MORE ACTION.</span>
+        </div>
         <p class="section-subtitle">
           Loaded with the most popular multiplayer titles on PS5, Xbox Series X, and Nintendo Switch. 
           Surround sound, stadium seating, and zero lag.
@@ -272,6 +276,18 @@ const scrollToContact = () => {
   line-height: 1.6;
 }
 
+/* Mobile impact headline */
+.mobile-impact-headline {
+  display: none;
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 9vw, 3.2rem);
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  margin: 0.8rem 0 1.2rem;
+}
+
 /* ============================================================
    GAMES GRID — 4 Columns on desktop, 2 on tablet, 1 on mobile
    ============================================================ */
@@ -293,8 +309,35 @@ const scrollToContact = () => {
 }
 
 @media (max-width: 680px) {
+  .mobile-impact-headline {
+    display: block;
+  }
+  .section-title {
+    display: none;
+  }
   .games-grid {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 1rem;
+    padding-bottom: 1.2rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    margin-left: -1.4rem;
+    margin-right: -1.4rem;
+    padding-left: 1.4rem;
+    padding-right: 1.4rem;
+  }
+  .games-grid::-webkit-scrollbar {
+    display: none;
+  }
+  .game-card {
+    scroll-snap-align: start;
+    flex-shrink: 0;
+    width: 78vw;
+    max-width: 290px;
   }
 }
 

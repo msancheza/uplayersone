@@ -61,73 +61,112 @@ onUnmounted(() => {
 
 <template>
   <div class="scroll-nav-wrapper" aria-label="Section Navigation">
-    <!-- Top accent line -->
-    <div class="nav-top-accent"></div>
+    <!-- ── DESKTOP / TABLET FULL HUD PANEL ── -->
+    <div class="hud-panel">
+      <!-- Top accent line -->
+      <div class="nav-top-accent"></div>
 
-    <!-- Header: SYSTEM + counter -->
-    <div class="nav-header">
-      <span class="nav-system-label">SYSTEM</span>
-      <div class="nav-counter">
-        <span class="nav-counter-current">
-          {{ String(getActiveIndex() + 1).padStart(2, '0') }}
-        </span>
-        <span class="nav-counter-sep"> / </span>
-        <span class="nav-counter-total">{{ String(totalSections).padStart(2, '0') }}</span>
-      </div>
-    </div>
-
-    <!-- Vertical spine + dots + labels -->
-    <div class="nav-track-container">
-      <!-- The continuous vertical line -->
-      <div class="nav-spine">
-        <!-- Active fill that grows from top -->
-        <div
-          class="nav-spine-fill"
-          :style="{ height: `${((getActiveIndex()) / (totalSections - 1)) * 100}%` }"
-        ></div>
+      <!-- Header: SYSTEM + counter -->
+      <div class="nav-header">
+        <span class="nav-system-label">SYSTEM</span>
+        <div class="nav-counter">
+          <span class="nav-counter-current">
+            {{ String(getActiveIndex() + 1).padStart(2, '0') }}
+          </span>
+          <span class="nav-counter-sep"> / </span>
+          <span class="nav-counter-total">{{ String(totalSections).padStart(2, '0') }}</span>
+        </div>
       </div>
 
-      <!-- Section items -->
-      <div class="nav-items">
-        <button
-          v-for="(section, idx) in sections"
-          :key="section.id"
-          class="nav-item"
-          :class="{ active: activeSection === section.id }"
-          @click="scrollTo(section.id)"
-          :aria-label="`Navigate to ${section.label}`"
-        >
-          <!-- Dot on the spine -->
-          <div class="nav-dot-wrapper">
-            <div class="nav-dot">
-              <div class="nav-dot-inner"></div>
+      <!-- Vertical spine + dots + labels -->
+      <div class="nav-track-container">
+        <!-- The continuous vertical line -->
+        <div class="nav-spine">
+          <!-- Active fill that grows from top -->
+          <div
+            class="nav-spine-fill"
+            :style="{ height: `${((getActiveIndex()) / (totalSections - 1)) * 100}%` }"
+          ></div>
+        </div>
+
+        <!-- Section items -->
+        <div class="nav-items">
+          <button
+            v-for="(section, idx) in sections"
+            :key="section.id"
+            class="nav-item"
+            :class="{ active: activeSection === section.id }"
+            @click="scrollTo(section.id)"
+            :aria-label="`Navigate to ${section.label}`"
+          >
+            <!-- Dot on the spine -->
+            <div class="nav-dot-wrapper">
+              <div class="nav-dot">
+                <div class="nav-dot-inner"></div>
+              </div>
             </div>
-          </div>
 
-          <!-- Section info -->
-          <div class="nav-item-content">
-            <span class="nav-item-num">{{ String(idx + 1).padStart(2, '0') }}</span>
-            <span class="nav-item-label">{{ section.label }}</span>
-          </div>
-        </button>
+            <!-- Section info — hidden on tablet (compact mode) -->
+            <div class="nav-item-content">
+              <span class="nav-item-num">{{ String(idx + 1).padStart(2, '0') }}</span>
+              <span class="nav-item-label">{{ section.label }}</span>
+            </div>
+          </button>
+        </div>
       </div>
+
+      <!-- Scroll down arrow -->
+      <button class="nav-scroll-down" @click="scrollDown" aria-label="Scroll to next section">
+        <div class="scroll-arrow-ring">
+          <ChevronDown :size="14" />
+        </div>
+      </button>
+
+      <!-- Bottom accent line -->
+      <div class="nav-bottom-accent"></div>
     </div>
 
-    <!-- Scroll down arrow -->
-    <button class="nav-scroll-down" @click="scrollDown" aria-label="Scroll to next section">
-      <div class="scroll-arrow-ring">
-        <ChevronDown :size="14" />
-      </div>
-    </button>
+    <!-- ── MOBILE VERTICAL PROGRESS SPINE ── -->
+    <div class="mobile-spine" aria-label="Section Level Indicator">
+      <!-- Active Level Number -->
+      <span class="mobile-section-num">
+        {{ String(getActiveIndex() + 1).padStart(2, '0') }}
+      </span>
 
-    <!-- Bottom accent line -->
-    <div class="nav-bottom-accent"></div>
+      <!-- Track container with continuous spine + nodes -->
+      <div class="mobile-track-box">
+        <!-- Continuous background line -->
+        <div class="mobile-track-line">
+          <!-- Active red glowing fill line -->
+          <div 
+            class="mobile-track-fill"
+            :style="{ height: `${((getActiveIndex()) / (totalSections - 1)) * 100}%` }"
+          ></div>
+        </div>
+
+        <!-- Level Nodes (01 to 07) -->
+        <div class="mobile-nodes-list">
+          <button
+            v-for="(section, idx) in sections"
+            :key="section.id"
+            class="mobile-node-btn"
+            :class="{ active: activeSection === section.id, passed: idx < getActiveIndex() }"
+            @click="scrollTo(section.id)"
+            :aria-label="`Navigate to ${section.label}`"
+          >
+            <div class="node-bullet">
+              <div class="node-bullet-inner"></div>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <style scoped>
 /* ============================================================
-   WRAPPER — Compact HUD spine (78px width)
+   WRAPPER — positions both HUD and mobile spine
    ============================================================ */
 .scroll-nav-wrapper {
   position: fixed;
@@ -135,7 +174,15 @@ onUnmounted(() => {
   top: 50%;
   transform: translateY(-50%);
   z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
+/* ============================================================
+   DESKTOP FULL HUD PANEL (78px wide glass card)
+   ============================================================ */
+.hud-panel {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -148,20 +195,16 @@ onUnmounted(() => {
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-left: 1px solid rgba(255, 0, 43, 0.4);
   border-radius: 4px;
-
   padding: 0;
   width: 78px;
   overflow: hidden;
-
   box-shadow:
     0 0 0 0.5px rgba(255, 0, 43, 0.25),
     0 20px 50px rgba(0, 0, 0, 0.95),
     inset 0 0 20px rgba(255, 0, 43, 0.05);
 }
 
-/* ============================================================
-   TOP / BOTTOM ACCENT LINES
-   ============================================================ */
+/* ── Accent lines ── */
 .nav-top-accent,
 .nav-bottom-accent {
   width: 100%;
@@ -173,9 +216,7 @@ onUnmounted(() => {
   background: linear-gradient(90deg, transparent 0%, rgba(255, 0, 43, 0.3) 30%, #ff002b 100%);
 }
 
-/* ============================================================
-   HEADER
-   ============================================================ */
+/* ── Header ── */
 .nav-header {
   width: 100%;
   padding: 0.55rem 0.4rem 0.4rem;
@@ -207,9 +248,7 @@ onUnmounted(() => {
   font-size: 0.72rem;
 }
 
-/* ============================================================
-   TRACK CONTAINER
-   ============================================================ */
+/* ── Track Container ── */
 .nav-track-container {
   position: relative;
   width: 100%;
@@ -217,7 +256,6 @@ onUnmounted(() => {
   flex-grow: 1;
 }
 
-/* Spine line (background static line) */
 .nav-spine {
   position: absolute;
   left: 14px;
@@ -227,7 +265,6 @@ onUnmounted(() => {
   background: rgba(255, 255, 255, 0.1);
 }
 
-/* Animated fill — red line that grows as user scrolls */
 .nav-spine-fill {
   position: absolute;
   top: 0;
@@ -238,9 +275,7 @@ onUnmounted(() => {
   box-shadow: 0 0 6px rgba(255, 0, 43, 0.6);
 }
 
-/* ============================================================
-   SECTION ITEMS
-   ============================================================ */
+/* ── Section Items ── */
 .nav-items {
   display: flex;
   flex-direction: column;
@@ -269,7 +304,6 @@ onUnmounted(() => {
   background: rgba(255, 0, 43, 0.12);
 }
 
-/* Dot on the spine */
 .nav-dot-wrapper {
   width: 28px;
   display: flex;
@@ -351,9 +385,7 @@ onUnmounted(() => {
   letter-spacing: 0.12em;
 }
 
-/* ============================================================
-   SCROLL DOWN BUTTON
-   ============================================================ */
+/* ── Scroll Down Button ── */
 .nav-scroll-down {
   background: transparent;
   border: none;
@@ -392,11 +424,164 @@ onUnmounted(() => {
 }
 
 /* ============================================================
-   RESPONSIVE — hide on small screens
+   TABLET (769px–1024px): Compact — hide labels, keep numbers
    ============================================================ */
-@media (max-width: 768px) {
-  .scroll-nav-wrapper {
+@media (max-width: 1024px) and (min-width: 769px) {
+  .hud-panel {
+    width: 52px;
+  }
+
+  .nav-system-label {
     display: none;
   }
+
+  .nav-item-label {
+    display: none;
+  }
+
+  .nav-item-num {
+    font-size: 0.68rem;
+  }
+
+  .nav-item.active .nav-item-num {
+    font-size: 0.76rem;
+  }
+
+  .nav-counter {
+    font-size: 0.6rem;
+  }
 }
-</style>yle>
+
+/* ============================================================
+   MOBILE SPINE (≤768px) — Continuous vertical progress line
+   ============================================================ */
+.mobile-spine {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .scroll-nav-wrapper {
+    right: 4px;
+    z-index: 990;
+    pointer-events: auto;
+  }
+
+  /* Hide the full HUD panel */
+  .hud-panel {
+    display: none;
+  }
+
+  /* Show mobile spine pill — more transparent, glued to right edge */
+  .mobile-spine {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(6, 6, 10, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 0, 43, 0.2);
+    border-radius: 20px;
+    padding: 0.5rem 0.3rem;
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.75), 0 0 8px rgba(255, 0, 43, 0.12);
+  }
+
+  .mobile-section-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.68rem;
+    font-weight: 900;
+    color: #ff002b;
+    letter-spacing: 0.08em;
+    text-shadow: 0 0 8px rgba(255, 0, 43, 0.7);
+    margin-bottom: 0.4rem;
+    display: block;
+    line-height: 1;
+  }
+
+  .mobile-track-box {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.2rem 0;
+  }
+
+  .mobile-track-line {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 2px;
+    z-index: 1;
+  }
+
+  .mobile-track-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: #ff002b;
+    box-shadow: 0 0 8px #ff002b;
+    border-radius: 2px;
+    transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .mobile-nodes-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 13px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .mobile-node-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+  }
+
+  .node-bullet {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    background: #06060a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  }
+
+  .mobile-node-btn.passed .node-bullet {
+    border-color: #ff002b;
+    background: #ff002b;
+    box-shadow: 0 0 6px rgba(255, 0, 43, 0.7);
+  }
+
+  .mobile-node-btn.active .node-bullet {
+    width: 11px;
+    height: 11px;
+    border-color: #ffffff;
+    background: #ff002b;
+    box-shadow: 0 0 10px #ff002b, 0 0 20px rgba(255, 0, 43, 0.85);
+    transform: scale(1.15);
+  }
+
+  .node-bullet-inner {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #ffffff;
+    display: block;
+  }
+}
+</style>

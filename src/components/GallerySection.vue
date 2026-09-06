@@ -69,7 +69,7 @@ const openLightbox = (index) => {
 
 const closeLightbox = () => {
   isLightboxOpen.value = false
-  document.body.style.overflow = 'auto'
+  document.body.style.overflow = ''
 }
 
 const prevLightbox = () => {
@@ -270,7 +270,7 @@ onUnmounted(() => {
     </div>
 
     <!-- Glassmorphism Lightbox Modal -->
-    <transition name="modal-fade">
+    <transition name="modal-fade" :duration="250" type="transition">
       <div v-if="isLightboxOpen" class="lightbox-modal-backdrop" @click.self="closeLightbox">
         <div class="lightbox-dialog floating-hud-glass">
           
@@ -753,6 +753,16 @@ onUnmounted(() => {
 /* ============================================================
    GLASSMORPHISM LIGHTBOX MODAL
    ============================================================ */
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+}
+
 .lightbox-modal-backdrop {
   position: fixed;
   inset: 0;
@@ -938,4 +948,260 @@ onUnmounted(() => {
   box-shadow: 0 0 32px rgba(255, 0, 43, 0.9);
   transform: translateY(-2px);
 }
+
+/* ============================================================
+   MOBILE GALLERY RESPONSIVE OVERRIDES
+   ============================================================ */
+@media (max-width: 768px) {
+  .kinetic-gallery-section {
+    padding: 4rem 0 3.5rem;
+    overflow-x: hidden;
+  }
+
+  .gallery-header {
+    margin-bottom: 2rem;
+    padding: 0 0.5rem;
+  }
+
+  .header-top-row {
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+  }
+
+  .eyebrow-badge {
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    padding: 0.3rem 0.7rem;
+  }
+
+  .hud-media-counter {
+    font-size: 0.62rem;
+    padding: 0.32rem 0.7rem;
+  }
+
+  /* Full-width slider on mobile */
+  .kinetic-slider-viewport {
+    height: 68vw;
+    min-height: 300px;
+    max-height: 460px;
+    margin-bottom: 2rem;
+  }
+
+  .kinetic-slider-track {
+    width: min(88vw, 320px);
+    height: min(68vw, 400px);
+  }
+
+  .kinetic-card {
+    width: min(88vw, 320px);
+    height: min(68vw, 400px);
+  }
+
+  /* Card content compact */
+  .card-top-tag {
+    top: 0.8rem;
+    left: 0.8rem;
+    font-size: 0.5rem;
+    padding: 0.2rem 0.55rem;
+    letter-spacing: 0.1em;
+  }
+
+  .zoom-trigger-btn {
+    top: 0.8rem;
+    right: 0.8rem;
+    font-size: 0.5rem;
+    padding: 0.28rem 0.55rem;
+  }
+
+  .card-tech-overlay {
+    padding: 1rem;
+    gap: 0.3rem;
+  }
+
+  .tech-title {
+    font-size: 0.78rem;
+  }
+
+  .tech-meta {
+    font-size: 0.65rem;
+    gap: 0.15rem;
+  }
+
+  .tech-spec {
+    font-size: 0.6rem;
+  }
+
+  /* Bottom controls bar — compact layout that fits viewport */
+  .gallery-controls-bar {
+    padding: 0 0.5rem;
+    gap: 0.6rem;
+  }
+
+  .hud-nav-btn {
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    padding: 0.55rem 0.75rem;
+    gap: 0.3rem;
+    flex-shrink: 0;
+  }
+
+  .slider-dots-track {
+    gap: 0.3rem;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    justify-content: center;
+    max-width: 100%;
+  }
+
+  .slider-dots-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .slider-dot {
+    width: 7px;
+    height: 7px;
+    flex-shrink: 0;
+  }
+
+  .slider-dot.active {
+    transform: scale(1.25);
+  }
+
+  /* Gallery header compact */
+  .gallery-title {
+    font-size: clamp(1.6rem, 6.5vw, 2.4rem);
+    padding: 0 0.25rem;
+  }
+
+  .gallery-sub {
+    font-size: 0.88rem;
+    padding: 0 0.5rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+
+  /* Filter tabs — scroll horizontally, compact */
+  .neon-tabs-bar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    gap: 0.4rem;
+    padding: 0 0.5rem 0.6rem;
+    margin: 0 -0.5rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .neon-tabs-bar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .neon-tab-btn {
+    flex-shrink: 0;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    padding: 0.42rem 0.85rem;
+    white-space: nowrap;
+  }
+
+  /* Lightbox mobile */
+  .lightbox-modal-backdrop {
+    padding: 0.5rem;
+  }
+
+  .lightbox-close-btn {
+    top: 0.6rem;
+    right: 0.6rem;
+    width: 38px;
+    height: 38px;
+  }
+
+  .lightbox-nav-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .lightbox-nav-btn.prev-lightbox { left: 0.5rem; }
+  .lightbox-nav-btn.next-lightbox { right: 0.5rem; }
+
+  .lightbox-main-body {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .lightbox-img-container {
+    max-height: 50vh;
+    min-height: 280px;
+  }
+
+  .lightbox-sidebar {
+    padding: 1.8rem 1.4rem;
+  }
+
+  .sidebar-title {
+    font-size: 1.2rem;
+    margin-bottom: 1.4rem;
+  }
+
+  .sidebar-meta-list {
+    gap: 1rem;
+    margin-bottom: 1.8rem;
+  }
+
+  .meta-row {
+    font-size: 0.85rem;
+  }
+
+  .sidebar-book-btn {
+    font-size: 0.75rem;
+    padding: 0.9rem 1.3rem;
+    width: 100%;
+  }
+}
+
+/* Extra compact for very small screens */
+@media (max-width: 380px) {
+  .hud-nav-btn {
+    font-size: 0.58rem;
+    padding: 0.5rem 0.6rem;
+  }
+
+  .hud-nav-btn span {
+    display: none;
+  }
+
+  .hud-nav-btn {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .slider-dot {
+    width: 6px;
+    height: 6px;
+  }
+
+  .gallery-controls-bar {
+    gap: 0.4rem;
+  }
+
+  .neon-tab-btn {
+    font-size: 0.55rem;
+    padding: 0.38rem 0.7rem;
+  }
+
+  .kinetic-card {
+    width: 86vw;
+  }
+
+  .kinetic-slider-track {
+    width: 86vw;
+  }
+}
+
 </style>

@@ -396,6 +396,8 @@ const goHome = () => {
   min-height: 100vh;
   padding-top: 5rem;
   padding-bottom: 6rem;
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 /* ============================================================
@@ -406,6 +408,8 @@ const goHome = () => {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   background: radial-gradient(circle at 50% 0%, rgba(255, 0, 43, 0.15) 0%, transparent 70%);
   text-align: center;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .back-link {
@@ -1091,5 +1095,159 @@ const goHome = () => {
 .btn-reset-form:hover {
   border-color: #ff002b;
   color: #ff002b;
+}
+
+/* ============================================================
+   MOBILE FIXES — prevent horizontal overflow that hides the
+   navbar hamburger and truncates the fixed dock buttons.
+   ============================================================ */
+@media (max-width: 768px) {
+  .contact-page {
+    padding-top: 4.5rem;
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  .contact-hero {
+    padding: 1.5rem 0 2rem;
+    overflow: hidden;
+  }
+
+  .contact-hero .container,
+  .contact-body .container {
+    max-width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .back-link {
+    font-size: 0.65rem;
+  }
+
+  .hero-badge {
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    padding: 0.35rem 0.8rem;
+    max-width: calc(100vw - 2rem);
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.4;
+    word-break: break-word;
+  }
+
+  .hero-title {
+    font-size: clamp(1.4rem, 7.5vw, 2.2rem);
+    line-height: 1.08;
+    padding: 0 0.25rem;
+    word-break: break-word;
+    max-width: 100%;
+  }
+
+  .hero-lead {
+    font-size: 0.9rem;
+    padding: 0 0.25rem;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    max-width: 100%;
+  }
+
+  .channel-card {
+    padding: 1.4rem 1.2rem;
+  }
+
+  .channel-info h3 {
+    font-size: 1rem;
+  }
+
+  .channel-info p {
+    font-size: 0.82rem;
+  }
+
+  .channel-action-btn {
+    font-size: 0.72rem;
+    padding: 0.6rem 0.8rem;
+  }
+
+  .info-card-panel {
+    padding: 1.8rem 1.4rem;
+  }
+
+  .info-card-panel h2 {
+    font-size: 1.4rem;
+  }
+
+  .perk-item h4 {
+    font-size: 0.88rem;
+  }
+
+  .perk-item p {
+    font-size: 0.82rem;
+  }
+
+  .form-card-box {
+    padding: 1.5rem 1.2rem;
+  }
+
+  .form-title-bar {
+    flex-direction: column;
+    gap: 0.6rem;
+    text-align: center;
+  }
+
+  .box-main-title {
+    font-size: 1.1rem;
+  }
+
+  .form-row-3 {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .btn-submit-contact {
+    font-size: 0.78rem;
+    padding: 1rem 1.2rem;
+  }
+
+  .form-success-panel {
+    padding: 2rem 1.2rem;
+  }
+
+  .form-success-panel h3 {
+    font-size: 1.3rem;
+  }
+
+  .success-summary {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-badge {
+    font-size: 0.52rem;
+    letter-spacing: 0.08em;
+    padding: 0.3rem 0.6rem;
+    gap: 0.35rem;
+  }
+
+  .hero-title {
+    font-size: clamp(1.3rem, 6.5vw, 1.7rem);
+  }
+
+  .hero-lead {
+    font-size: 0.85rem;
+  }
+
+  .channel-card {
+    padding: 1.2rem 1rem;
+  }
+
+  .info-card-panel {
+    padding: 1.5rem 1.1rem;
+  }
+
+  .form-card-box {
+    padding: 1.3rem 1rem;
+  }
 }
 </style>
