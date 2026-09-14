@@ -108,8 +108,6 @@ const navigateToContact = () => {
 
           <div class="link-column">
             <h4>Support &amp; Legal</h4>
-            <RouterLink to="/policies">Cancellation Policy</RouterLink>
-            <RouterLink to="/terms-and-conditions">Terms &amp; Conditions</RouterLink>
             <RouterLink to="/privacy-policy">Privacy Policy</RouterLink>
             <RouterLink to="/contact">Contact Support</RouterLink>
           </div>

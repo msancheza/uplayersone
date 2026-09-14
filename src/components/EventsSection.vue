@@ -1,17 +1,18 @@
 <script setup>
-import { 
-  Cake, 
-  GraduationCap, 
-  Users2, 
-  School, 
-  Trophy, 
-  HeartHandshake, 
-  Church, 
+import {
+  Cake,
+  GraduationCap,
+  Users2,
+  School,
+  Trophy,
+  HeartHandshake,
+  Church,
   Building2,
   ChevronRight,
   Sparkles
 } from 'lucide-vue-next'
 import siteConfig from '../config/siteConfig.js'
+import PartySuppliesCTA from './PartySuppliesCTA.vue'
 
 const eventTypes = [
   {
@@ -147,6 +148,9 @@ const scrollToContact = () => {
           </a>
         </div>
       </div>
+
+      <!-- Party Supplies CTA -->
+      <PartySuppliesCTA />
 
     </div>
   </section>

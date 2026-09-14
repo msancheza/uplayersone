@@ -17,7 +17,7 @@ const vehicles = [
     subtitle: 'GAMING TRUCK',
     displays: '6 DISPLAYS',
     detail: '4 INSIDE / 2 OUTSIDE',
-    image: '/trucks/01.jpg'
+    image: '/trucks/01.png'
   },
   {
     id: 2,
@@ -26,7 +26,7 @@ const vehicles = [
     subtitle: 'GAMING TRUCK',
     displays: '6 DISPLAYS',
     detail: 'ALL INSIDE',
-    image: '/trucks/02.jpg'
+    image: '/trucks/02.png'
   },
   {
     id: 3,
@@ -35,7 +35,7 @@ const vehicles = [
     subtitle: 'GAMING TRUCK',
     displays: '10 DISPLAYS',
     detail: 'ALL INSIDE',
-    image: '/trucks/04.jpg'
+    image: '/trucks/03.jpg'
   },
   {
     id: 4,
@@ -44,7 +44,7 @@ const vehicles = [
     subtitle: 'MOBILE GAMING BUS',
     displays: '6 DISPLAYS',
     detail: 'ALL INSIDE',
-    image: '/trucks/04.jpg'
+    image: '/trucks/04.png'
   }
 ]
 
@@ -92,6 +92,30 @@ const fallbackGalleryImages = [
 ]
 
 const allGalleryImages = dynamicGalleryImages.length > 0 ? dynamicGalleryImages : fallbackGalleryImages
+
+import { useRouter } from 'vue-router'
+import { useSelectedTruck } from '../composables/useSelectedTruck.js'
+const router = useRouter()
+const { setSelectedTruckId } = useSelectedTruck()
+
+// Navigate from any hero thumbnail to the full Gallery section (#gallery)
+const goToGallery = () => {
+  const onHome = router.currentRoute.value.path === '/' || router.currentRoute.value.path === ''
+  if (onHome) {
+    const el = document.getElementById('gallery')
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      history.replaceState(null, '', '#gallery')
+      return
+    }
+  }
+  router.push({ path: '/', hash: '#gallery' }).then(() => {
+    setTimeout(() => {
+      const el = document.getElementById('gallery')
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 150)
+  })
+}
 
 const activeImageIndex = ref(0)
 const startIndex = ref(0)
@@ -209,7 +233,8 @@ const navigateToContact = () => {
   if (el) el.scrollIntoView({ behavior: 'smooth' })
 }
 
-const navigateToTrucks = () => {
+const navigateToTrucks = (truckId = null) => {
+  if (truckId !== null) setSelectedTruckId(truckId)
   const el = document.getElementById('prices')
   if (el) el.scrollIntoView({ behavior: 'smooth' })
 }
@@ -222,15 +247,14 @@ const navigateToTrucks = () => {
       class="hero-bg-wrapper"
       :style="{ transform: `translate3d(${parallaxX * -0.6}px, ${parallaxY * -0.6}px, 0)` }"
     >
-      <video 
+      <video
         ref="videoRef"
-        autoplay 
-        loop 
-        muted 
-        playsinline 
+        autoplay
+        loop
+        muted
+        playsinline
         webkit-playsinline
         preload="auto"
-        poster="/galleries/88.jpg"
         class="hero-bg-video"
       >
         <source src="/vid01.mp4" type="video/mp4" />
@@ -250,31 +274,36 @@ const navigateToTrucks = () => {
         <div class="panel-tech-corner top-right"></div>
         
         <div class="vehicles-list">
-          <div 
-            v-for="v in vehicles" 
+          <div
+            v-for="v in vehicles"
             :key="v.id"
             class="vehicle-card"
             :class="{ active: selectedVehicle === v.id }"
-            @click="selectedVehicle = v.id"
+            @click="() => navigateToTrucks(v.id)"
           >
+            <!-- Top: Two-column header (left: # + title, right: displays) -->
             <div class="vehicle-card-info">
-              <span class="v-num bright-red-num">{{ v.num }}</span>
-              <div class="v-titles">
+              <div class="v-left">
+                <span class="v-num bright-red-num">{{ v.num }}</span>
                 <h4 class="v-title">{{ v.title }}</h4>
-                <span class="v-subtitle">{{ v.subtitle }}</span>
               </div>
               <div class="v-specs">
                 <div class="v-displays-row text-red">
-                  <Tv :size="13" class="v-display-icon" />
+                  <Tv :size="12" class="v-display-icon" />
                   <span class="v-displays">{{ v.displays }}</span>
                 </div>
                 <span class="v-detail">{{ v.detail }}</span>
               </div>
             </div>
-            <div class="vehicle-card-img-box">
+
+            <!-- Bottom: Floating truck showcase (independent object, not behind text) -->
+            <div class="vehicle-card-showcase">
+              <div class="showcase-floor"></div>
+              <div class="showcase-floor-grid"></div>
               <img :src="v.image" :alt="v.title" class="v-img" />
+              <span class="v-chip">{{ v.subtitle }}</span>
+              <ChevronRight :size="16" class="v-arrow" />
             </div>
-            <ChevronRight :size="16" class="v-arrow" />
           </div>
         </div>
 
@@ -299,7 +328,7 @@ const navigateToTrucks = () => {
             :key="item.originalIndex"
             class="thumbnail-box"
             :class="{ active: activeImageIndex === item.originalIndex }"
-            @click="handleUserInteraction(() => selectImage(item.originalIndex))"
+            @click="handleUserInteraction(goToGallery)"
           >
             <img :src="item.url" alt="Gaming Truck Interior" class="thumb-img" />
             <div v-if="activeImageIndex === item.originalIndex" class="thumb-target-dot"></div>
@@ -336,13 +365,14 @@ const navigateToTrucks = () => {
           </p>
         </div>
 
-        <!-- Scroll Indicator (desktop) -->
+        <!-- Scroll Indicator (desktop) — minimal, no button chrome -->
         <div class="scroll-explore-indicator">
-          <span class="scroll-text">SCROLL TO EXPLORE</span>
+          <div class="scroll-label-line">
+            <span class="scroll-text">SCROLL DOWN</span>
+          </div>
           <div class="mouse-icon">
             <span class="mouse-dot"></span>
           </div>
-          <ChevronDown :size="14" class="text-red scroll-down-arrow" />
         </div>
 
         <!-- Mobile scroll hint (HUD-style interface indicator) -->
@@ -379,13 +409,13 @@ const navigateToTrucks = () => {
         </div>
       </div>
 
-      <div class="feature-col">
-        <Truck :size="22" class="text-red flex-shrink-0" />
+      <router-link to="/party-essentials" class="feature-col feature-col-cta">
+        <Sparkles :size="22" class="text-red flex-shrink-0" />
         <div class="feat-text">
-          <h5 class="feat-title">WE COME TO YOU</h5>
-          <p class="feat-desc">Los Angeles & surrounding areas.</p>
+          <h5 class="feat-title">EXPLORE THE EXPERIENCE <ChevronRight :size="12" class="feat-arrow" /></h5>
+          <p class="feat-desc">Choose what your party needs.</p>
         </div>
-      </div>
+      </router-link>
 
       <div class="feature-col">
         <Phone :size="22" class="text-red flex-shrink-0" />
@@ -419,6 +449,16 @@ const navigateToTrucks = () => {
   width: 110%;
   height: 110%;
   z-index: 0;
+  /* Solid dark fallback shown while the video loads — prevents the
+     flash of the previous poster image (e.g. a gallery photo). */
+  background-color: #000000;
+  background-image:
+    radial-gradient(
+      ellipse at 70% 50%,
+      rgba(40, 30, 45, 0.5) 0%,
+      rgba(0, 0, 0, 0.9) 60%,
+      #000000 100%
+    );
 }
 
 .hero-bg-video {
@@ -520,22 +560,22 @@ const navigateToTrucks = () => {
   height: calc(100vh - 160px);
   max-height: 760px;
   min-height: 520px;
-  padding: 1.1rem;
+  padding: 0.85rem;
 }
 
 .vehicles-list {
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
+  gap: 0.55rem;
   flex-grow: 1;
   justify-content: space-around;
 }
 
 .vehicle-card {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.95rem 1rem;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.55rem 0.85rem 0.45rem 0.85rem;
   background: rgba(14, 14, 22, 0.88);
   border: 1.5px solid rgba(255, 255, 255, 0.12);
   border-radius: 6px;
@@ -551,47 +591,61 @@ const navigateToTrucks = () => {
 }
 
 .vehicle-card.active {
-  background: linear-gradient(90deg, rgba(255, 0, 43, 0.25) 0%, rgba(22, 10, 18, 0.96) 100%);
+  background: linear-gradient(180deg, rgba(255, 0, 43, 0.18) 0%, rgba(22, 10, 18, 0.96) 100%);
   border-color: #ff002b;
   box-shadow: 0 0 24px rgba(255, 0, 43, 0.5);
 }
 
 .vehicle-card-info {
   display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+
+.v-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 .bright-red-num {
   font-family: var(--font-heading);
-  font-size: 1.45rem;
+  font-size: 1.05rem;
   font-weight: 900;
   line-height: 1;
   color: #ff002b;
   text-shadow: 0 0 12px rgba(255, 0, 43, 0.6);
+  flex-shrink: 0;
+}
+
+.v-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
 }
 
 .v-title {
   font-family: var(--font-heading);
-  font-size: 1.05rem;
+  font-size: 0.88rem;
   font-weight: 900;
   color: #ffffff;
   line-height: 1;
   letter-spacing: 0.04em;
 }
 
-.v-subtitle {
-  font-size: 0.68rem;
-  color: #a0a0b2;
-  text-transform: uppercase;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-}
-
 .v-specs {
   display: flex;
   flex-direction: column;
-  margin-top: 0.4rem;
+  align-items: flex-end;
+  gap: 0;
+  line-height: 1.1;
+  text-align: right;
+  flex-shrink: 0;
 }
 
 .v-displays-row {
@@ -607,44 +661,145 @@ const navigateToTrucks = () => {
 }
 
 .v-displays {
-  font-size: 0.72rem;
+  font-size: 0.62rem;
   font-weight: 800;
   letter-spacing: 0.06em;
 }
 
 .v-detail {
-  font-size: 0.64rem;
+  font-size: 0.52rem;
   color: #888899;
+  letter-spacing: 0.02em;
 }
 
-.vehicle-card-img-box {
-  width: 90px;
-  height: 64px;
-  border-radius: 5px;
+/* ============================================================
+   TRUCK SHOWCASE — the truck floats as an independent object,
+   like a Tesla / Porsche / Apple product card. It does NOT
+   touch the card edges, does NOT fill the background, and is
+   NOT behind the text.
+   ============================================================ */
+.vehicle-card-showcase {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  max-height: 116px;
+  min-height: 78px;
+  margin-top: 0.05rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
-  border: 1.5px solid rgba(255, 255, 255, 0.2);
-  background: #000000;
-  flex-shrink: 0;
+}
+
+/* Subtle product-stage floor under the truck */
+.showcase-floor {
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  width: 55%;
+  height: 6px;
+  transform: translateX(-50%);
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 0, 43, 0.35) 0%,
+    rgba(255, 0, 43, 0.1) 45%,
+    transparent 75%
+  );
+  filter: blur(3px);
+  pointer-events: none;
+}
+
+/* Tech grid pattern that fades out — gives a "studio backdrop" feel */
+.showcase-floor-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 14px 14px;
+  mask-image: radial-gradient(
+    ellipse at center,
+    black 0%,
+    transparent 70%
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse at center,
+    black 0%,
+    transparent 70%
+  );
+  pointer-events: none;
 }
 
 .v-img {
+  /* Source truck photos are ~2:1 wide (Standard/Deluxe/Bus) and
+     1:1 (Elite). The showcase is 2:1, so cover only crops a tiny
+     amount for the wide sources and stays centered for the square
+     one — preserving text sharpness on the truck body. */
+  position: relative;
+  z-index: 2;
   width: 100%;
   height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: cover;
-  object-position: center center;
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
-  transform: translateZ(0);
-  will-change: transform;
+  object-position: center 40%;
+  image-rendering: high-quality;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.vehicle-card:hover .v-img {
+  transform: translateY(-2px) scale(1.04);
+}
+
+.vehicle-card.active .v-img {
+  transform: translateY(-1px) scale(1.02);
 }
 
 .v-arrow {
+  position: absolute;
+  right: 0.1rem;
+  bottom: 0.1rem;
+  z-index: 3;
   color: #666677;
-  transition: color 0.2s ease;
+  transition: color 0.2s ease, transform 0.25s ease;
+}
+
+.vehicle-card:hover .v-arrow {
+  transform: translateX(3px);
 }
 
 .vehicle-card.active .v-arrow {
   color: #ff002b;
+}
+
+/* HUD-style chip overlaid on the image's top-left corner
+   (subtitle like "GAMING TRUCK" / "MOBILE GAMING BUS") */
+.v-chip {
+  position: absolute;
+  top: 0.3rem;
+  left: 0.35rem;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.14rem 0.42rem;
+  font-family: var(--font-heading);
+  font-size: 0.5rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #ffffff;
+  background: rgba(255, 0, 43, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 3px;
+  box-shadow:
+    0 0 8px rgba(255, 0, 43, 0.55),
+    0 2px 6px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  pointer-events: none;
 }
 
 .vehicle-selector-footer {
@@ -732,8 +887,8 @@ const navigateToTrucks = () => {
 }
 
 .thumbnail-box {
-  width: 160px;
-  height: 130px;
+  width: 170px;
+  aspect-ratio: 1.5 / 1;
   border-radius: 4px;
   overflow: hidden;
   border: 1.5px solid rgba(255, 255, 255, 0.22);
@@ -742,6 +897,7 @@ const navigateToTrucks = () => {
   transition: border-color 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
               box-shadow 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   background: #000000;
+  flex-shrink: 0;
 }
 
 .thumbnail-box:hover {
@@ -760,9 +916,12 @@ const navigateToTrucks = () => {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center center;
+  object-position: center 40%;
+  /* crisp-edges was forcing nearest-neighbor scaling, which made
+     text on truck photos look pixelated. high-quality uses the
+     browser's smoother resampler — sharp without artifacts. */
+  image-rendering: high-quality;
   image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
   transform: translateZ(0);
   will-change: transform;
 }
@@ -874,51 +1033,51 @@ const navigateToTrucks = () => {
   bottom: 0.8rem;
   left: 2.5rem;
   display: flex;
-  align-items: center;
-  gap: 0.9rem;
-  padding: 0.65rem 1.4rem;
-  background: rgba(10, 10, 16, 0.88);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1.5px solid rgba(255, 0, 43, 0.45);
-  border-radius: 30px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.95), 0 0 16px rgba(255, 0, 43, 0.25);
-  transition: all 0.3s ease;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  transition: opacity 0.3s ease;
 }
 
 .scroll-explore-indicator:hover {
-  border-color: #ff002b;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.95), 0 0 22px rgba(255, 0, 43, 0.55);
-  transform: translateY(-2px);
+  transform: none;
 }
 
 .scroll-text {
   font-family: var(--font-heading);
-  font-size: 0.78rem;
-  font-weight: 900;
-  letter-spacing: 0.18em;
-  color: #ffffff;
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+  font-size: 0.6rem;
+  font-weight: 300;
+  letter-spacing: 0.34em;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  text-shadow: none;
+  line-height: 1;
 }
 
 .mouse-icon {
-  width: 20px;
-  height: 32px;
-  border: 2px solid #ff002b;
-  border-radius: 12px;
+  width: 18px;
+  height: 28px;
+  border: 1.5px solid rgba(255, 0, 43, 0.75);
+  border-radius: 10px;
   position: relative;
   display: flex;
   justify-content: center;
-  padding-top: 5px;
-  box-shadow: 0 0 10px rgba(255, 0, 43, 0.4);
+  padding-top: 4px;
+  box-shadow: 0 0 8px rgba(255, 0, 43, 0.35);
 }
 
 .mouse-dot {
-  width: 4px;
-  height: 8px;
-  border-radius: 2px;
+  width: 3px;
+  height: 6px;
+  border-radius: 1.5px;
   background: #ff002b;
-  box-shadow: 0 0 8px #ff002b;
+  box-shadow: 0 0 6px #ff002b;
   animation: mouse-scroll 1.5s infinite;
 }
 

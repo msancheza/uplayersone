@@ -1,0 +1,224 @@
+Para la página independiente de **Party Supplies**, te recomiendo un orden pensado como catálogo visual: primero inspirar, luego ayudar a elegir y finalmente llevar a una cotización. Como vas a incluir fotos, las imágenes deben hacer el trabajo principal; el texto solo debe orientar y responder dudas clave. Las páginas de renta funcionan mejor cuando combinan navegación clara, imágenes de calidad, tarjetas escaneables y CTAs visibles para disponibilidad/cotización. [subframe](https://www.subframe.com/tips/rental-website-design-examples)
+Fotos por categorias aqui: public/supplies
+Todo el contenido debe estar en ingles
+## Orden visual recomendado
+
+```text
+01. Hero de categoría
+02. Categorías rápidas
+03. Galería / catálogo de productos
+04. Cómo funciona
+05. Combina tu fiesta
+06. FAQ breve + CTA final
+```
+
+El usuario debería poder llegar a una solicitud en cualquier momento, sin tener que recorrer toda la página.
+
+## 1. Hero de categoría
+
+No llenes el hero con muchas fotos pequeñas. Usa una foto protagonista muy buena: una celebración real ya montada, donde se vean varios elementos de UPlayers juntos —por ejemplo, decoración, mesas, sillas, globos y/o jumper, solo si esos productos son parte real de la oferta.
+
+```text
+SYSTEM 03 / PARTY ESSENTIALS
+
+EVERY DETAIL.
+ONE UNFORGETTABLE PARTY.
+
+Décor, balloons and party essentials
+to complete your celebration.
+
+[ BUILD MY PARTY ]   [ VIEW THE ESSENTIALS ↓ ]
+```
+
+Si la ruta se llama `/party-supplies`, el título visible puede seguir siendo **Party Essentials**. Es más premium y emocional; “Party Supplies” puede permanecer en el slug, metadatos y SEO.
+
+Incluye un CTA principal fijo y concreto:
+
+> **GET A PARTY QUOTE**  
+> *Tell us your date, location and what you need.*
+
+Y como CTA secundaria:
+
+> **ADD TO MY GAMING TRUCK PARTY**
+
+Eso conecta esta sección con el servicio insignia, sin obligar a que todos alquilen un truck.
+
+## 2. Categorías rápidas
+
+Justo después del hero, incluye botones/filtros grandes, con iconos y una imagen pequeña o textura visual. No muestres filtros complejos si el inventario inicial todavía es pequeño.
+
+```text
+EXPLORE PARTY ESSENTIALS
+
+[ ALL ITEMS ] [ DÉCOR ] [ BALLOONS ] [ TABLES & CHAIRS ]
+[ BACKDROPS ] [ PARTY PACKAGES ]
+```
+
+Usa solo categorías que UPlayers realmente tenga disponibles. Si aún no ofrecen mesas/sillas, evita crear esa expectativa.
+
+Si el catálogo crece, añade filtros por criterios que un cliente sí usa para decidir:
+
+- **Event type:** Birthday, baby shower, graduation, wedding, corporate.
+- **Theme:** Gaming, princess, superhero, sports, custom.
+- **Color:** Pink, blue, red, black/gold, custom.
+- **Budget:** Optional, si muestran rangos de precio.
+- **Availability:** Si pueden conectarlo a un sistema real de reservas.
+
+Los filtros más útiles son los que reducen una decisión real; en catálogos grandes, mostrar filtros activos y permitir quitarlos fácilmente evita que las personas se pierdan. [magecom](https://magecom.net/post/ecommerce-category-page-best-practices)
+
+## 3. Catálogo visual
+
+Esta es la zona principal de la página. En desktop, usaría una cuadrícula de **3 tarjetas por fila**; en tablet, 2; en móvil, 1 o 2 según el tamaño y legibilidad.
+
+Cada tarjeta debe tener proporciones consistentes, aunque las fotos originales sean diferentes:
+
+```text
+┌──────────────────────────────┐
+│                              │
+│       FOTO REAL GRANDE       │
+│                              │
+│          [ POPULAR ]         │
+├──────────────────────────────┤
+│ GAMING BALLOON GARLAND       │
+│ Balloon Décor · Custom       │
+│ Starting at $___              │
+│ [ VIEW DETAILS → ]           │
+└──────────────────────────────┘
+```
+
+Para cada artículo o paquete, incluye:
+
+- Foto real de buena calidad.
+- Nombre entendible, no un código interno.
+- Categoría: `Balloon Décor`, `Backdrop`, `Party Package`, etc.
+- Precio “Starting at” **solo** si es real y suficientemente claro.
+- Capacidad, medidas, colores o temas cuando aplique.
+- Un badge opcional: `POPULAR`, `NEW`, `SUMMER FAVORITE`, `CUSTOM`, `GAMING PARTY READY`.
+- CTA: **VIEW DETAILS** o **ADD TO MY QUOTE**.
+
+Toda la tarjeta debería ser clicable. Las imágenes de producto claras, el título, el precio o rango, variantes y una acción visible facilitan que el usuario compare opciones sin entrar a cada página una por una. [midsummer](https://midsummer.agency/blog/ecommerce-category-best-practices/)
+
+### Fotos: qué mostrar
+
+Para cada elemento importante, intenta usar al menos:
+
+1. **Foto completa en contexto:** el montaje terminado en una fiesta real.
+2. **Foto cercana:** textura, globos, mesa, letrero, estructura o detalle.
+3. **Foto de escala:** personas cerca, para que se entienda tamaño.
+4. **Foto variante:** otro color, tema o configuración posible.
+
+Para decoraciones personalizadas, no muestres 25 variantes como 25 productos distintos. Mejor usa una tarjeta tipo:
+
+> **CUSTOM BALLOON DÉCOR**  
+> *Choose your theme, colors and event style.*  
+> **[ START A CUSTOM REQUEST ]**
+
+Dentro de su página de detalle, muestras una galería de ejemplos y un formulario corto. Para muchas variaciones, es mejor agruparlas y comunicar cuántas opciones hay que convertir cada variante en un listado separado. [magecom](https://magecom.net/post/ecommerce-category-page-best-practices)
+
+## 4. Página de detalle
+
+Cuando alguien hace clic en una tarjeta, debe abrir una página o modal de detalle. Para inventario que se renta, prefiero una ruta propia porque es más fácil de compartir, posicionar y consultar desde un teléfono.
+
+Orden recomendado:
+
+```text
+Breadcrumb: Party Essentials / Balloon Décor
+
+[ Galería grande ]     [ Nombre del producto ]
+[ thumbnails ]         [ Starting at $___ ]
+                       [ What’s included ]
+                       [ Size / setup / colors ]
+                       [ Ideal for ]
+                       [ CHECK AVAILABILITY ]
+                       [ ADD TO MY PARTY PACKAGE ]
+```
+
+No prometería disponibilidad automática si el equipo aún la confirma manualmente. En ese caso, evita “Book Now” y usa:
+
+> **CHECK AVAILABILITY**  
+> *We’ll confirm your date and send a custom quote.*
+
+Eso es honesto y reduce solicitudes erróneas.
+
+## 5. Bloque de paquetes
+
+Después del catálogo, agrega una sección cruzada muy visual para aumentar el valor por evento:
+
+```text
+BUILD THE COMPLETE EXPERIENCE
+
+Gaming Truck + Party Décor + Jumpers
+One local team. One unforgettable celebration.
+
+[ BUILD MY PARTY PACKAGE → ]
+```
+
+Incluye tres combinaciones ilustrativas, sin obligar a fijar precios si varían:
+
+| Paquete | Incluye | CTA |
+|---|---|---|
+| **The Gamer Setup** | Gaming truck + themed balloon décor | BUILD THIS PARTY |
+| **The Ultimate Celebration** | Gaming truck + décor + activity jumper | GET A CUSTOM QUOTE |
+| **The Splash Party** | Water jumper + balloon décor + party essentials | PLAN A SPLASH PARTY |
+
+Solo muestra combinaciones que el equipo realmente pueda entregar de forma coordinada. La meta es ayudar al visitante a imaginar una solución completa, no convertir el catálogo en una lista interminable.
+
+## 6. Cómo funciona y cierre
+
+Antes del final, usa una franja muy simple:
+
+```text
+HOW IT WORKS
+
+01  Choose your favorites
+02  Tell us your date and location
+03  We confirm availability and build your quote
+04  We help bring the party together
+```
+
+Después, un bloque final con una foto energética y CTA grande:
+
+> **READY TO BUILD YOUR ULTIMATE PARTY?**  
+> Share your event date, location, guest count and party vision.  
+>
+> **START YOUR REQUEST**
+
+Incluye teléfono/texto como vía rápida, pero no dependas solo de él.
+
+## Wireframe compacto
+
+```text
+[ NAVIGATION ]
+
+[ HERO: foto de fiesta montada + Party Essentials + CTA ]
+
+[ CATEGORY CHIPS / filtros ]
+
+[ CATÁLOGO: cards con fotos ]
+[ CATÁLOGO: cards con fotos ]
+[ CATÁLOGO: cards con fotos ]
+
+[ BLOQUE: Custom Décor / Need something unique? ]
+
+[ BUILD THE COMPLETE EXPERIENCE: truck + décor + jumper ]
+
+[ HOW IT WORKS: 4 pasos ]
+
+[ FAQ: entrega, setup, depósito, área de servicio, clima ]
+
+[ CTA FINAL: Request a Party Quote ]
+
+[ FOOTER ]
+```
+
+## Cómo conservar tu identidad visual
+
+Mantén la estética roja/negra y el lenguaje de sistemas, pero deja respirar a las fotos. Una buena proporción sería:
+
+- Fondo oscuro y UI futurista para navegación, títulos, botones y marcos.
+- Fotos grandes, cálidas y reales para catálogo, galerías y pruebas de evento.
+- Rojo como acento y acción, no como fondo dominante de todas las tarjetas.
+- Tipografía gamer para headings; una sans-serif muy legible para descripciones, precios y especificaciones.
+- Etiquetas visuales: `SYSTEM 03`, `SELECT YOUR SETUP`, `ADD TO PARTY`, `CHECK AVAILABILITY`.
+
+En resumen, la página debe sentirse como un catálogo de experiencias curado: **primero enamora con una fiesta real, después permite elegir con facilidad y termina convirtiendo esa inspiración en una solicitud de cotización**.

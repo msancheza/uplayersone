@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { X, Sparkles, DollarSign, HelpCircle, Mail, ChevronRight, Instagram, Facebook, Youtube, Gamepad2, Tag, FileText, Camera, Phone } from 'lucide-vue-next'
+import { X, Sparkles, DollarSign, HelpCircle, Mail, ChevronRight, Instagram, Facebook, Youtube, Gamepad2, Tag, FileText, Camera, Phone, Package } from 'lucide-vue-next'
 import siteConfig from '../config/siteConfig.js'
 
 const router = useRouter()
@@ -17,7 +17,8 @@ const menuItems = [
   { id: 'policies-page', name: 'Our Policies', subtitle: 'Cancellation & Guidelines', icon: FileText, type: 'route', path: '/policies', num: '04' },
   { id: 'prices', name: 'Our Fleet', subtitle: 'Gaming Trucks', icon: Sparkles, type: 'hash', hash: 'prices', num: '05' },
   { id: 'gallery', name: 'Live Gallery', subtitle: 'Real Party Photos', icon: Camera, type: 'hash', hash: 'gallery', num: '06' },
-  { id: 'contact-page', name: 'Contact Us', subtitle: 'Direct Dispatch & Custom Quotes', icon: Mail, type: 'route', path: '/contact', num: '07' },
+  { id: 'party-essentials', name: 'Party Supplies', subtitle: 'Decor, Snacks & Trophies', icon: Package, type: 'route', path: '/party-essentials', num: '07', badge: 'NEW' },
+  { id: 'contact-page', name: 'Contact Us', subtitle: 'Direct Dispatch & Custom Quotes', icon: Mail, type: 'route', path: '/contact', num: '08' },
 ]
 
 const handleScroll = () => {
@@ -65,10 +66,16 @@ const navigateToContact = () => {
 
 const navigateHome = (e) => {
   e.preventDefault()
-  if (route.path !== '/') {
-    router.push('/')
-  } else {
+  // Always strip the hash so a page reload doesn't auto-anchor
+  // the user to whatever section they were just viewing.
+  if (route.path === '/') {
+    history.replaceState(null, '', '/')
     window.scrollTo({ top: 0, behavior: 'smooth' })
+  } else {
+    router.push('/').then(() => {
+      history.replaceState(null, '', '/')
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    })
   }
 }
 
@@ -175,12 +182,17 @@ onUnmounted(() => {
               :key="item.id"
               href="javascript:void(0)"
               class="drawer-link"
+              :class="{ 'has-icon': item.icon, 'has-badge': item.badge }"
               :style="{ '--delay': `${index * 0.06}s` }"
               @click="navigateToItem(item)"
             >
               <span class="link-idx">{{ item.num }}</span>
+              <component v-if="item.icon" :is="item.icon" :size="18" class="link-icon" />
               <div class="link-body">
-                <span class="link-name">{{ item.name }}</span>
+                <span class="link-name">
+                  {{ item.name }}
+                  <span v-if="item.badge" class="link-badge">{{ item.badge }}</span>
+                </span>
                 <span class="link-sub">{{ item.subtitle }}</span>
               </div>
               <span class="link-chevron">›</span>
@@ -410,7 +422,12 @@ onUnmounted(() => {
   height: 44px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.08);
-  border: 1.5px solid rgba(255, 255, 255, 0.55);
+  border: 2px solid rgba(255, 255, 255, 0.75);
+  /* Reinforce the border with inset ring — kills pixelation on
+     sub-pixel renders and gives a sharper, more defined edge. */
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    inset 0 0 8px rgba(0, 0, 0, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -422,7 +439,9 @@ onUnmounted(() => {
 .social-circle:hover {
   background: #ff002b;
   border-color: #ff002b;
-  box-shadow: 0 0 18px rgba(255, 0, 43, 0.85);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.25),
+    0 0 18px rgba(255, 0, 43, 0.85);
   transform: translateY(-2px);
 }
 
@@ -703,6 +722,16 @@ onUnmounted(() => {
   flex-grow: 1;
 }
 
+.link-icon {
+  color: rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+  transition: color 0.25s ease;
+}
+
+.drawer-link:hover .link-icon {
+  color: #ff002b;
+}
+
 .link-name {
   font-family: var(--font-heading);
   font-size: clamp(1.1rem, 4vw, 1.5rem);
@@ -712,6 +741,26 @@ onUnmounted(() => {
   letter-spacing: 0.02em;
   text-transform: uppercase;
   transition: color 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.link-badge {
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-size: 0.55rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  color: #ffffff;
+  background: linear-gradient(180deg, #ff002b 0%, #cc0022 100%);
+  padding: 0.18rem 0.45rem;
+  border-radius: 3px;
+  vertical-align: middle;
+  line-height: 1;
+  text-transform: uppercase;
+  box-shadow: 0 0 8px rgba(255, 0, 43, 0.5);
 }
 
 .link-sub {

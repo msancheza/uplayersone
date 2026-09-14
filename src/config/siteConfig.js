@@ -15,9 +15,9 @@ export const siteConfig = {
 
   // Social Media Links
   socials: {
-    instagram: 'https://instagram.com/uplayersone',
-    facebook: 'https://facebook.com/uplayersone',
-    tiktok: 'https://tiktok.com/@uplayersone',
+    instagram: 'https://instagram.com/UltimatePlayersOne',
+    facebook: 'https://www.facebook.com/UltimatePlayersOne/',
+    tiktok: 'https://tiktok.com/@ultimateplayersone',
     youtube: 'https://youtube.com/@uplayersone'
   }
 }

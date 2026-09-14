@@ -5,6 +5,7 @@ import PoliciesView from '../views/PoliciesView.vue'
 import ContactView from '../views/ContactView.vue'
 import PrivacyPolicyView from '../views/PrivacyPolicyView.vue'
 import TermsConditionsView from '../views/TermsConditionsView.vue'
+import PartyEssentialsView from '../views/PartyEssentialsView.vue'
 
 const routes = [
   {
@@ -26,6 +27,11 @@ const routes = [
     path: '/contact',
     name: 'contact',
     component: ContactView
+  },
+  {
+    path: '/party-essentials',
+    name: 'party-essentials',
+    component: PartyEssentialsView
   },
   {
     path: '/privacy-policy',

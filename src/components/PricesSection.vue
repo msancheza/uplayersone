@@ -1,17 +1,98 @@
 <script setup>
-import { onMounted, nextTick } from 'vue'
+import { onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { Tv, Wind, Volume2, Gamepad2, Plus, ChevronRight, Tag } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 import siteConfig from '../config/siteConfig.js'
 import { initScrollObserver } from '../utils/scrollObserver.js'
+import PartySuppliesCTA from './PartySuppliesCTA.vue'
+import { useSelectedTruck } from '../composables/useSelectedTruck.js'
 
 const router = useRouter()
+const { selectedTruckId, clearSelectedTruckId } = useSelectedTruck()
+
+// A truck card is "highlighted" when it was picked from the hero
+// (selectedTruckId is set), OR — only if nothing was picked —
+// the data-defined default (Deluxe) keeps its highlight.
+const isHighlighted = (truck) => {
+  if (selectedTruckId.value !== null) {
+    return selectedTruckId.value === truck.id
+  }
+  return truck.highlight
+}
+
+const isPopular = (truck) => {
+  // Keep the popular badge only for the data-defined popular one.
+  return truck.popular
+}
+
+// Dedicated IntersectionObserver that re-triggers the entrance
+// animation every time the user scrolls into the GAMING UNITS
+// section. Each card animates in with a staggered cascade so the
+// section feels alive on arrival.
+let truckObserver = null
+
+const observeTruckCards = () => {
+  if (typeof window === 'undefined') return
+  if (truckObserver) truckObserver.disconnect()
+
+  const cards = document.querySelectorAll('.truck-card')
+  cards.forEach((card, idx) => {
+    // Reset to pre-animation state every time we (re)observe so the
+    // animation re-plays if the user scrolls away and back.
+    card.classList.remove('card-in-view')
+    card.style.setProperty('--card-stagger', `${idx * 110}ms`)
+  })
+
+  truckObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('card-in-view')
+        } else {
+          // Replay animation when re-entering from below (scroll up).
+          if (entry.boundingClientRect.top > 0) {
+            entry.target.classList.remove('card-in-view')
+          }
+        }
+      })
+    },
+    { threshold: 0.18, rootMargin: '0px 0px -60px 0px' }
+  )
+
+  cards.forEach((card) => truckObserver.observe(card))
+}
+
+// When the hero clicks a vehicle card it sets selectedTruckId, then
+// navigates to #prices. Once the trucks grid is mounted, scroll the
+// chosen card into view so it lands centered, then re-trigger the
+// cascade so it feels intentional.
+watch(selectedTruckId, async (newId) => {
+  if (newId === null) return
+  await nextTick()
+  setTimeout(() => {
+    const el = document.querySelector(`[data-truck-id="${newId}"]`)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+    // Replay the entrance animation after the scroll lands.
+    observeTruckCards()
+  }, 600)
+}, { immediate: true })
 
 onMounted(() => {
   nextTick(() => {
     initScrollObserver()
+    observeTruckCards()
   })
 })
+
+onUnmounted(() => {
+  if (truckObserver) {
+    truckObserver.disconnect()
+    truckObserver = null
+  }
+})
+
 
 const trucks = [
   {
@@ -112,8 +193,9 @@ const scrollToContact = () => {
         <div
           v-for="truck in trucks"
           :key="truck.id"
-          class="truck-card scroll-reveal tilt-card"
-          :class="{ highlight: truck.highlight }"
+          :data-truck-id="truck.id"
+          class="truck-card tilt-card"
+          :class="{ highlight: isHighlighted(truck) }"
         >
           <!-- Popular badge -->
           <div v-if="truck.popular" class="popular-badge">
@@ -203,7 +285,7 @@ const scrollToContact = () => {
           <!-- Card Action Button -->
           <button
             class="btn-card-cta"
-            :class="{ 'cta-highlight': truck.highlight }"
+            :class="{ 'cta-highlight': isHighlighted(truck) }"
             @click="scrollToContact"
           >
             <span>INQUIRE NOW</span>
@@ -226,9 +308,12 @@ const scrollToContact = () => {
 
       <!-- Bottom note -->
       <p class="bottom-note">
-        Contact us to book your truck or get more info — 
+        Contact us to book your truck or get more info —
         <a :href="siteConfig.phoneTel" class="note-phone">{{ siteConfig.phone }}</a>
       </p>
+
+      <!-- Party Supplies CTA -->
+      <PartySuppliesCTA />
 
     </div>
   </section>
@@ -567,6 +652,36 @@ const scrollToContact = () => {
   flex-direction: column;
   gap: 0;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  /* Pre-animation default — the IntersectionObserver in setup
+     flips .card-in-view when the card scrolls into view. */
+  opacity: 0;
+  transform: translateY(60px) scale(0.94) rotateX(8deg);
+  transform-origin: center bottom;
+  filter: blur(4px);
+}
+
+@keyframes truck-card-in {
+  0% {
+    opacity: 0;
+    transform: translateY(60px) scale(0.94) rotateX(8deg);
+    filter: blur(4px);
+    box-shadow: 0 0 0 rgba(255, 0, 43, 0);
+  }
+  60% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotateX(0);
+    filter: blur(0);
+    box-shadow: 0 0 24px rgba(255, 0, 43, 0.08);
+  }
+}
+
+.truck-card.card-in-view {
+  animation: truck-card-in 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--card-stagger, 0ms);
 }
 
 .truck-card:hover {
