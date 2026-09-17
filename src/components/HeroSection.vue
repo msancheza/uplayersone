@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { ChevronUp, ChevronDown, ChevronRight, Gamepad2, Users, Truck, Phone, Tv, Wind, Sparkles } from 'lucide-vue-next'
 import siteConfig from '../config/siteConfig.js'
 
@@ -199,6 +199,73 @@ const handleUserInteraction = (action) => {
   startAutoRotate() // reset timer
 }
 
+/* -----------------------------------------------------------
+   VEHICLE ELEVATOR — hover-to-elevate
+   The 4 gaming truck cards live in a tall column that's taller
+   than the visible area on small laptops. Hovering a card
+   "elevates" the track so the hovered card sits at the top of
+   the visible window — like a vertical channel you can peek up
+   or down by moving the mouse. Hovering the last card (Gaming
+   Bus) brings it fully into view at the top; hovering the first
+   card resets to the top. No scrollbar is shown.
+
+   IMPORTANT: the listener lives on the WRAPPER, not on each card.
+   Cards move (the whole list translates on hover), so binding
+   mouseenter to individual cards causes a cascade:
+     hover card2 → list shifts → cursor now over card3 →
+     hover card3 → list shifts → cursor over card4 → ... →
+     cursor leaves panel → reset → cursor back over card2 → LOOP.
+   By listening on the wrapper (which never moves) and computing
+   the target slot from cursor Y relative to the wrapper top,
+   the offset becomes a pure function of (mouseY) and is stable.
+   ----------------------------------------------------------- */
+const hoveredVehicle = ref(null)
+const trackOffset = ref(0)
+let measuredCardHeight = 0
+let measuredCardGap = 0
+
+// Bound to the rotation indicator: shows hovered card position when
+// the elevator is engaged, otherwise falls back to the default selection.
+const indicatorId = computed(() => hoveredVehicle.value ?? selectedVehicle.value)
+
+const measureCard = () => {
+  if (typeof window === 'undefined') return
+  const card = document.querySelector('.vehicles-list .vehicle-card')
+  if (!card) return
+  measuredCardHeight = card.offsetHeight
+  // gap is on the parent .vehicles-list
+  const styles = window.getComputedStyle(card.parentElement)
+  measuredCardGap = parseFloat(styles.rowGap || styles.gap || '0') || 0
+}
+
+const getTrackOffsetForIndex = (idx) => {
+  if (idx <= 0 || measuredCardHeight === 0) return 0
+  return -idx * (measuredCardHeight + measuredCardGap)
+}
+
+// Wrapper-level handler: cursor Y in wrapper → which slot (0..3) →
+// that slot's card is brought to the top. The wrapper doesn't move
+// during translation, so this calculation is always stable and the
+// elevator can't oscillate.
+const onWrapperMouseMove = (e) => {
+  const wrapper = e.currentTarget
+  if (!wrapper || measuredCardHeight === 0) return
+  const rect = wrapper.getBoundingClientRect()
+  if (rect.height === 0) return
+  const relY = e.clientY - rect.top
+  const slotHeight = rect.height / vehicles.length
+  let slotIdx = Math.floor(relY / slotHeight)
+  if (slotIdx < 0) slotIdx = 0
+  if (slotIdx > vehicles.length - 1) slotIdx = vehicles.length - 1
+  hoveredVehicle.value = vehicles[slotIdx].id
+  trackOffset.value = getTrackOffsetForIndex(slotIdx)
+}
+
+const onWrapperMouseLeave = () => {
+  hoveredVehicle.value = null
+  trackOffset.value = 0
+}
+
 const handleMouseMove = (e) => {
   const { clientX, clientY } = e
   const centerX = window.innerWidth / 2
@@ -215,12 +282,17 @@ const startVideo = () => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   window.addEventListener('mousemove', handleMouseMove)
   startVideo()
   setTimeout(startVideo, 200)
   setTimeout(startVideo, 600)
   startAutoRotate()
+  // Measure the first vehicle card so the elevator knows how far to
+  // translate when the user hovers card #2/#3/#4. nextTick ensures
+  // the template has rendered before we query the DOM.
+  await nextTick()
+  measureCard()
 })
 
 onUnmounted(() => {
@@ -273,38 +345,58 @@ const navigateToTrucks = (truckId = null) => {
         <div class="panel-tech-corner top-left"></div>
         <div class="panel-tech-corner top-right"></div>
         
-        <div class="vehicles-list">
+        <div
+          class="vehicles-list-wrapper"
+          @mousemove="onWrapperMouseMove"
+          @mouseleave="onWrapperMouseLeave"
+        >
           <div
-            v-for="v in vehicles"
-            :key="v.id"
-            class="vehicle-card"
-            :class="{ active: selectedVehicle === v.id }"
-            @click="() => navigateToTrucks(v.id)"
+            class="vehicles-list"
+            :class="{ 'is-elevated': trackOffset !== 0 }"
+            :style="{ transform: `translateY(${trackOffset}px)` }"
           >
-            <!-- Top: Two-column header (left: # + title, right: displays) -->
-            <div class="vehicle-card-info">
-              <div class="v-left">
-                <span class="v-num bright-red-num">{{ v.num }}</span>
-                <h4 class="v-title">{{ v.title }}</h4>
-              </div>
-              <div class="v-specs">
-                <div class="v-displays-row text-red">
-                  <Tv :size="12" class="v-display-icon" />
-                  <span class="v-displays">{{ v.displays }}</span>
+            <div
+              v-for="v in vehicles"
+              :key="v.id"
+              class="vehicle-card"
+              :class="{ active: selectedVehicle === v.id, hovered: hoveredVehicle === v.id }"
+              @click="() => navigateToTrucks(v.id)"
+            >
+              <!-- Top: Two-column header (left: # + title, right: displays) -->
+              <div class="vehicle-card-info">
+                <div class="v-left">
+                  <span class="v-num bright-red-num">{{ v.num }}</span>
+                  <h4 class="v-title">{{ v.title }}</h4>
                 </div>
-                <span class="v-detail">{{ v.detail }}</span>
+                <div class="v-specs">
+                  <div class="v-displays-row text-red">
+                    <Tv :size="12" class="v-display-icon" />
+                    <span class="v-displays">{{ v.displays }}</span>
+                  </div>
+                  <span class="v-detail">{{ v.detail }}</span>
+                </div>
               </div>
-            </div>
 
-            <!-- Bottom: Floating truck showcase (independent object, not behind text) -->
-            <div class="vehicle-card-showcase">
-              <div class="showcase-floor"></div>
-              <div class="showcase-floor-grid"></div>
-              <img :src="v.image" :alt="v.title" class="v-img" />
-              <span class="v-chip">{{ v.subtitle }}</span>
-              <ChevronRight :size="16" class="v-arrow" />
+              <!-- Bottom: Floating truck showcase (independent object, not behind text) -->
+              <div class="vehicle-card-showcase">
+                <div class="showcase-floor"></div>
+                <div class="showcase-floor-grid"></div>
+                <img :src="v.image" :alt="v.title" class="v-img" />
+                <span class="v-chip">{{ v.subtitle }}</span>
+                <ChevronRight :size="16" class="v-arrow" />
+              </div>
             </div>
           </div>
+        </div>
+
+        <!-- HUD elevator position indicator: shows current card
+             (hovered, or default selection when not hovering) -->
+        <div class="rotation-indicator" aria-hidden="true">
+          <span class="ri-current">{{ String(indicatorId).padStart(2, '0') }}</span>
+          <span class="ri-bar">
+            <span class="ri-fill" :style="{ width: `${(indicatorId / vehicles.length) * 100}%` }"></span>
+          </span>
+          <span class="ri-total">{{ String(vehicles.length).padStart(2, '0') }}</span>
         </div>
 
         <div class="vehicle-selector-footer" @click="navigateToTrucks">
@@ -563,12 +655,38 @@ const navigateToTrucks = (truckId = null) => {
   padding: 0.85rem;
 }
 
+/* Vertical channel that hosts the 4 vehicle cards. The list is taller
+   than this wrapper on small laptops, and the .vehicles-list inside
+   gets translateY'd up/down on hover so any card can be brought to
+   the top of the visible window — without ever showing a scrollbar. */
+.vehicles-list-wrapper {
+  position: relative;
+  overflow: hidden;
+  flex-grow: 1;
+  min-height: 0;
+  /* Slight inward padding so the very first/last card never gets clipped
+     flush against the rounded panel edge on hover. */
+  padding: 2px 0;
+}
+
 .vehicles-list {
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
-  flex-grow: 1;
-  justify-content: space-around;
+  /* Stacked from the top so there's room below for the elevator to
+     push the bottom cards up into view. */
+  justify-content: flex-start;
+  will-change: transform;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* When the elevator is engaged, only the elevated card remains
+   interactive. Disabling pointer events on the other cards prevents
+   the cursor from "entering" them as they slide past the mouse —
+   which would otherwise trigger bubble-up hover handlers and
+   create a cascading bounce between cards. */
+.vehicles-list.is-elevated .vehicle-card:not(.hovered) {
+  pointer-events: none;
 }
 
 .vehicle-card {
@@ -587,6 +705,17 @@ const navigateToTrucks = (truckId = null) => {
 .vehicle-card:hover {
   background: rgba(28, 20, 32, 0.95);
   border-color: rgba(255, 0, 43, 0.6);
+  transform: translateX(3px);
+}
+
+.vehicle-card.hovered {
+  /* Stronger HUD glow on the elevated card — gives the elevator a clear
+     "this one is at the front of the channel" feeling. */
+  background: linear-gradient(180deg, rgba(255, 0, 43, 0.18) 0%, rgba(22, 10, 18, 0.96) 100%);
+  border-color: #ff002b;
+  box-shadow:
+    0 0 24px rgba(255, 0, 43, 0.5),
+    inset 0 0 14px rgba(255, 0, 43, 0.18);
   transform: translateX(3px);
 }
 
@@ -800,6 +929,41 @@ const navigateToTrucks = (truckId = null) => {
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   pointer-events: none;
+}
+
+/* HUD-style rotation indicator between the cards and the footer */
+.rotation-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.4rem 0.5rem;
+  font-family: var(--font-heading);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: rgba(255, 255, 255, 0.55);
+}
+.ri-current {
+  color: #ff002b;
+  text-shadow: 0 0 8px rgba(255, 0, 43, 0.5);
+}
+.ri-bar {
+  position: relative;
+  flex: 1;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.ri-fill {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(255, 0, 43, 0.4), #ff002b);
+  box-shadow: 0 0 8px rgba(255, 0, 43, 0.7);
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ri-total {
+  color: rgba(255, 255, 255, 0.55);
 }
 
 .vehicle-selector-footer {
