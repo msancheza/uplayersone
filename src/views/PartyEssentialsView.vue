@@ -1,15 +1,18 @@
 <script setup>
-import { ref, computed, onMounted, nextTick, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import {
   ArrowLeft,
   Sparkles,
   ChevronRight,
+  ChevronLeft,
+  X,
   MapPin,
   Package,
   PartyPopper,
   Gift,
   Check,
   ArrowDown,
+  Maximize2,
 } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 import siteConfig from '../config/siteConfig.js'
@@ -88,34 +91,84 @@ const setCategory = (id) => {
   activeCategory.value = id
 }
 
+/* -----------------------------------------------------------
+   LIGHTBOX — clicking a catalog photo opens an enlarged view
+   with prev/next navigation. Mirrors the main Gallery's UX.
+   ----------------------------------------------------------- */
+const isLightboxOpen = ref(false)
+const lightboxIndex = ref(0)
+
+const openLightbox = (index) => {
+  if (!filteredCatalog.value.length) return
+  lightboxIndex.value = Math.max(0, Math.min(index, filteredCatalog.value.length - 1))
+  isLightboxOpen.value = true
+  document.body.style.overflow = 'hidden'
+}
+
+const closeLightbox = () => {
+  isLightboxOpen.value = false
+  document.body.style.overflow = ''
+}
+
+const prevLightbox = () => {
+  if (!filteredCatalog.value.length) return
+  lightboxIndex.value =
+    (lightboxIndex.value - 1 + filteredCatalog.value.length) % filteredCatalog.value.length
+}
+
+const nextLightbox = () => {
+  if (!filteredCatalog.value.length) return
+  lightboxIndex.value = (lightboxIndex.value + 1) % filteredCatalog.value.length
+}
+
+const lightboxItem = computed(() => filteredCatalog.value[lightboxIndex.value] || null)
+
+const handleLightboxKey = (e) => {
+  if (!isLightboxOpen.value) return
+  if (e.key === 'Escape') closeLightbox()
+  if (e.key === 'ArrowLeft') prevLightbox()
+  if (e.key === 'ArrowRight') nextLightbox()
+}
+
 // When the active category changes, Vue swaps the catalog items
-// inside the .pe-catalog section. The new cards are mounted with
-// `.reveal-card` (opacity: 0). The sentinel observer has already
-// fired and unobserved the section, so the new cards stay hidden.
-// Flip them visible on the next tick and refresh the stagger so the
-// cascade still feels intentional. We also re-pin the chips + the
-// categories label, because Vue's reactive update on
-// `activeCategory` was inadvertently dropping the
-// `.card-in-view` class from the first two chips during re-render.
+// inside the .pe-catalog section. The new cards mount with
+// `.reveal-card` (opacity:0). Since the reveal animation is now
+// driven by the SECTION's `card-in-view` class (see CSS), we
+// toggle that class to replay the cascade. Toggling the class
+// restarts the CSS animation because `forwards` fill mode means
+// removing the class reverts to the base state.
 watch(activeCategory, () => {
   nextTick(() => {
-    // 1. Re-show chips that Vue may have re-rendered without the
-    //    in-view class. Force them visible after the DOM settles.
-    document.querySelectorAll('.chip').forEach((c) => {
-      c.classList.add('card-in-view')
-    })
-
-    // 2. Replay the catalog cards so the new filter feels animated.
     const section = document.querySelector('.pe-catalog')
     if (!section) return
-    const cards = section.querySelectorAll('.reveal-card')
-    cards.forEach((c, i) => {
-      c.style.setProperty('--card-stagger', `${i * 50}ms`)
-      c.classList.remove('card-in-view')
-      // Force a reflow so removing+re-adding restarts the transition.
-      // eslint-disable-next-line no-unused-expressions
-      void c.offsetWidth
-      c.classList.add('card-in-view')
+
+    // 1. Re-stagger the cards so the cascade re-plays from 0.
+    section.querySelectorAll('.reveal-card').forEach((c, i) => {
+      c.style.setProperty('--card-stagger', `${i * 75}ms`)
+    })
+
+    // 2. Restart the keyframe animation by removing then
+    //    re-adding card-in-view on the section. Forcing a reflow
+    //    in between ensures the browser registers the removal.
+    section.classList.remove('card-in-view')
+    // eslint-disable-next-line no-unused-expressions
+    void section.offsetWidth
+    section.classList.add('card-in-view')
+
+    // 3. Re-pin the category chips: Vue's reactive update on
+    //    `activeCategory` was inadvertently dropping the
+    //    `card-in-view` state from the first two chips during
+    //    re-render. Force them visible after the DOM settles.
+    //    (Chips live in the .pe-categories section, so once
+    //    that section has card-in-view they're animated in
+    //    automatically; this just guarantees it after a
+    //    category switch.)
+    requestAnimationFrame(() => {
+      document.querySelectorAll('.chip').forEach((c) => {
+        c.style.opacity = '1'
+        c.style.transform = 'none'
+        c.style.filter = 'none'
+      })
     })
   })
 })
@@ -152,7 +205,7 @@ const faqs = [
   },
   {
     q: 'What about a deposit?',
-    a: 'A 30% deposit secures your date, with the balance due 48 hours before the event. Cancellations follow our posted policy.',
+    a: 'Call us to confirm the exact deposit amount required to secure your date.',
   },
 ]
 
@@ -169,24 +222,32 @@ const heroImage = '/supplies/decors/IMG_4849.jpg'
 /* -----------------------------------------------------------
    Entrance reveal — flip cards to visible as soon as the user
    scrolls anywhere into the page. We use a single sentinel
-   observer that watches each section and reveals ALL its cards
-   at once with a staggered cascade — simpler and far more
-   reliable than per-card observers.
+   observer that watches each SECTION and adds `card-in-view` to
+   it; the CSS animation cascade is then driven by descendant
+   selector (see `.pe-X.card-in-view .reveal-card`). Putting the
+   trigger on the section (rather than on each card) is critical:
+   Vue 3's :class binding replaces `el.className` wholesale on
+   re-render, which would silently wipe out a class added via
+   classList.add() on individual cards.
    ----------------------------------------------------------- */
+const REVEAL_SECTIONS = '.pe-hero, .pe-categories, .pe-catalog, .pe-experience, .pe-how, .pe-faq, .pe-final'
+
 const revealCards = () => {
-  const sections = document.querySelectorAll('.pe-categories, .pe-catalog, .pe-experience, .pe-how, .pe-faq, .pe-final')
+  const sections = document.querySelectorAll(REVEAL_SECTIONS)
   sections.forEach((section) => {
-    const cards = section.querySelectorAll('.reveal-card')
-    cards.forEach((c, i) => c.style.setProperty('--card-stagger', `${i * 60}ms`))
+    // Stagger each card in the section for the cascade
+    section.querySelectorAll('.reveal-card').forEach((c, i) => {
+      c.style.setProperty('--card-stagger', `${i * 80}ms`)
+    })
   })
 
   const sentinelObserver = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          entry.target.querySelectorAll('.reveal-card').forEach((c) => {
-            c.classList.add('card-in-view')
-          })
+          // Toggle the section's class to trigger the CSS animation
+          // on all descendant .reveal-card elements at once.
+          entry.target.classList.add('card-in-view')
           sentinelObserver.unobserve(entry.target)
         }
       })
@@ -197,19 +258,31 @@ const revealCards = () => {
 }
 
 onMounted(() => {
+  window.addEventListener('keydown', handleLightboxKey)
   nextTick(() => {
     revealCards()
-    // Safety net: also flip any cards that are ALREADY in the viewport
-    // at mount time (e.g. when user lands directly via hash navigation).
+    // Safety net: any section ALREADY in the viewport at mount
+    // time (e.g. user lands via hash navigation, or the hero
+    // section which is always at the top) needs card-in-view
+    // added immediately. The observer only fires on the
+    // intersection CHANGE, not the initial state.
     setTimeout(() => {
-      document.querySelectorAll('.reveal-card').forEach((c) => {
-        const r = c.getBoundingClientRect()
+      const sections = document.querySelectorAll(REVEAL_SECTIONS)
+      sections.forEach((section) => {
+        const r = section.getBoundingClientRect()
         if (r.top < window.innerHeight && r.bottom > 0) {
-          c.classList.add('card-in-view')
+          section.classList.add('card-in-view')
         }
       })
     }, 200)
   })
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleLightboxKey)
+  // Make sure body scroll is restored when leaving the page with the
+  // lightbox open (e.g. user clicks "BACK" or navigates away).
+  document.body.style.overflow = ''
 })
 </script>
 
@@ -271,19 +344,24 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- 3. CATALOG -->
-    <div id="pe-catalog" class="pe-catalog container">
+    <!-- 3. CATALOG — fullwidth (no .container cap) -->
+    <div id="pe-catalog" class="pe-catalog pe-fullwidth">
       <div class="catalog-grid">
         <article
-          v-for="item in filteredCatalog"
+          v-for="(item, index) in filteredCatalog"
           :key="item.id"
           class="catalog-card reveal-card"
           :class="{ 'is-highlight': item.highlight }"
+          @click="openLightbox(index)"
         >
           <div class="card-img-wrap">
             <img :src="item.image" :alt="item.title" loading="lazy" />
             <div class="card-img-overlay"></div>
             <span v-if="item.badge" class="card-badge">{{ item.badge }}</span>
+            <span class="card-expand-hint" aria-hidden="true">
+              <Maximize2 :size="14" />
+              <span>EXPAND</span>
+            </span>
           </div>
 
           <div class="card-body">
@@ -291,7 +369,7 @@ onMounted(() => {
             <p class="card-sub">{{ item.subtitle }}</p>
             <div class="card-price">{{ item.price }}</div>
 
-            <button class="card-cta">
+            <button class="card-cta" @click.stop="openLightbox(index)">
               <span>VIEW DETAILS</span>
               <ChevronRight :size="14" />
             </button>
@@ -413,6 +491,63 @@ onMounted(() => {
         </div>
       </div>
     </div>
+
+    <!-- LIGHTBOX MODAL — opens when a catalog card is clicked -->
+    <transition name="modal-fade" :duration="250" type="transition">
+      <div
+        v-if="isLightboxOpen && lightboxItem"
+        class="pe-lightbox-backdrop"
+        @click.self="closeLightbox"
+      >
+        <div class="pe-lightbox-dialog floating-hud-glass">
+          <button class="pe-lightbox-close" @click="closeLightbox" aria-label="Close lightbox">
+            <X :size="22" />
+          </button>
+
+          <button class="pe-lightbox-nav prev" @click="prevLightbox" aria-label="Previous">
+            <ChevronLeft :size="26" />
+          </button>
+
+          <button class="pe-lightbox-nav next" @click="nextLightbox" aria-label="Next">
+            <ChevronRight :size="26" />
+          </button>
+
+          <div class="pe-lightbox-body">
+            <div class="pe-lightbox-img-wrap">
+              <img
+                :src="lightboxItem.image"
+                :alt="lightboxItem.title"
+                class="pe-lightbox-img"
+              />
+            </div>
+
+            <aside class="pe-lightbox-sidebar">
+              <div class="lb-eyebrow">
+                <Sparkles :size="14" class="text-red" />
+                <span>PARTY ESSENTIALS // {{ lightboxItem.id.toUpperCase() }}</span>
+              </div>
+
+              <span v-if="lightboxItem.badge" class="lb-badge">{{ lightboxItem.badge }}</span>
+
+              <h3 class="lb-title">{{ lightboxItem.title }}</h3>
+              <p class="lb-sub">{{ lightboxItem.subtitle }}</p>
+              <div class="lb-price">{{ lightboxItem.price }}</div>
+
+              <div class="lb-counter">
+                <span>{{ String(lightboxIndex + 1).padStart(2, '0') }}</span>
+                <span class="lb-counter-sep">/</span>
+                <span>{{ String(filteredCatalog.length).padStart(2, '0') }}</span>
+              </div>
+
+              <button class="btn-primary lb-cta" @click="goToBooking">
+                <span>BUILD THIS INTO MY PARTY</span>
+                <ChevronRight :size="16" />
+              </button>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </transition>
   </section>
 </template>
 
@@ -433,19 +568,47 @@ onMounted(() => {
   padding: 0 1.5rem;
 }
 
+/* ============================================================
+   ENTRANCE REVEAL — used by all .reveal-card elements on this
+   page (hero, catalog, experience, how, faq, final cards).
+
+   IMPORTANT: the trigger class `card-in-view` lives on the
+   PARENT section (not on each card). This is because Vue 3's
+   :class binding replaces `el.className` wholesale whenever the
+   binding changes, which wipes out any class added externally
+   via classList.add(). Since the FAQ items have `:class="{ open:
+   openFaq === idx }"`, clicking a FAQ would silently remove
+   `card-in-view` from that card and snap it back to opacity:0.
+
+   Putting `card-in-view` on the section means Vue never touches
+   it (sections are static divs without :class binding), and we
+   use `forwards` fill mode on the keyframe animation so the
+   card stays at the end state even if the class is later removed.
+   ============================================================ */
 .reveal-card {
   opacity: 0;
-  transform: translateY(40px) scale(0.96);
-  filter: blur(3px);
-  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-              filter 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-  transition-delay: var(--card-stagger, 0ms);
+  transform: translateY(56px) scale(0.93) rotateX(10deg);
+  filter: blur(5px) saturate(0.55);
+  transform-origin: center 80%;
+  will-change: transform, opacity, filter;
 }
-.reveal-card.card-in-view {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  filter: blur(0);
+
+.pe-hero.card-in-view .reveal-card,
+.pe-categories.card-in-view .reveal-card,
+.pe-catalog.card-in-view .reveal-card,
+.pe-experience.card-in-view .reveal-card,
+.pe-how.card-in-view .reveal-card,
+.pe-faq.card-in-view .reveal-card,
+.pe-final.card-in-view .reveal-card {
+  animation: pe-card-reveal 0.95s cubic-bezier(0.16, 1, 0.3, 1) var(--card-stagger, 0ms) forwards;
+}
+
+@keyframes pe-card-reveal {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotateX(0);
+    filter: blur(0) saturate(1);
+  }
 }
 
 /* Eyebrow badge */
@@ -641,15 +804,47 @@ onMounted(() => {
 }
 
 /* ============================================================
-   CATALOG
+   CATALOG — fullwidth, edge-to-edge with subtle HUD framing
    ============================================================ */
 .pe-catalog {
-  padding: 2rem 1.5rem 4rem;
+  position: relative;
+  padding: 3rem 0 5rem;
+  width: 100%;
+  max-width: none;
+  overflow: hidden;
 }
+
+/* Subtle vertical HUD lines at the section edges, fading at the
+   top and bottom. Gives the catalog a "command center" frame
+   without blocking any content. */
+.pe-catalog::before,
+.pe-catalog::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(255, 0, 43, 0.35) 20%,
+    rgba(255, 0, 43, 0.35) 80%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+.pe-catalog::before { left: 0.6rem; }
+.pe-catalog::after  { right: 0.6rem; }
+
 .catalog-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.4rem;
+  /* Default desktop: 4 columns at full viewport width. The grid
+     breathes edge-to-edge so the catalog feels like a wall of
+     party essentials, not a boxed-in card list. */
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.1rem;
+  padding: 0 1.4rem;
 }
 .catalog-card {
   position: relative;
@@ -1051,15 +1246,277 @@ onMounted(() => {
   .pkg-grid { grid-template-columns: repeat(2, 1fr); }
   .steps-strip { grid-template-columns: repeat(2, 1fr); }
 }
+
+@media (min-width: 1400px) {
+  /* Ultra-wide screens keep 4 columns but with a slightly wider
+     gap and a touch more edge breathing room. */
+  .catalog-grid { gap: 1.4rem; padding: 0 2.2rem; }
+}
+
 @media (max-width: 640px) {
   .pe-hero { min-height: 78vh; }
   .pe-hero-content { padding: 7rem 1rem 3rem; }
   .back-btn { top: 5rem; left: 1rem; }
-  .catalog-grid { grid-template-columns: 1fr; }
+  .catalog-grid { grid-template-columns: 1fr; padding: 0 1rem; }
   .pkg-grid { grid-template-columns: 1fr; }
   .steps-strip { grid-template-columns: 1fr; }
   .final-card { padding: 2.2rem 1.3rem; }
   .final-actions { flex-direction: column; }
   .btn-primary, .btn-ghost { width: 100%; justify-content: center; }
+  /* Hide HUD edge lines on small screens — they crowd the layout */
+  .pe-catalog::before, .pe-catalog::after { display: none; }
+}
+
+/* ============================================================
+   CATALOG CARD — EXPAND hint + click affordance
+   ============================================================ */
+.catalog-card {
+  cursor: pointer;
+}
+
+.card-expand-hint {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.32rem 0.62rem;
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 3px;
+  font-family: var(--font-heading);
+  font-size: 0.55rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: #ffffff;
+  opacity: 0;
+  transform: translateY(-3px);
+  transition: opacity 0.25s ease, transform 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+}
+
+.catalog-card:hover .card-expand-hint,
+.catalog-card:focus-visible .card-expand-hint {
+  opacity: 1;
+  transform: translateY(0);
+  border-color: rgba(255, 0, 43, 0.6);
+  background: rgba(255, 0, 43, 0.18);
+}
+
+/* ============================================================
+   LIGHTBOX MODAL — enlarged catalog photo + sidebar
+   ============================================================ */
+
+/* Local copy of the floating-hud-glass treatment (the GallerySection's
+   version is scoped, so we redefine it for PartyEssentialsView). */
+.floating-hud-glass {
+  background: rgba(6, 6, 10, 0.92);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.98), inset 0 0 24px rgba(255, 0, 43, 0.08);
+  border-radius: 8px;
+}
+
+.pe-lightbox-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: rgba(0, 0, 0, 0.86);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.pe-lightbox-dialog {
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+  max-height: calc(100vh - 3rem);
+  display: flex;
+  overflow: hidden;
+}
+
+.pe-lightbox-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 5;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.85);
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+.pe-lightbox-close:hover {
+  border-color: #ff002b;
+  background: #ff002b;
+  box-shadow: 0 0 16px rgba(255, 0, 43, 0.7);
+}
+
+.pe-lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.85);
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+.pe-lightbox-nav.prev { left: 1rem; }
+.pe-lightbox-nav.next { right: calc(36% + 1rem); }
+
+.pe-lightbox-nav:hover {
+  border-color: #ff002b;
+  background: #ff002b;
+  box-shadow: 0 0 16px rgba(255, 0, 43, 0.7);
+}
+
+.pe-lightbox-body {
+  display: grid;
+  grid-template-columns: 1fr 36%;
+  width: 100%;
+  min-height: 0;
+}
+
+.pe-lightbox-img-wrap {
+  background: #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 480px;
+}
+
+.pe-lightbox-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-height: calc(100vh - 6rem);
+  object-fit: contain;
+}
+
+.pe-lightbox-sidebar {
+  padding: 2.4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(8, 8, 14, 0.7);
+}
+
+.lb-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.lb-badge {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 0.25rem 0.7rem;
+  background: #ff002b;
+  border-radius: 3px;
+  font-family: var(--font-heading);
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  color: #ffffff;
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+}
+
+.lb-title {
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.lb-sub {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.5;
+}
+
+.lb-price {
+  display: inline-block;
+  padding: 0.55rem 1rem;
+  background: rgba(255, 0, 43, 0.12);
+  border: 1px solid rgba(255, 0, 43, 0.45);
+  border-radius: 4px;
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  color: #ff002b;
+  text-shadow: 0 0 8px rgba(255, 0, 43, 0.5);
+  align-self: flex-start;
+}
+
+.lb-counter {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.2rem;
+  font-family: var(--font-heading);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: auto;
+}
+
+.lb-counter-sep { color: rgba(255, 255, 255, 0.3); margin: 0 0.05rem; }
+
+.lb-cta {
+  align-self: flex-start;
+  margin-top: 0.4rem;
+}
+
+/* Modal fade transition (mirrors GallerySection's) */
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+}
+
+@media (max-width: 900px) {
+  .pe-lightbox-body { grid-template-columns: 1fr; max-height: calc(100vh - 3rem); overflow-y: auto; }
+  .pe-lightbox-img-wrap { min-height: 320px; max-height: 50vh; }
+  .pe-lightbox-sidebar { border-left: none; border-top: 1px solid rgba(255, 255, 255, 0.12); }
+  .pe-lightbox-nav.next { right: 1rem; }
+  .pe-lightbox-nav.prev { left: 1rem; }
+}
+
+@media (max-width: 480px) {
+  .pe-lightbox-backdrop { padding: 0.5rem; }
+  .pe-lightbox-sidebar { padding: 1.6rem 1.2rem; }
+  .lb-title { font-size: 1.3rem; }
 }
 </style>

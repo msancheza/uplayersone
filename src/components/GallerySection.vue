@@ -13,13 +13,11 @@ import {
   Filter
 } from 'lucide-vue-next'
 import siteConfig from '../config/siteConfig.js'
-import { useRouter } from 'vue-router'
 
 const activeFilter = ref('all')
 const activeIndex = ref(2)
 const isLightboxOpen = ref(false)
 const lightboxIndex = ref(0)
-const router = useRouter()
 
 import galleryData from '../data/gallery.json'
 
@@ -80,29 +78,6 @@ const prevLightbox = () => {
 
 const nextLightbox = () => {
   lightboxIndex.value = (lightboxIndex.value + 1) % filteredPhotos.value.length
-}
-
-// Navigate from any Gallery card to the Gaming Trucks section (#prices)
-const goToTrucks = () => {
-  closeLightbox()
-  // If we are not on the home route, push to '/' with the #prices hash.
-  // Otherwise, just scroll to the existing section smoothly.
-  const onHome = router.currentRoute.value.path === '/' || router.currentRoute.value.path === ''
-  if (onHome) {
-    const el = document.getElementById('prices')
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      // Update the hash so ScrollNav / URL stay in sync
-      history.replaceState(null, '', '#prices')
-      return
-    }
-  }
-  router.push({ path: '/', hash: '#prices' }).then(() => {
-    setTimeout(() => {
-      const el = document.getElementById('prices')
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }, 150)
-  })
 }
 
 // Touch & Mouse Drag Handling
@@ -226,11 +201,11 @@ onUnmounted(() => {
               next: index === (activeIndex + 1) % filteredPhotos.length,
               hidden: Math.abs(index - activeIndex) > 2 && index !== 0 && index !== filteredPhotos.length - 1
             }"
-            :style="{ 
+            :style="{
               '--offset': index - activeIndex,
               transform: `translate3d(${(index - activeIndex) * 360 + dragOffset}px, 0, ${index === activeIndex ? 0 : -120}px) rotateY(${(index - activeIndex) * -12}deg)`
             }"
-            @click="goToTrucks"
+            @click="openLightbox(index)"
           >
             <!-- Cyber Bracket Corners -->
             <div class="cyber-corner top-left"></div>
@@ -661,6 +636,12 @@ onUnmounted(() => {
   cursor: pointer;
   opacity: 0;
   transition: all 0.25s ease;
+}
+
+.kinetic-card.active .zoom-trigger-btn {
+  /* Always visible on the active card (not just hover) so mobile/trackpad
+     users can see the photo is interactive. Hover boosts to full opacity. */
+  opacity: 0.85;
 }
 
 .kinetic-card.active:hover .zoom-trigger-btn {

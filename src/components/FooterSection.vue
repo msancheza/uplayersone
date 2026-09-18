@@ -116,7 +116,7 @@ const navigateToContact = () => {
 
       <!-- Footer Bottom -->
       <div class="footer-bottom">
-        <p>© {{ currentYear }} ULTIMATEPLAYERSONE. All rights reserved.</p>
+        <p>© 2018 ULTIMATEPLAYERSONE. All rights reserved.</p>
         <p class="built-with">
           Designed with <Heart :size="14" class="heart-icon" /> for gamers worldwide.
         </p>
