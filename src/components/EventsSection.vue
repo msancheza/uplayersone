@@ -267,30 +267,6 @@ const scrollToContact = () => {
   .events-title {
     display: none;
   }
-  .events-grid {
-    display: flex;
-    flex-direction: row;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    gap: 1rem;
-    padding-bottom: 1.2rem;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    margin-left: -1.4rem;
-    margin-right: -1.4rem;
-    padding-left: 1.4rem;
-    padding-right: 1.4rem;
-  }
-  .events-grid::-webkit-scrollbar {
-    display: none;
-  }
-  .event-card {
-    scroll-snap-align: start;
-    flex-shrink: 0;
-    width: 80vw;
-    max-width: 280px;
-  }
 }
 
 /* ============================================================
@@ -511,5 +487,94 @@ const scrollToContact = () => {
 
 .banner-phone:hover {
   color: #ff002b;
+}
+
+/* ============================================================
+   MOBILE — minimalist row layout, no horizontal scroll
+   ============================================================
+   MUST come AFTER the base rules so it overrides with equal
+   specificity (CSS source order tiebreaker).
+   ============================================================ */
+@media (max-width: 650px) {
+  /* Mobile: vertical stack instead of horizontal carousel.
+     The previous horizontal layout captured touch gestures and
+     blocked the page's vertical scroll. Each event is now a
+     compact row instead. */
+  .events-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Compact row: icon left, title in the middle, chevron right */
+  .event-card {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.75rem 0.9rem;
+    background: #f8f9fc;
+    border: 1px solid #e5e8f0;
+    border-radius: 6px;
+    box-shadow: none;
+  }
+
+  /* Re-layout the top bar (icon + num) inline */
+  .event-card-top {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.55rem;
+    margin: 0;
+    flex-shrink: 0;
+  }
+
+  .event-icon-box {
+    width: 32px;
+    height: 32px;
+    border-radius: 5px;
+  }
+
+  .event-num {
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+  }
+
+  /* Hide heavy content on mobile for a minimalist row */
+  .event-tag,
+  .event-desc {
+    display: none;
+  }
+
+  /* Title takes the full middle column */
+  .event-name {
+    font-size: 0.95rem;
+    margin: 0;
+    line-height: 1.2;
+    flex: 1;
+    min-width: 0;
+    /* Truncate long titles instead of wrapping */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Hide the verbose footer CTA on mobile; chevron stays as
+     the tap affordance for the whole card. */
+  .event-card-footer span {
+    display: none;
+  }
+
+  .event-card-footer {
+    padding: 0;
+    border: none;
+    gap: 0;
+    flex-shrink: 0;
+  }
+
+  .footer-arrow {
+    color: #8c93a4;
+    transition: transform 0.2s ease, color 0.2s ease;
+  }
 }
 </style>

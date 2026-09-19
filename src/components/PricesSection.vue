@@ -453,7 +453,12 @@ const scrollToContact = () => {
   }
 }
 
-/* Mobile: horizontal snap-scroll carousel */
+/* Mobile: vertical column stack (NO horizontal carousel).
+   The previous horizontal layout had scroll-snap-type: x mandatory,
+   which captures the touch gesture and blocks the page's vertical
+   scroll. Users had to swipe multiple times to "escape" the snap
+   and resume scrolling. Now each truck card stacks vertically so
+   the page scroll flows naturally. */
 @media (max-width: 600px) {
   .prices-section {
     padding: 5rem 0 4.5rem;
@@ -479,32 +484,15 @@ const scrollToContact = () => {
 
   .trucks-grid {
     display: flex;
-    flex-direction: row;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    gap: 0.9rem;
-    padding-bottom: 1.2rem;
-    /* Hide scrollbar but keep functionality */
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    margin-left: -1.25rem;
-    /* Reserve space on the right for the ScrollNav indicator (right: 4px, ~28px wide) */
-    margin-right: -2.5rem;
-    padding-left: 1.25rem;
-    padding-right: 2.5rem;
-  }
-
-  .trucks-grid::-webkit-scrollbar {
-    display: none;
+    flex-direction: column;
+    gap: 1.1rem;
+    /* No horizontal scroll, no snap — let the page scroll vertically
+       pass through cleanly. */
   }
 
   .truck-card {
-    scroll-snap-align: start;
-    flex-shrink: 0;
-    /* Leave ~32px of room on the right edge so the card never sits under the ScrollNav */
-    width: calc(100vw - 3.5rem);
-    max-width: 300px;
+    width: 100%;
+    max-width: 100%;
     padding: 1.5rem 1.3rem;
   }
 

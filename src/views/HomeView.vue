@@ -27,10 +27,10 @@ onMounted(() => {
     <main>
       <HeroSection id="hero" />
       <PricesSection id="prices" />
+      <VideoSection />
       <EventsSection id="events" />
       <GallerySection id="gallery" />
       <GamesSection id="games" />
-      <VideoSection />
       <FAQSection id="faq" />
       <ContactSection id="contact" />
     </main>

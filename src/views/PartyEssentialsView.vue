@@ -584,11 +584,19 @@ onUnmounted(() => {
    it (sections are static divs without :class binding), and we
    use `forwards` fill mode on the keyframe animation so the
    card stays at the end state even if the class is later removed.
+
+   SAFE-DEFAULT: cards are visible by default (no opacity: 0).
+   The hidden state lives inside the `pe-card-reveal` animation's
+   `from` keyframe, with `forwards` fill mode (NOT `both`). This
+   means:
+   - If the IntersectionObserver never fires (slow scroll, edge
+     cases, sections below the fold at mount), cards still show.
+   - When card-in-view IS added, the animation jumps to the hidden
+     `from` state, then cascades up to the visible `to` state.
+   - After animation ends, `forwards` keeps the end state even if
+     the class is later removed.
    ============================================================ */
 .reveal-card {
-  opacity: 0;
-  transform: translateY(56px) scale(0.93) rotateX(10deg);
-  filter: blur(5px) saturate(0.55);
   transform-origin: center 80%;
   will-change: transform, opacity, filter;
 }
@@ -604,6 +612,11 @@ onUnmounted(() => {
 }
 
 @keyframes pe-card-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(56px) scale(0.93) rotateX(10deg);
+    filter: blur(5px) saturate(0.55);
+  }
   to {
     opacity: 1;
     transform: translateY(0) scale(1) rotateX(0);

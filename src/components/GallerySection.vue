@@ -116,6 +116,37 @@ const handleKeyDown = (e) => {
   }
 }
 
+// Swipe-down to dismiss lightbox on mobile (native iOS-style gesture).
+// Tracks vertical drag distance; if dragged more than 120px or 25% of
+// viewport height, closes the modal so the user can resume page scroll.
+const lightboxDragY = ref(0)
+const lightboxDragging = ref(false)
+let lightboxTouchStartY = 0
+
+const onLightboxTouchStart = (e) => {
+  if (e.touches?.length !== 1) return
+  lightboxTouchStartY = e.touches[0].clientY
+  lightboxDragging.value = true
+  lightboxDragY.value = 0
+}
+
+const onLightboxTouchMove = (e) => {
+  if (!lightboxDragging.value || e.touches?.length !== 1) return
+  const dy = e.touches[0].clientY - lightboxTouchStartY
+  // Only allow downward drag (positive dy) for dismiss; upward stays at 0
+  lightboxDragY.value = dy > 0 ? dy : 0
+}
+
+const onLightboxTouchEnd = () => {
+  if (!lightboxDragging.value) return
+  const viewportH = window.innerHeight
+  if (lightboxDragY.value > 120 || lightboxDragY.value > viewportH * 0.25) {
+    closeLightbox()
+  }
+  lightboxDragging.value = false
+  lightboxDragY.value = 0
+}
+
 onMounted(() => {
   window.addEventListener('keydown', handleKeyDown)
 })
@@ -269,79 +300,109 @@ onUnmounted(() => {
 
     </div>
 
-    <!-- Glassmorphism Lightbox Modal -->
-    <transition name="modal-fade" :duration="250" type="transition">
-      <div v-if="isLightboxOpen" class="lightbox-modal-backdrop" @click.self="closeLightbox">
-        <div class="lightbox-dialog floating-hud-glass">
-          
-          <button class="lightbox-close-btn" @click="closeLightbox" aria-label="Close Lightbox">
-            <X :size="22" />
-          </button>
+    <!-- Glassmorphism Lightbox Modal — teleported to body so its z-index
+         is not trapped inside #gallery's stacking context (the section has
+         `will-change: transform` which creates one). This guarantees the
+         backdrop covers the navbar and MobileAppDock on mobile. -->
+    <Teleport to="body">
+      <transition name="modal-fade" :duration="250" type="transition">
+        <div
+          v-if="isLightboxOpen"
+          class="lightbox-modal-backdrop"
+          @click.self="closeLightbox"
+          @touchstart.passive="onLightboxTouchStart"
+          @touchmove.passive="onLightboxTouchMove"
+          @touchend="onLightboxTouchEnd"
+        >
+          <div
+            class="lightbox-dialog floating-hud-glass"
+            :style="lightboxDragY > 0 ? { transform: `translateY(${lightboxDragY}px)`, opacity: Math.max(0.35, 1 - lightboxDragY / 400) } : null"
+          >
 
-          <button class="lightbox-nav-btn prev-lightbox" @click="prevLightbox">
-            <ChevronLeft :size="26" />
-          </button>
+            <button class="lightbox-close-btn" @click="closeLightbox" aria-label="Close Lightbox">
+              <X :size="22" />
+            </button>
 
-          <button class="lightbox-nav-btn next-lightbox" @click="nextLightbox">
-            <ChevronRight :size="26" />
-          </button>
+            <button class="lightbox-nav-btn prev-lightbox" @click="prevLightbox">
+              <ChevronLeft :size="26" />
+            </button>
 
-          <div class="lightbox-main-body">
-            <div class="lightbox-img-container">
-              <img 
-                :src="filteredPhotos[lightboxIndex]?.url || '/galleries/01.jpg'" 
-                :alt="filteredPhotos[lightboxIndex]?.title" 
-                class="lightbox-img" 
-              />
-            </div>
+            <button class="lightbox-nav-btn next-lightbox" @click="nextLightbox">
+              <ChevronRight :size="26" />
+            </button>
 
-            <div class="lightbox-sidebar">
-              <div class="sidebar-badge">
-                <Sparkles :size="14" class="text-red" />
-                <span>ULTIMATE MEDIA VAULT</span>
-              </div>
+            <div class="lightbox-main-body">
+              <div class="lightbox-img-container">
+                <img
+                  :src="filteredPhotos[lightboxIndex]?.url || '/galleries/01.jpg'"
+                  :alt="filteredPhotos[lightboxIndex]?.title"
+                  class="lightbox-img"
+                />
 
-              <h3 class="sidebar-title">{{ filteredPhotos[lightboxIndex]?.title }}</h3>
-              <p v-if="filteredPhotos[lightboxIndex]?.description" class="sidebar-desc">
-                {{ filteredPhotos[lightboxIndex]?.description }}
-              </p>
-
-              <div class="sidebar-meta-list">
-                <div class="meta-row">
-                  <MapPin :size="16" class="text-red flex-shrink-0" />
-                  <div>
-                    <strong>Location:</strong>
-                    <span>{{ filteredPhotos[lightboxIndex]?.location }}</span>
+                <!-- Minimal HUD overlay (mobile-first): photo is the protagonist.
+                     Only shows a small counter (top) and title (bottom). Tap
+                     anywhere on the photo area dismisses, plus swipe-down. -->
+                <div class="lightbox-mobile-hud">
+                  <div class="lb-hud-top">
+                    <span class="lb-counter">
+                      {{ String(lightboxIndex + 1).padStart(2, '0') }} / {{ String(filteredPhotos.length).padStart(2, '0') }}
+                    </span>
                   </div>
-                </div>
-
-                <div class="meta-row">
-                  <Tv :size="16" class="text-red flex-shrink-0" />
-                  <div>
-                    <strong>Equipment & Specs:</strong>
-                    <span>{{ filteredPhotos[lightboxIndex]?.specs }}</span>
-                  </div>
-                </div>
-
-                <div class="meta-row">
-                  <Gamepad2 :size="16" class="text-red flex-shrink-0" />
-                  <div>
-                    <strong>Event Type:</strong>
-                    <span>{{ filteredPhotos[lightboxIndex]?.tag }}</span>
+                  <div class="lb-hud-bottom">
+                    <span class="lb-tag-pill">{{ filteredPhotos[lightboxIndex]?.tag }}</span>
+                    <span class="lb-title">{{ filteredPhotos[lightboxIndex]?.title }}</span>
                   </div>
                 </div>
               </div>
 
-              <a href="/#contact" class="sidebar-book-btn" @click="closeLightbox">
-                <span>BOOK YOUR EVENT</span>
-                <ChevronRight :size="16" />
-              </a>
+              <div class="lightbox-sidebar">
+                <div class="sidebar-badge">
+                  <Sparkles :size="14" class="text-red" />
+                  <span>ULTIMATE MEDIA VAULT</span>
+                </div>
+
+                <h3 class="sidebar-title">{{ filteredPhotos[lightboxIndex]?.title }}</h3>
+                <p v-if="filteredPhotos[lightboxIndex]?.description" class="sidebar-desc">
+                  {{ filteredPhotos[lightboxIndex]?.description }}
+                </p>
+
+                <div class="sidebar-meta-list">
+                  <div class="meta-row">
+                    <MapPin :size="16" class="text-red flex-shrink-0" />
+                    <div>
+                      <strong>Location:</strong>
+                      <span>{{ filteredPhotos[lightboxIndex]?.location }}</span>
+                    </div>
+                  </div>
+
+                  <div class="meta-row">
+                    <Tv :size="16" class="text-red flex-shrink-0" />
+                    <div>
+                      <strong>Equipment & Specs:</strong>
+                      <span>{{ filteredPhotos[lightboxIndex]?.specs }}</span>
+                    </div>
+                  </div>
+
+                  <div class="meta-row">
+                    <Gamepad2 :size="16" class="text-red flex-shrink-0" />
+                    <div>
+                      <strong>Event Type:</strong>
+                      <span>{{ filteredPhotos[lightboxIndex]?.tag }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <a href="/#contact" class="sidebar-book-btn" @click="closeLightbox">
+                  <span>BOOK YOUR EVENT</span>
+                  <ChevronRight :size="16" />
+                </a>
+              </div>
             </div>
+
           </div>
-
         </div>
-      </div>
-    </transition>
+      </transition>
+    </Teleport>
 
   </section>
 </template>
@@ -955,6 +1016,13 @@ onUnmounted(() => {
   transform: translateY(-2px);
 }
 
+/* Mobile HUD overlay (inside .lightbox-img-container).
+   Hidden by default — only enabled in the @media (max-width: 768px) block
+   below. On desktop the sidebar carries the title/metadata. */
+.lightbox-mobile-hud {
+  display: none;
+}
+
 /* ============================================================
    MOBILE GALLERY RESPONSIVE OVERRIDES
    ============================================================ */
@@ -1114,58 +1182,152 @@ onUnmounted(() => {
     white-space: nowrap;
   }
 
-  /* Lightbox mobile */
+  /* Lightbox mobile — photo is the protagonist, fullscreen.
+     The sidebar (description, location, specs, CTA) is hidden so the
+     image gets the entire viewport. A minimal HUD overlay floats on
+     top of the photo with just the counter (top) and tag+title (bottom).
+     z-index is bumped to cover the navbar/dock. */
   .lightbox-modal-backdrop {
-    padding: 0.5rem;
+    padding: 0;
+    z-index: 99999;
+    align-items: stretch;
+    justify-content: stretch;
+  }
+
+  .lightbox-dialog {
+    width: 100%;
+    max-width: 100%;
+    height: 100vh;
+    height: 100dvh; /* better mobile viewport (handles URL bar) */
+    max-height: 100vh;
+    border: none;
+    border-radius: 0;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
   }
 
   .lightbox-close-btn {
-    top: 0.6rem;
-    right: 0.6rem;
-    width: 38px;
-    height: 38px;
+    top: max(0.8rem, env(safe-area-inset-top, 0.8rem));
+    right: 0.9rem;
+    width: 44px;
+    height: 44px;
+    z-index: 30;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
 
   .lightbox-nav-btn {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
+    z-index: 30;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
 
-  .lightbox-nav-btn.prev-lightbox { left: 0.5rem; }
-  .lightbox-nav-btn.next-lightbox { right: 0.5rem; }
+  .lightbox-nav-btn.prev-lightbox { left: 0.6rem; }
+  .lightbox-nav-btn.next-lightbox { right: 0.6rem; }
 
   .lightbox-main-body {
     grid-template-columns: 1fr;
-    min-height: auto;
+    height: 100%;
+    min-height: 100%;
   }
 
   .lightbox-img-container {
-    max-height: 50vh;
-    min-height: 280px;
-  }
-
-  .lightbox-sidebar {
-    padding: 1.8rem 1.4rem;
-  }
-
-  .sidebar-title {
-    font-size: 1.2rem;
-    margin-bottom: 1.4rem;
-  }
-
-  .sidebar-meta-list {
-    gap: 1rem;
-    margin-bottom: 1.8rem;
-  }
-
-  .meta-row {
-    font-size: 0.85rem;
-  }
-
-  .sidebar-book-btn {
-    font-size: 0.75rem;
-    padding: 0.9rem 1.3rem;
+    height: 100%;
+    max-height: 100%;
+    min-height: 100%;
     width: 100%;
+    position: relative;
+    background: #000000;
+  }
+
+  .lightbox-img {
+    /* Contain = show the FULL photo, no crop. Letterbox as needed. */
+    object-fit: contain;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Mobile HUD overlay — counter top, tag+title bottom */
+  .lightbox-mobile-hud {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: max(0.8rem, env(safe-area-inset-top, 0.8rem)) 0.9rem max(0.9rem, env(safe-area-inset-bottom, 0.9rem));
+    z-index: 25;
+  }
+
+  .lb-hud-top,
+  .lb-hud-bottom {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    pointer-events: none;
+  }
+
+  .lb-hud-top {
+    justify-content: flex-end;
+    margin-right: 3.2rem; /* clear of close button */
+  }
+
+  .lb-counter {
+    font-family: var(--font-heading);
+    font-size: 0.7rem;
+    font-weight: 900;
+    letter-spacing: 0.18em;
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 0, 43, 0.4);
+    padding: 0.32rem 0.7rem;
+    border-radius: 3px;
+  }
+
+  .lb-hud-bottom {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .lb-tag-pill {
+    font-family: var(--font-heading);
+    font-size: 0.55rem;
+    font-weight: 900;
+    letter-spacing: 0.18em;
+    color: #ff002b;
+    background: rgba(0, 0, 0, 0.72);
+    border: 1px solid rgba(255, 0, 43, 0.5);
+    padding: 0.25rem 0.55rem;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .lb-title {
+    font-family: var(--font-heading);
+    font-size: 0.82rem;
+    font-weight: 900;
+    color: #ffffff;
+    letter-spacing: 0.04em;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 0.3rem 0.6rem;
+    border-radius: 3px;
+    /* Truncate if too long — keeps HUD slim */
+    max-width: 60vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Sidebar hidden on mobile — text content lives in HUD overlay now */
+  .lightbox-sidebar {
+    display: none;
   }
 }
 
