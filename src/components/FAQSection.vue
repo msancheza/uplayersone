@@ -179,7 +179,7 @@ const faqs = [
       {
         label: 'Cancellation & Refund Policy',
         desc: 'Deposit terms, rescheduling rules, and organization policies.',
-        to: '/policies'
+        to: '/our-policies'
       },
       {
         label: 'Terms & Conditions',

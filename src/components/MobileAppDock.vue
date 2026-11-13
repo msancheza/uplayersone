@@ -1,5 +1,5 @@
 <script setup>
-import { ChevronRight, Phone, Instagram, Facebook, Youtube } from 'lucide-vue-next'
+import { ChevronRight, Phone, Instagram, Facebook, Youtube, Star } from 'lucide-vue-next'
 import { useRouter, useRoute } from 'vue-router'
 import siteConfig from '../config/siteConfig.js'
 
@@ -52,6 +52,9 @@ const navigateToContact = () => {
         </a>
         <a :href="siteConfig.socials.youtube" target="_blank" rel="noopener" class="dock-social-item" title="YouTube">
           <Youtube :size="18" />
+        </a>
+        <a :href="siteConfig.socials.yelp" target="_blank" rel="noopener" class="dock-social-item" title="Yelp">
+          <Star :size="18" />
         </a>
       </div>
     </div>

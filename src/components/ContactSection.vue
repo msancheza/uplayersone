@@ -60,33 +60,21 @@ const handleSubmit = () => {
             Tell us about your party, and we’ll check availability and prepare a custom quote for you—<strong>no payment required</strong>.
           </p>
 
-          <!-- 3-Step Process Flow -->
+          <!-- 3-Step Process Flow — minimalist on web (inline numbered list,
+               no descriptions). Mobile keeps nothing here (hidden below). -->
           <div class="steps-flow">
-            
-            <div class="step-card">
-              <div class="step-num-badge">01</div>
-              <div class="step-content">
-                <h4>Event Logistics</h4>
-                <p>Provide your preferred date, time frame, and zip code to check route availability.</p>
-              </div>
+            <div class="step-inline">
+              <span class="step-inline-num">01</span>
+              <span class="step-inline-title">Event Logistics</span>
             </div>
-
-            <div class="step-card">
-              <div class="step-num-badge">02</div>
-              <div class="step-content">
-                <h4>Experience & Vehicle</h4>
-                <p>Select your favorite gaming truck model, event occasion, and optional VR upgrades.</p>
-              </div>
+            <div class="step-inline">
+              <span class="step-inline-num">02</span>
+              <span class="step-inline-title">Experience & Vehicle</span>
             </div>
-
-            <div class="step-card">
-              <div class="step-num-badge">03</div>
-              <div class="step-content">
-                <h4>Custom Quote & Fast Response</h4>
-                <p>Our coordinator evaluates your setup and sends a tailored proposal with exact pricing A.S.A.P.</p>
-              </div>
+            <div class="step-inline">
+              <span class="step-inline-num">03</span>
+              <span class="step-inline-title">Custom Quote & Fast Response</span>
             </div>
-
           </div>
 
           <!-- Free & No Obligation Guarantee Pill -->
@@ -379,57 +367,48 @@ const handleSubmit = () => {
   text-decoration: underline;
 }
 
-/* 3 Steps Flow */
+/* 3 Steps Flow — minimalist on web: inline numbered list, no descriptions */
 .steps-flow {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  gap: 0.7rem;
+  margin-bottom: 1.6rem;
 }
 
-.step-card {
-  display: flex;
-  align-items: flex-start;
-  gap: 1.2rem;
-  padding: 1.1rem 1.3rem;
-  background: rgba(14, 14, 22, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 4px;
-  transition: border-color 0.2s ease;
-}
-
-.step-card:hover {
-  border-color: rgba(255, 0, 43, 0.4);
-}
-
-.step-num-badge {
-  font-family: var(--font-heading);
-  font-size: 1.2rem;
-  font-weight: 900;
-  color: #ff002b;
-  background: rgba(255, 0, 43, 0.1);
-  border: 1px solid rgba(255, 0, 43, 0.3);
-  width: 40px;
-  height: 40px;
-  border-radius: 6px;
+.step-inline {
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+  gap: 0.9rem;
+  padding: 0.55rem 0.2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.step-content h4 {
+.step-inline:last-child {
+  border-bottom: none;
+}
+
+.step-inline-num {
   font-family: var(--font-heading);
-  font-size: 0.95rem;
+  font-size: 0.78rem;
   font-weight: 900;
-  color: #ffffff;
-  margin-bottom: 0.2rem;
+  letter-spacing: 0.08em;
+  color: #ff002b;
+  background: rgba(255, 0, 43, 0.08);
+  border: 1px solid rgba(255, 0, 43, 0.3);
+  padding: 0.28rem 0.5rem;
+  border-radius: 3px;
+  flex-shrink: 0;
+  min-width: 32px;
+  text-align: center;
 }
 
-.step-content p {
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.6);
-  line-height: 1.45;
+.step-inline-title {
+  font-family: var(--font-heading);
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  line-height: 1.3;
 }
 
 .no-commitment-pill {
@@ -581,7 +560,7 @@ const handleSubmit = () => {
   grid-template-columns: 1.2fr 1.4fr 1fr;
 }
 
-@media (max-width: 680px) {
+@media (max-width: 768px) {
   .form-row,
   .form-row-3 {
     grid-template-columns: 1fr;
@@ -945,32 +924,25 @@ const handleSubmit = () => {
     max-width: 100%;
   }
 
-  /* Step cards */
+  /* Step inline rows */
   .steps-flow {
-    gap: 0.7rem;
+    gap: 0.5rem;
     padding: 0 2.6rem 0 0.25rem;
   }
 
-  .step-card {
-    padding: 0.9rem 1rem 0.9rem 1rem;
-    gap: 0.8rem;
+  .step-inline {
+    padding: 0.4rem 0.1rem;
+    gap: 0.7rem;
   }
 
-  .step-num-badge {
-    width: 34px;
-    height: 34px;
-    font-size: 0.85rem;
-    flex-shrink: 0;
+  .step-inline-num {
+    font-size: 0.72rem;
+    padding: 0.22rem 0.4rem;
+    min-width: 28px;
   }
 
-  .step-content h4 {
+  .step-inline-title {
     font-size: 0.82rem;
-    line-height: 1.25;
-  }
-
-  .step-content p {
-    font-size: 0.76rem;
-    line-height: 1.4;
   }
 
   /* No-commitment pill */
@@ -998,13 +970,15 @@ const handleSubmit = () => {
     font-size: 0.76rem;
   }
 
-  /* Form wrapper */
+  /* Form wrapper — give the form real breathing room so content
+     never crowds the right edge (ScrollNav reserves ~32px on the right). */
   .form-card-wrapper {
     padding: 0;
+    margin-right: 0.5rem; /* extra safety vs ScrollNav */
   }
 
   .builder-form-inner {
-    padding: 1.4rem 1.1rem;
+    padding: 1.4rem 1.25rem 1.6rem;
   }
 
   .form-header-bar {
@@ -1031,13 +1005,19 @@ const handleSubmit = () => {
     gap: 1.2rem;
   }
 
+  /* Each form section is its own visual block — keeps the form from
+     feeling like one long blob on mobile. */
   .form-section-block {
-    padding: 1rem 0.8rem;
+    padding: 1.1rem 0.95rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 5px;
   }
 
   .block-label-row {
     flex-wrap: wrap;
     gap: 0.4rem;
+    margin-bottom: 0.4rem;
   }
 
   .block-step-tag {
@@ -1045,7 +1025,7 @@ const handleSubmit = () => {
   }
 
   .block-step-title {
-    font-size: 0.85rem;
+    font-size: 0.78rem;
   }
 
   .form-group label {
@@ -1055,29 +1035,39 @@ const handleSubmit = () => {
   .form-group input,
   .form-group select,
   .form-group textarea {
-    padding: 0.75rem 0.85rem;
-    font-size: 0.88rem;
-  }
-
-  /* Native <select> auto-sizes to the widest option text, which makes
-     the Step 2 selects blow past the viewport (e.g. "Elite Gaming Truck
-     (10 TVs Inside · 10 Displays)" ≈ 391px). Constrain them and let
-     the closed select show an ellipsis. */
-  .form-group {
-    min-width: 0;
-  }
-
-  .form-group select {
+    padding: 0.78rem 0.9rem;
+    font-size: 0.9rem;
     width: 100%;
     max-width: 100%;
     min-width: 0;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  /* CustomSelect renders its own dropdown — make sure the closed
+     trigger and the menu panel both respect the form width. */
+  .form-group :deep(.custom-select) {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .form-group :deep(.custom-select-trigger) {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 0.78rem 0.9rem;
+    font-size: 0.9rem;
+  }
+
+  .form-group {
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .addon-toggle-box {
-    padding: 0.75rem 0.85rem;
+    padding: 0.85rem 0.95rem;
   }
 
   .addon-header-line {

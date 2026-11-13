@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { X, Sparkles, DollarSign, HelpCircle, Mail, ChevronRight, Instagram, Facebook, Youtube, Gamepad2, Tag, FileText, Camera, Phone, Package } from 'lucide-vue-next'
+import { X, Sparkles, DollarSign, HelpCircle, Mail, ChevronRight, Instagram, Facebook, Youtube, Gamepad2, Tag, FileText, Camera, Phone, Package, Star } from 'lucide-vue-next'
 import siteConfig from '../config/siteConfig.js'
 
 const router = useRouter()
@@ -14,9 +14,9 @@ const menuItems = [
   { id: 'hero', name: 'Home', subtitle: 'Main Showcase', icon: Sparkles, type: 'hash', hash: 'hero', num: '01' },
   { id: 'pricing-page', name: 'Prices', subtitle: 'Official Rates & Add-ons', icon: DollarSign, type: 'route', path: '/pricing', num: '02' },
   { id: 'faq', name: 'FAQ', subtitle: 'Frequently Asked Questions', icon: HelpCircle, type: 'hash', hash: 'faq', num: '03' },
-  { id: 'policies-page', name: 'Our Policies', subtitle: 'Cancellation & Guidelines', icon: FileText, type: 'route', path: '/policies', num: '04' },
+  { id: 'policies-page', name: 'Our Policies', subtitle: 'Cancellation & Guidelines', icon: FileText, type: 'route', path: '/our-policies', num: '04' },
   { id: 'prices', name: 'Our Fleet', subtitle: 'Gaming Trucks', icon: Sparkles, type: 'hash', hash: 'prices', num: '05' },
-  { id: 'gallery', name: 'Live Gallery', subtitle: 'Real Party Photos', icon: Camera, type: 'hash', hash: 'gallery', num: '06' },
+  { id: 'gallery', name: 'Live Gallery', subtitle: 'Real Party Photos', icon: Camera, type: 'route', path: '/gallery', num: '06' },
   { id: 'party-essentials', name: 'Party Supplies', subtitle: 'Decor, Snacks & Trophies', icon: Package, type: 'route', path: '/party-essentials', num: '07', badge: 'NEW' },
   { id: 'contact-page', name: 'Contact Us', subtitle: 'Direct Dispatch & Custom Quotes', icon: Mail, type: 'route', path: '/contact', num: '08' },
 ]
@@ -130,6 +130,7 @@ onUnmounted(() => {
             </svg>
           </a>
           <a :href="siteConfig.socials.youtube" target="_blank" rel="noopener" class="social-circle" title="YouTube"><Youtube :size="22" /></a>
+          <a :href="siteConfig.socials.yelp" target="_blank" rel="noopener" class="social-circle" title="Yelp"><Star :size="22" /></a>
         </div>
 
         <div class="header-divider desktop-only"></div>
@@ -226,6 +227,7 @@ onUnmounted(() => {
               </svg>
             </a>
             <a :href="siteConfig.socials.youtube" target="_blank" rel="noopener" class="drawer-social" title="YouTube"><Youtube :size="18" /></a>
+            <a :href="siteConfig.socials.yelp" target="_blank" rel="noopener" class="drawer-social" title="Yelp"><Star :size="18" /></a>
           </div>
 
           <!-- Bottom status -->

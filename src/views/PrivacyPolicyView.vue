@@ -164,7 +164,7 @@ const goHome = () => {
               <ul class="sidebar-links">
                 <li class="active"><RouterLink to="/privacy-policy">Privacy Policy</RouterLink></li>
                 <li><RouterLink to="/terms-and-conditions">Terms & Conditions</RouterLink></li>
-                <li><RouterLink to="/policies">All Event Policies</RouterLink></li>
+                <li><RouterLink to="/our-policies">All Event Policies</RouterLink></li>
                 <li><RouterLink to="/pricing">Trucks & Pricing</RouterLink></li>
                 <li><RouterLink to="/contact">Contact Support</RouterLink></li>
               </ul>

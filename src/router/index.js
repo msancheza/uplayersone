@@ -6,6 +6,7 @@ import ContactView from '../views/ContactView.vue'
 import PrivacyPolicyView from '../views/PrivacyPolicyView.vue'
 import TermsConditionsView from '../views/TermsConditionsView.vue'
 import PartyEssentialsView from '../views/PartyEssentialsView.vue'
+import GalleryView from '../views/GalleryView.vue'
 
 const routes = [
   {
@@ -19,9 +20,14 @@ const routes = [
     component: PricingView
   },
   {
-    path: '/policies',
+    path: '/our-policies',
     name: 'policies',
     component: PoliciesView
+  },
+  {
+    // Legacy path kept as a redirect so old links / bookmarks still work.
+    path: '/policies',
+    redirect: '/our-policies'
   },
   {
     path: '/contact',
@@ -32,6 +38,11 @@ const routes = [
     path: '/party-essentials',
     name: 'party-essentials',
     component: PartyEssentialsView
+  },
+  {
+    path: '/gallery',
+    name: 'gallery',
+    component: GalleryView
   },
   {
     path: '/privacy-policy',
@@ -50,6 +61,13 @@ const routes = [
   {
     path: '/terms',
     redirect: '/terms-and-conditions'
+  },
+  {
+    // Catch-all — any unknown path (e.g. the retired /invitations route)
+    // redirects back to the home page instead of showing a blank screen.
+    path: '/:pathMatch(.*)*',
+    name: 'not-found',
+    redirect: '/'
   }
 ]
 

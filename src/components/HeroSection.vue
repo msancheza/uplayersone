@@ -117,6 +117,27 @@ const goToGallery = () => {
   })
 }
 
+// Navigate from the "POWERFUL CONSOLES" hero card to the OUR FLEET
+// section (#prices). Same pattern as goToGallery: if we're on the home
+// page, scroll smoothly; otherwise navigate home first and scroll.
+const goToFleet = () => {
+  const onHome = router.currentRoute.value.path === '/' || router.currentRoute.value.path === ''
+  if (onHome) {
+    const el = document.getElementById('prices')
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      history.replaceState(null, '', '#prices')
+      return
+    }
+  }
+  router.push({ path: '/', hash: '#prices' }).then(() => {
+    setTimeout(() => {
+      const el = document.getElementById('prices')
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 150)
+  })
+}
+
 const activeImageIndex = ref(0)
 const startIndex = ref(0)
 const isModalOpen = ref(false)
@@ -485,13 +506,13 @@ const navigateToTrucks = (truckId = null) => {
 
     <!-- 4. Bottom Ticker / Feature Highlights Bar -->
     <div class="bottom-features-bar">
-      <div class="feature-col">
+      <button type="button" class="feature-col feature-col-link" @click="goToFleet">
         <Gamepad2 :size="22" class="text-red flex-shrink-0" />
         <div class="feat-text">
-          <h5 class="feat-title">POWERFUL CONSOLES</h5>
+          <h5 class="feat-title">POWERFUL CONSOLES <ChevronRight :size="12" class="feat-arrow" /></h5>
           <p class="feat-desc">PS5, Xbox Series X, Nintendo Switch & more.</p>
         </div>
-      </div>
+      </button>
 
       <div class="feature-col">
         <Users :size="22" class="text-red flex-shrink-0" />
@@ -1281,10 +1302,45 @@ const navigateToTrucks = (truckId = null) => {
   gap: 0.85rem;
   padding: 0 1rem;
   border-right: 1px solid rgba(255, 255, 255, 0.08);
+  /* Reset for the tappable variant — see .feature-col-link below */
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  font: inherit;
 }
 
 .feature-col:last-child {
   border-right: none;
+}
+
+/* Tappable feature variant — used for cards that navigate (e.g. POWERFUL
+   CONSOLES → OUR FLEET). Looks like the rest of the bar but adds a hover
+   glow, an active press state, and a chevron hint so it's obvious the
+   card is clickable. */
+.feature-col-link {
+  cursor: pointer;
+  position: relative;
+  transition: background 0.25s ease, transform 0.2s ease;
+}
+
+.feature-col-link:hover {
+  background: rgba(255, 0, 43, 0.06);
+}
+
+.feature-col-link:active {
+  background: rgba(255, 0, 43, 0.14);
+  transform: scale(0.98);
+}
+
+.feature-col-link .feat-arrow {
+  display: inline-block;
+  color: #ff002b;
+  margin-left: 0.2rem;
+  transition: transform 0.25s ease;
+}
+
+.feature-col-link:hover .feat-arrow {
+  transform: translateX(3px);
 }
 
 .feat-text {

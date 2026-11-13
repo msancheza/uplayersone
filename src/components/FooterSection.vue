@@ -1,5 +1,5 @@
 <script setup>
-import { Instagram, Facebook, Youtube, Heart, Phone, ChevronRight } from 'lucide-vue-next'
+import { Instagram, Facebook, Youtube, Heart, Phone, ChevronRight, Star } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 import siteConfig from '../config/siteConfig.js'
 
@@ -54,13 +54,14 @@ const navigateToContact = () => {
             </svg>
           </a>
           <a :href="siteConfig.socials.youtube" target="_blank" rel="noopener" class="msocial" title="YouTube"><Youtube :size="18" /></a>
+          <a :href="siteConfig.socials.yelp" target="_blank" rel="noopener" class="msocial" title="Yelp"><Star :size="18" /></a>
         </div>
 
         <div class="mobile-nav-links">
           <a href="/#hero">HOME</a>
           <RouterLink to="/pricing">PRICES</RouterLink>
           <a href="/#faq">FAQ</a>
-          <RouterLink to="/policies">OUR POLICIES</RouterLink>
+          <RouterLink to="/our-policies">OUR POLICIES</RouterLink>
           <RouterLink to="/contact">CONTACT US</RouterLink>
         </div>
       </div>
@@ -84,6 +85,7 @@ const navigateToContact = () => {
               </svg>
             </a>
             <a :href="siteConfig.socials.youtube" target="_blank" rel="noopener" class="social-btn" title="YouTube"><Youtube :size="18" /></a>
+            <a :href="siteConfig.socials.yelp" target="_blank" rel="noopener" class="social-btn" title="Yelp"><Star :size="18" /></a>
           </div>
         </div>
 
@@ -93,7 +95,7 @@ const navigateToContact = () => {
             <h4>Navigation</h4>
             <a href="/#hero">Home</a>
             <RouterLink to="/pricing">Trucks &amp; Pricing</RouterLink>
-            <a href="/#gallery">Live Gallery</a>
+            <RouterLink to="/gallery">Live Gallery</RouterLink>
             <RouterLink to="/contact">Contact Us</RouterLink>
             <a href="/#faq">FAQ</a>
           </div>

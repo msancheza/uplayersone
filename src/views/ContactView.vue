@@ -1,21 +1,21 @@
 <script setup>
 import { ref } from 'vue'
-import { 
-  ArrowLeft, 
-  Sparkles, 
-  Phone, 
-  Mail, 
-  MapPin, 
-  Clock, 
-  MessageSquare, 
-  CheckCircle2, 
-  Glasses, 
-  ChevronRight, 
-  ShieldCheck, 
+import {
+  ArrowLeft,
+  Sparkles,
+  Phone,
+  MapPin,
+  Clock,
+  MessageSquare,
+  CheckCircle2,
+  Glasses,
+  ChevronRight,
+  ShieldCheck,
   Lock,
   Calendar,
   Truck,
-  HelpCircle
+  HelpCircle,
+  Rocket,
 } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 import siteConfig from '../config/siteConfig.js'
@@ -46,6 +46,14 @@ const handleSubmit = () => {
 
 const goHome = () => {
   router.push('/')
+}
+
+// Scroll smoothly to the EVENT CONFIGURATOR form below. Used by the
+// "Start Your Event Request" channel card (replaces the old email card
+// so users are funneled to the booking form instead of slow email).
+const scrollToRequestForm = () => {
+  const el = document.getElementById('start-event-request-form')
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 </script>
 
@@ -101,16 +109,16 @@ const goHome = () => {
 
           <div class="channel-card">
             <div class="channel-icon-box">
-              <Mail :size="24" />
+              <Rocket :size="24" />
             </div>
             <div class="channel-info">
-              <span class="channel-tag">EMAIL DISPATCH</span>
-              <h3>Send An Inquiry</h3>
-              <p>Corporate proposals, COI requests, and customized event solutions.</p>
-              <a :href="'mailto:' + siteConfig.email" class="channel-action-btn secondary">
-                <span>{{ siteConfig.email }}</span>
+              <span class="channel-tag">FASTEST RESPONSE</span>
+              <h3>Start Your Event Request</h3>
+              <p>Skip the email back-and-forth — get a custom quote in minutes via the booking form.</p>
+              <button type="button" class="channel-action-btn secondary" @click="scrollToRequestForm">
+                <span>START MY REQUEST</span>
                 <ChevronRight :size="16" />
-              </a>
+              </button>
             </div>
           </div>
 
@@ -195,7 +203,7 @@ const goHome = () => {
                   <HelpCircle :size="20" class="text-red flex-shrink-0" />
                   <div>
                     <strong>Need policy details first?</strong>
-                    <p>Review our cancellation rules, damage policies, and supervisor guidelines on our <RouterLink to="/policies" class="text-red">policies page</RouterLink>.</p>
+                    <p>Review our cancellation rules, damage policies, and supervisor guidelines on our <RouterLink to="/our-policies" class="text-red">policies page</RouterLink>.</p>
                   </div>
                 </div>
 
@@ -204,7 +212,7 @@ const goHome = () => {
 
             <!-- Right Column: The Form -->
             <div class="booking-form-col">
-              <div v-if="!submitted" class="form-card-box">
+              <div v-if="!submitted" id="start-event-request-form" class="form-card-box">
                 
                 <div class="form-title-bar">
                   <div>
