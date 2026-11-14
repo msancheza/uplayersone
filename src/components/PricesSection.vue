@@ -351,8 +351,9 @@ const scrollToContact = () => {
 }
 
 .banner-text-block p {
-  font-size: 0.92rem;
-  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #e5e7eb;
 }
 
 .btn-view-pricing {
@@ -420,8 +421,9 @@ const scrollToContact = () => {
 }
 
 .section-header p {
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.45);
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #e5e7eb;
   line-height: 1.6;
 }
 
@@ -632,8 +634,13 @@ const scrollToContact = () => {
    ============================================================ */
 .truck-card {
   position: relative;
-  background: rgba(10, 10, 16, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: linear-gradient(
+    160deg,
+    rgba(22, 20, 34, 0.98) 0%,
+    rgba(16, 15, 26, 0.96) 55%,
+    rgba(20, 14, 20, 0.97) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.11);
   border-radius: 4px;
   padding: 2rem;
   display: flex;
@@ -736,10 +743,10 @@ const scrollToContact = () => {
 }
 
 .truck-subtitle {
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.18em;
-  color: rgba(255, 255, 255, 0.35);
+  color: #d1d5e5;
   text-transform: uppercase;
   margin-top: 0.2rem;
 }
@@ -816,8 +823,8 @@ const scrollToContact = () => {
 }
 
 .spec-value {
-  font-size: 0.86rem;
-  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.88rem;
+  color: #ffffff;
   font-weight: 600;
   line-height: 1.4;
 }
@@ -832,8 +839,8 @@ const scrollToContact = () => {
 }
 
 .consoles-list li {
-  font-size: 0.84rem;
-  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.86rem;
+  color: #e5e7eb;
   font-weight: 600;
   padding-left: 0.8rem;
   position: relative;
@@ -849,13 +856,14 @@ const scrollToContact = () => {
 
 /* Add-on */
 .addon-value {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #d1d5e5;
 }
 
 .addon-value em {
   font-style: italic;
-  color: rgba(255, 255, 255, 0.28);
+  color: #a0a4b8;
 }
 
 /* ============================================================
@@ -918,8 +926,9 @@ const scrollToContact = () => {
 .bottom-note {
   text-align: center;
   margin-top: 2.5rem;
-  font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.28);
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #d1d5e5;
 }
 
 .note-phone {

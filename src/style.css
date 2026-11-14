@@ -35,8 +35,8 @@ picture {
   --primary-red-glow: rgba(255, 0, 43, 0.7);
   --white: #ffffff;
   --color-white: #ffffff;
-  --color-text-muted: #9999aa;
-  --text-muted: #9999aa;
+  --color-text-muted: #d1d5e5;
+  --text-muted: #d1d5e5;
   --color-border: rgba(255, 255, 255, 0.12);
   --color-border-red: rgba(255, 0, 43, 0.4);
   --border-red: rgba(255, 0, 43, 0.4);
@@ -93,6 +93,11 @@ h1, h2, h3, h4, h5, h6 {
 p, span, a, li, label, input, textarea, select, button {
   font-family: var(--font-body);
   letter-spacing: 0.01em;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
 button {

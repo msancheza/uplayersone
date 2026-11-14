@@ -96,6 +96,7 @@ export function applySeo(seo = {}, jsonLdScope = 'route') {
     noindex = false,
     jsonLd = null,
     locale = 'en_US',
+    markdown = null,
     publishedTime = null,
     authors = null
   } = seo
@@ -111,6 +112,13 @@ export function applySeo(seo = {}, jsonLdScope = 'route') {
   upsertMeta('name', 'author', siteConfig.legalName)
 
   upsertLink('canonical', canonical)
+
+  // llms.txt v2 link relations: `alternate` points at the Markdown version
+  // of this page, `describedby` at the llms.txt file that covers it.
+  upsertLink('alternate', absoluteUrl(markdown || (path === '/' ? '/index.md' : `${path}.md`)), {
+    type: 'text/markdown'
+  })
+  upsertLink('describedby', absoluteUrl('/llms.txt'))
 
   // Open Graph
   upsertMeta('property', 'og:type', type)

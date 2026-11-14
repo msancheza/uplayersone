@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, nextTick } from 'vue'
+import { onMounted, nextTick, computed } from 'vue'
 import HeroSection from '../components/HeroSection.vue'
 import PricesSection from '../components/PricesSection.vue'
 import EventsSection from '../components/EventsSection.vue'
@@ -10,10 +10,12 @@ import FAQSection from '../components/FAQSection.vue'
 import ContactSection from '../components/ContactSection.vue'
 import ScrollNav from '../components/ScrollNav.vue'
 import SEOHead from '../components/SEOHead.vue'
-import { routeSeo } from '../data/seoRoutes.js'
+import { routeSeo, buildRouteGraph } from '../data/seoRoutes.js'
 import { initScrollObserver } from '../utils/scrollObserver.js'
 
 const seo = routeSeo.home
+// Same graph the prerenderer ships, so runtime and static HTML match.
+const schema = computed(() => buildRouteGraph('home'))
 
 onMounted(() => {
   if (!window.location.hash) {
@@ -33,6 +35,7 @@ onMounted(() => {
       :path="seo.path"
       :breadcrumb="seo.breadcrumb"
       :faq="seo.faq"
+      :schema="schema"
     />
     <ScrollNav />
     <main>

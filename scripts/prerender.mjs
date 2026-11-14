@@ -1,16 +1,19 @@
-#!/usr/bin/env node
 /**
- * Static prerenderer for the SEO head.
+ * Static prerenderer for the SEO + LLM surfaces of the site.
  *
  * Social scrapers (Facebook, WhatsApp, X, LinkedIn, Slack…) and most
  * crawlers fetch the raw HTML and never execute JavaScript, so a purely
  * client-rendered SPA shows them a blank card and an empty description.
  *
- * This script walks the built `dist/index.html` and writes one static
- * HTML file per route with the route's title, description, canonical,
- * Open Graph / Twitter tags and its JSON-LD graph already in the markup.
- * The SPA still hydrates and takes over navigation exactly as before —
- * the prerender only replaces the marked head block.
+ * This plugin runs as part of `vite build` and writes:
+ *
+ *   dist/<route>/index.html   one static document per route, with the
+ *                              route's title, description, canonical, OG
+ *                              tags and JSON-LD graph already in the markup
+ *   dist/404.html             the home document for static hosts
+ *   dist/llms.txt             curated index for LLM agents (llms.txt v2)
+ *   dist/llms-full.txt        the whole site as one plain-text document
+ *   dist/<route>.md           a clean Markdown version of each page
  *
  * It reads the same `src/data/seoRoutes.js` the application uses, so the
  * prerendered markup and the runtime markup can never disagree.
@@ -23,10 +26,10 @@ import { routeSeo, buildRouteGraph } from '../src/data/seoRoutes.js'
 import { catalog } from '../src/data/partyCatalog.js'
 import { partyServices } from '../src/data/partyServices.js'
 import siteConfig from '../src/config/siteConfig.js'
+import { buildLlmsTxt, buildLlmsFullTxt, markdownPages } from '../src/utils/llmsTxt.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
-const DIST = join(ROOT, 'dist')
 
 const ORIGIN = siteConfig.url.replace(/\/+$/, '')
 const abs = (p) => `${ORIGIN}${p.startsWith('/') ? p : `/${p}`}`
@@ -46,6 +49,9 @@ function renderHead({ title, description, path, image, graph }) {
   const canonical = abs(path)
   const ogImage = abs(image || siteConfig.images.ogDefault)
   const keywords = siteConfig.keywords.join(', ')
+  // llms.txt v2: `alternate` points at the Markdown version of this page,
+  // `describedby` points at the llms.txt file that covers it.
+  const markdownUrl = abs(path === '/' ? '/index.md' : `${path}.md`)
 
   return [
     START_MARK,
@@ -55,6 +61,8 @@ function renderHead({ title, description, path, image, graph }) {
     `    <meta name="author" content="${escapeHtml(siteConfig.legalName)}" />`,
     `    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />`,
     `    <link rel="canonical" href="${canonical}" />`,
+    `    <link rel="alternate" type="text/markdown" href="${markdownUrl}" />`,
+    `    <link rel="describedby" href="${abs('/llms.txt')}" />`,
     ``,
     `    <meta property="og:type" content="website" />`,
     `    <meta property="og:site_name" content="${escapeHtml(siteConfig.name)}" />`,
@@ -83,56 +91,81 @@ const PLAN = [
   { key: 'home', dir: '' },
   { key: 'pricing', dir: 'pricing' },
   { key: 'partyEssentials', dir: 'party-essentials', deps: { catalog, services: partyServices } },
-  { key: 'gallery', dir: 'gallery', deps: { photos: JSON.parse(readFileSync(join(ROOT, 'src/data/gallery.json'), 'utf8')).photos } },
+  {
+    key: 'gallery',
+    dir: 'gallery',
+    deps: { photos: JSON.parse(readFileSync(join(ROOT, 'src/data/gallery.json'), 'utf8')).photos }
+  },
   { key: 'contact', dir: 'contact' },
   { key: 'policies', dir: 'our-policies' },
   { key: 'privacy', dir: 'privacy-policy' },
   { key: 'terms', dir: 'terms-and-conditions' }
 ]
 
-function main() {
-  const indexPath = join(DIST, 'index.html')
-  if (!existsSync(indexPath)) {
-    console.error('[prerender] dist/index.html not found — run `vite build` first.')
-    process.exit(1)
+/**
+ * Vite plugin: emits the LLM-facing text files as bundle assets and
+ * writes the per-route static documents once the bundle is on disk.
+ */
+export function prerenderPlugin() {
+  let outDir = 'dist'
+  let root = process.cwd()
+
+  return {
+    name: 'seo-prerender',
+    configResolved(config) {
+      outDir = config.build.outDir
+      root = config.root
+    },
+    generateBundle() {
+      this.emitFile({ type: 'asset', fileName: 'llms.txt', source: buildLlmsTxt() })
+      this.emitFile({ type: 'asset', fileName: 'llms-full.txt', source: buildLlmsFullTxt() })
+      for (const [file, builder] of Object.entries(markdownPages)) {
+        this.emitFile({ type: 'asset', fileName: file.replace(/^\//, ''), source: builder() })
+      }
+    },
+    closeBundle() {
+      const dist = join(root, outDir)
+      const indexPath = join(dist, 'index.html')
+      if (!existsSync(indexPath)) return
+
+      const template = readFileSync(indexPath, 'utf8')
+      if (!template.includes(START_MARK) || !template.includes(END_MARK)) {
+        this.warn('[prerender] SEO markers missing from index.html — skipped.')
+        return
+      }
+
+      let written = 0
+      for (const { key, dir, deps = {} } of PLAN) {
+        const cfg = routeSeo[key]
+        const graph = buildRouteGraph(key, deps)
+        const head = renderHead({
+          title: cfg.title,
+          description: cfg.description,
+          path: cfg.path,
+          image: siteConfig.images.ogDefault,
+          graph
+        })
+
+        const html = template.replace(
+          new RegExp(`${START_MARK}[\\s\\S]*?${END_MARK}`),
+          () => head
+        )
+
+        const outDirPath = dir ? join(dist, dir) : dist
+        if (dir) mkdirSync(outDirPath, { recursive: true })
+        writeFileSync(join(outDirPath, 'index.html'), html)
+        written++
+      }
+
+      // Static hosts serve 404.html for unmatched paths; the catch-all
+      // route redirects to home, so serve the home document there.
+      writeFileSync(join(dist, '404.html'), readFileSync(indexPath, 'utf8'))
+
+      this.info?.(
+        `[prerender] ${written} routes + 404.html + llms.txt, llms-full.txt and ${Object.keys(markdownPages).length} markdown pages`
+      )
+    }
   }
-
-  const template = readFileSync(indexPath, 'utf8')
-  if (!template.includes(START_MARK) || !template.includes(END_MARK)) {
-    console.error('[prerender] SEO markers missing from dist/index.html — nothing to do.')
-    process.exit(1)
-  }
-
-  let written = 0
-
-  for (const { key, dir, deps = {} } of PLAN) {
-    const cfg = routeSeo[key]
-    const graph = buildRouteGraph(key, deps)
-    const head = renderHead({
-      title: cfg.title,
-      description: cfg.description,
-      path: cfg.path,
-      image: siteConfig.images.ogDefault,
-      graph
-    })
-
-    const html = template.replace(
-      new RegExp(`${START_MARK}[\\s\\S]*?${END_MARK}`),
-      () => head
-    )
-
-    const outDir = dir ? join(DIST, dir) : DIST
-    if (dir) mkdirSync(outDir, { recursive: true })
-    writeFileSync(join(outDir, 'index.html'), html)
-    written++
-    console.log(`[prerender] ${cfg.path.padEnd(24)} -> ${dir ? `${dir}/index.html` : 'index.html'}`)
-  }
-
-  // Static hosts serve 404.html for unmatched paths; the catch-all route
-  // redirects to home, so serve the home document there.
-  writeFileSync(join(DIST, '404.html'), readFileSync(join(DIST, 'index.html'), 'utf8'))
-
-  console.log(`[prerender] ${written} routes written + 404.html`)
 }
 
-main()
+export default prerenderPlugin

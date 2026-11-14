@@ -1,19 +1,11 @@
 <script setup>
 import { ref } from 'vue'
 import {
-  Send,
   CheckCircle2,
-  Calendar,
-  Clock,
-  MapPin,
-  Truck,
   Glasses,
   Sparkles,
   ChevronRight,
-  ShieldCheck,
   Phone,
-  FileCheck2,
-  Lock
 } from 'lucide-vue-next'
 import CustomSelect from './CustomSelect.vue'
 import siteConfig from '../config/siteConfig.js'
@@ -43,71 +35,41 @@ const handleSubmit = () => {
 <template>
   <section id="contact" class="request-builder-section">
     <div class="container">
-      <div class="request-grid">
-        
-        <!-- Left Column: Context & Overview -->
-        <div class="request-info-column scroll-reveal reveal-left">
+      <div class="request-wrapper">
+
+        <!-- Section header — centered above the form -->
+        <div class="contact-section-header">
           <div class="eyebrow-badge">
             <Sparkles :size="14" class="text-red" />
             <span>REQUEST BUILDER · NO PAYMENT REQUIRED</span>
           </div>
-          
           <h2 class="section-heading">
-            START YOUR<br/><span class="text-red-glow">EVENT REQUEST</span>
+            START YOUR <span class="text-red-glow">EVENT REQUEST</span>
           </h2>
-          
           <p class="section-lead">
-            Tell us about your party, and we’ll check availability and prepare a custom quote for you—<strong>no payment required</strong>.
+            Tell us about your party — we’ll check availability and send you a custom quote. <strong>No payment required.</strong>
           </p>
-
-          <!-- 3-Step Process Flow — minimalist on web (inline numbered list,
-               no descriptions). Mobile keeps nothing here (hidden below). -->
-          <div class="steps-flow">
-            <div class="step-inline">
-              <span class="step-inline-num">01</span>
-              <span class="step-inline-title">Event Logistics</span>
-            </div>
-            <div class="step-inline">
-              <span class="step-inline-num">02</span>
-              <span class="step-inline-title">Experience & Vehicle</span>
-            </div>
-            <div class="step-inline">
-              <span class="step-inline-num">03</span>
-              <span class="step-inline-title">Custom Quote & Fast Response</span>
-            </div>
-          </div>
-
-          <!-- Free & No Obligation Guarantee Pill -->
-          <div class="no-commitment-pill">
-            <Lock :size="16" class="text-red flex-shrink-0" />
-            <span>100% Free Consultation · Zero Immediate Payment · No Obligation</span>
-          </div>
-
-          <!-- Direct Phone Option -->
-          <div class="phone-helper-card">
-            <Phone :size="18" class="text-red flex-shrink-0" />
-            <div>
-              <strong>Prefer to discuss over the phone?</strong>
-              <span>Call or text our coordinator directly: <a :href="siteConfig.phoneTel" class="phone-num-link">{{ siteConfig.phone }}</a></span>
-            </div>
-          </div>
-
         </div>
 
-        <!-- Right Column: The Request Builder Form -->
-        <div class="form-card-wrapper scroll-reveal reveal-right tilt-card">
+        <!-- Full-width Form Card -->
+        <div class="form-card-wrapper tilt-card">
           <div v-if="!submitted" class="builder-form-inner">
-            
+
             <div class="form-header-bar">
-              <div>
+              <div class="form-header-left">
                 <h3 class="builder-title">EVENT CONFIGURATOR</h3>
                 <span class="builder-subtitle">Complete your event profile for a tailored quote</span>
               </div>
-              <div class="free-quote-badge">
-                <span>FREE QUOTE</span>
+              <div class="form-header-right">
+                <div class="free-quote-badge">
+                  <span>FREE QUOTE</span>
+                </div>
+                <a :href="siteConfig.phoneTel" class="phone-inline-link">
+                  <Phone :size="13" />
+                  <span>{{ siteConfig.phone }}</span>
+                </a>
               </div>
             </div>
-
             <form @submit.prevent="handleSubmit" class="configurator-form">
               
               <!-- SECTION 1: Event Logistics -->
@@ -302,23 +264,35 @@ const handleSubmit = () => {
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.request-grid {
-  display: grid;
-  grid-template-columns: 1fr 1.25fr;
-  gap: 3.5rem;
-  align-items: flex-start;
+/* ============================================================
+   LAYOUT WRAPPER — full-width centered form
+   ============================================================ */
+.request-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.4rem;
 }
 
-@media (max-width: 1040px) {
-  .request-grid {
-    grid-template-columns: 1fr;
-    gap: 3rem;
+/* Section header above the form */
+.contact-section-header {
+  text-align: center;
+  max-width: 640px;
+  width: 100%;
+  animation: contact-fade-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes contact-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(36px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
-/* ============================================================
-   LEFT COLUMN
-   ============================================================ */
 .eyebrow-badge {
   display: inline-flex;
   align-items: center;
@@ -341,7 +315,7 @@ const handleSubmit = () => {
   font-weight: 900;
   color: #ffffff;
   line-height: 1.05;
-  margin-bottom: 1.2rem;
+  margin-bottom: 1rem;
   letter-spacing: 0.02em;
 }
 
@@ -356,118 +330,41 @@ const handleSubmit = () => {
 
 .section-lead {
   font-family: var(--font-body);
-  font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #e5e7eb;
   line-height: 1.6;
-  margin-bottom: 2.2rem;
+  margin-bottom: 0;
 }
 
 .section-lead strong {
   color: #ffffff;
-  text-decoration: underline;
-}
-
-/* 3 Steps Flow — minimalist on web: inline numbered list, no descriptions */
-.steps-flow {
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
-  margin-bottom: 1.6rem;
-}
-
-.step-inline {
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-  padding: 0.55rem 0.2rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.step-inline:last-child {
-  border-bottom: none;
-}
-
-.step-inline-num {
-  font-family: var(--font-heading);
-  font-size: 0.78rem;
-  font-weight: 900;
-  letter-spacing: 0.08em;
-  color: #ff002b;
-  background: rgba(255, 0, 43, 0.08);
-  border: 1px solid rgba(255, 0, 43, 0.3);
-  padding: 0.28rem 0.5rem;
-  border-radius: 3px;
-  flex-shrink: 0;
-  min-width: 32px;
-  text-align: center;
-}
-
-.step-inline-title {
-  font-family: var(--font-heading);
-  font-size: 0.88rem;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  color: #ffffff;
-  line-height: 1.3;
-}
-
-.no-commitment-pill {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: #ffffff;
-  background: rgba(255, 0, 43, 0.08);
-  border: 1px solid rgba(255, 0, 43, 0.25);
-  padding: 0.7rem 1rem;
-  border-radius: 4px;
-  margin-bottom: 1.4rem;
-}
-
-.phone-helper-card {
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 4px;
-  padding: 1rem 1.2rem;
-  font-size: 0.86rem;
-  line-height: 1.45;
-}
-
-.phone-helper-card strong {
-  display: block;
-  color: #ffffff;
-  margin-bottom: 0.15rem;
-}
-
-.phone-helper-card span {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.phone-num-link {
-  color: #ff002b;
-  font-weight: 800;
-  text-decoration: none;
 }
 
 /* ============================================================
-   RIGHT FORM COLUMN
+   FORM COLUMN (full-width)
    ============================================================ */
 .form-card-wrapper {
   background: linear-gradient(180deg, rgba(16, 14, 24, 0.95) 0%, rgba(10, 8, 14, 0.98) 100%);
   border: 1.5px solid rgba(255, 0, 43, 0.4);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.95), inset 0 0 25px rgba(255, 0, 43, 0.05);
-  border-radius: 6px;
-  padding: 2.4rem;
+  border-radius: 8px;
+  padding: 2.6rem 3rem;
   position: relative;
+  width: 100%;
+  max-width: 900px;
+  animation: contact-fade-in 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .form-card-wrapper {
-    padding: 1.5rem 1.1rem;
+    padding: 1.8rem 1.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-card-wrapper {
+    padding: 1.4rem 1rem;
   }
 }
 
@@ -479,6 +376,37 @@ const handleSubmit = () => {
   margin-bottom: 1.8rem;
   padding-bottom: 1.2rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.form-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.form-header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+/* Phone link in form header */
+.phone-inline-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.6);
+  transition: color 0.2s ease;
+  white-space: nowrap;
+}
+
+.phone-inline-link:hover {
+  color: #ff002b;
 }
 
 .builder-title {
@@ -494,7 +422,7 @@ const handleSubmit = () => {
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.45);
+  color: #d1d5e5;
   text-transform: uppercase;
 }
 
@@ -575,10 +503,10 @@ const handleSubmit = () => {
 
 .form-group label {
   font-family: var(--font-heading);
-  font-size: 0.6rem;
+  font-size: 0.62rem;
   font-weight: 800;
   letter-spacing: 0.12em;
-  color: rgba(255, 255, 255, 0.6);
+  color: #d1d5e5;
   text-transform: uppercase;
 }
 
@@ -689,8 +617,9 @@ const handleSubmit = () => {
 }
 
 .addon-note {
-  font-size: 0.74rem;
-  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.76rem;
+  font-weight: 500;
+  color: #d1d5e5;
 }
 
 /* Submit */
@@ -727,8 +656,9 @@ const handleSubmit = () => {
 
 .submit-micro-reassurance {
   text-align: center;
-  font-size: 0.74rem;
-  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #d1d5e5;
   line-height: 1.4;
 }
 

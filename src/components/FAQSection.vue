@@ -6,7 +6,7 @@ import {
   AlertTriangle, 
   ChevronRight
 } from 'lucide-vue-next'
-import { faqs } from '../data/faqData.js'
+import { faqs, allFaqs } from '../data/faqData.js'
 
 const activeIndex = ref(0)
 
@@ -40,9 +40,14 @@ const scrollToSection = (id) => {
 
       <!-- FAQ Accordion List -->
       <div class="faq-accordion scroll-reveal">
-        <div 
-          v-for="(faq, index) in faqs" 
-          :key="faq.id"
+        <template v-for="(faq, index) in allFaqs" :key="faq.id">
+          <!-- Group divider: one accordion, two phrasings of the same topic -->
+          <div v-if="index === faqs.length" class="faq-group-divider">
+            <span class="faq-group-label">COMMON QUESTIONS</span>
+            <span class="faq-group-line" />
+          </div>
+
+          <div
           class="faq-item"
           :class="{ active: activeIndex === index }"
         >
@@ -154,6 +159,7 @@ const scrollToSection = (id) => {
             </div>
           </div>
         </div>
+        </template>
       </div>
 
     </div>
@@ -161,6 +167,28 @@ const scrollToSection = (id) => {
 </template>
 
 <style scoped>
+/* Group divider inside the accordion */
+.faq-group-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 2.2rem 0 1.1rem;
+  padding: 0 0.4rem;
+}
+.faq-group-label {
+  font-family: var(--font-heading);
+  font-size: 0.64rem;
+  font-weight: 900;
+  letter-spacing: 0.28em;
+  color: #ff002b;
+  white-space: nowrap;
+}
+.faq-group-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 0, 43, 0.4), rgba(255, 255, 255, 0.06));
+}
+
 /* ============================================================
    SECTION WRAPPER
    ============================================================ */
@@ -218,7 +246,8 @@ const scrollToSection = (id) => {
 .faq-subtitle {
   font-family: var(--font-body);
   font-size: 1.05rem;
-  color: rgba(255, 255, 255, 0.65);
+  font-weight: 500;
+  color: #e5e7eb;
   line-height: 1.6;
 }
 
@@ -612,7 +641,8 @@ const scrollToSection = (id) => {
 
 .pl-desc {
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.75);
+  font-weight: 500;
+  color: #e5e7eb;
   line-height: 1.45;
 }
 

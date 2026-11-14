@@ -272,7 +272,8 @@ const scrollToContact = () => {
 .section-subtitle {
   font-family: var(--font-body);
   font-size: 1.05rem;
-  color: rgba(255, 255, 255, 0.55);
+  font-weight: 500;
+  color: #e5e7eb;
   line-height: 1.6;
 }
 
@@ -346,7 +347,12 @@ const scrollToContact = () => {
    ============================================================ */
 .game-card {
   position: relative;
-  background: linear-gradient(180deg, rgba(14, 14, 22, 0.95) 0%, rgba(8, 8, 12, 0.98) 100%);
+  background: linear-gradient(
+    160deg,
+    rgba(22, 20, 34, 0.98) 0%,
+    rgba(16, 15, 26, 0.96) 55%,
+    rgba(20, 14, 20, 0.97) 100%
+  );
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 6px;
   padding: 2.2rem 1.8rem 1.8rem;
@@ -464,15 +470,16 @@ const scrollToContact = () => {
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.12em;
-  color: rgba(255, 255, 255, 0.35);
+  color: #d1d5e5;
   text-transform: uppercase;
   margin-bottom: 1rem;
 }
 
 .category-desc {
   font-family: var(--font-body);
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: #e5e7eb;
   line-height: 1.55;
   margin-bottom: 1.4rem;
 }
@@ -619,6 +626,7 @@ const scrollToContact = () => {
 }
 
 .guarantee-text span {
-  color: rgba(255, 255, 255, 0.5);
+  color: #d1d5e5;
+  font-weight: 500;
 }
 </style>

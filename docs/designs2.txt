@@ -1,0 +1,21 @@
+Mi propuesta: separar el logo de la información de ubicación.
+
+Actualmente tienes:
+- Logo.
+- LOS ANGELES, CA.
+- GAMING TRUCK SERVICES.
+- Línea roja inferior.
+Todo esto forma un bloque vertical que invade visualmente el hero.
+
+Yo haría lo siguiente:
+Elemento	Propuesta
+Logo	Mantener tamaño y protagonismo
+Ubicación	Moverla al hero
+Gaming Truck Services	Integrarla en el subtítulo
+Línea roja	Eliminarla o usarla como detalle del header
+
+El header tendría una altura más controlada, aproximadamente 85-95 px.
+
+El logo seguiría centrado, pero sin necesidad de que toda la información de ubicación esté debajo.
+
+Un detalle técnico: si el logo es SVG, revisaría también su viewBox para asegurar que no tenga espacio vacío innecesario. Así puedes controlar mejor sus dimensiones sin deformarlo ni reducirlo artificialmente.

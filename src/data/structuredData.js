@@ -1,6 +1,11 @@
 import siteConfig from '../config/siteConfig.js'
-import { faqs } from './faqData.js'
+import { allFaqs } from './faqData.js'
 import { packages, addOns } from './packages.js'
+import {
+  quickFacts,
+  serviceDefinitions,
+  oneLiner
+} from './geoContent.js'
 
 /**
  * Schema.org graph builders.
@@ -211,7 +216,7 @@ export function breadcrumbSchema(items = []) {
 /**
  * The page node, bound to the organization / service / breadcrumb.
  */
-export function webPageSchema({ path = '/', title, description, image, datePublished, dateModified, hasBreadcrumb = false }) {
+export function webPageSchema({ path = '/', title, description, image, datePublished, dateModified, hasBreadcrumb = false, speakable = null }) {
   const page = {
     '@type': 'WebPage',
     '@id': `${abs(path)}#webpage`,
@@ -224,6 +229,14 @@ export function webPageSchema({ path = '/', title, description, image, datePubli
     primaryImageOfPage: {
       '@type': 'ImageObject',
       url: abs(image || siteConfig.images.ogDefault)
+    }
+  }
+
+  // Voice assistants read the speakable region first.
+  if (speakable) {
+    page.speakable = {
+      '@type': 'SpeakableSpecification',
+      cssSelector: speakable
     }
   }
 
@@ -243,6 +256,11 @@ export function webPageSchema({ path = '/', title, description, image, datePubli
  * The accepted answer is flattened to plain text that includes the
  * supporting highlights, so the markup answers the question completely
  * instead of shipping a one-line teaser.
+ *
+ * `allFaqs` is the single accordion rendered on the page: the operational
+ * questions plus the conversational phrasings of the same topics. Every
+ * question here is visible on the page, so the markup never claims
+ * content a visitor cannot read.
  */
 export function faqPageSchema() {
   const buildAnswer = (faq) => {
@@ -263,12 +281,56 @@ export function faqPageSchema() {
   return {
     '@type': 'FAQPage',
     '@id': `${ORIGIN}/#faq`,
-    mainEntity: faqs.map((faq) => ({
+    mainEntity: allFaqs.map((faq) => ({
       '@type': 'Question',
       name: faq.question,
       acceptedAnswer: {
         '@type': 'Answer',
         text: buildAnswer(faq)
+      }
+    }))
+  }
+}
+
+/**
+ * DefinedTermSet — the vocabulary an assistant needs to map a question
+ * ("do you do Nerf Wars?") onto something this business actually sells.
+ */
+export function definedTermSetSchema() {
+  return {
+    '@type': 'DefinedTermSet',
+    '@id': `${ORIGIN}/#terms`,
+    name: 'Ultimate Players service definitions',
+    url: abs('/pricing'),
+    hasDefinedTerm: serviceDefinitions.map((def) => ({
+      '@type': 'DefinedTerm',
+      name: def.term,
+      description: def.definition,
+      inDefinedTermSet: { '@id': `${ORIGIN}/#terms` },
+      url: abs(def.url)
+    }))
+  }
+}
+
+/**
+ * The fact sheet — the atomic statements a generative engine quotes.
+ */
+export function factSheetSchema() {
+  return {
+    '@type': 'ItemList',
+    '@id': `${ORIGIN}/#facts`,
+    name: 'Ultimate Players at a glance',
+    description: oneLiner,
+    numberOfItems: quickFacts.length,
+    itemListElement: quickFacts.map((fact, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: fact.label,
+      item: {
+        '@type': 'PropertyValue',
+        name: fact.label,
+        value: fact.value,
+        description: fact.spoken
       }
     }))
   }
@@ -364,6 +426,7 @@ export function buildSchemaGraph(route = {}) {
     itemList = null,
     imageGallery = null,
     extraSchema = [],
+    speakable = null,
     datePublished = null,
     dateModified = null,
     includeCore = true
@@ -384,6 +447,7 @@ export function buildSchemaGraph(route = {}) {
       description,
       image,
       hasBreadcrumb,
+      speakable,
       datePublished,
       dateModified
     })

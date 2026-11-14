@@ -262,7 +262,7 @@ const navigateToContact = () => {
   font-family: var(--font-body);
   font-size: 0.9rem;
   font-weight: 500;
-  color: #9898b0;
+  color: #d1d5e5;
   letter-spacing: 0.01em;
 }
 
@@ -270,7 +270,7 @@ const navigateToContact = () => {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  color: #9898b0;
+  color: #d1d5e5;
 }
 
 .heart-icon {
@@ -342,7 +342,7 @@ const navigateToContact = () => {
     font-size: 0.6rem;
     font-weight: 700;
     letter-spacing: 0.16em;
-    color: rgba(255, 255, 255, 0.45);
+    color: #d1d5e5;
   }
 
   /* Phone CTA */
@@ -459,7 +459,7 @@ const navigateToContact = () => {
     font-size: 0.9rem;
     font-weight: 700;
     letter-spacing: 0.12em;
-    color: rgba(255, 255, 255, 0.55);
+    color: rgba(255, 255, 255, 0.85);
     text-decoration: none;
     transition: color 0.2s ease;
   }

@@ -2,7 +2,9 @@ import {
   buildSchemaGraph,
   imageGallerySchema,
   serviceListSchema,
-  additiveServiceSchema
+  additiveServiceSchema,
+  definedTermSetSchema,
+  factSheetSchema
 } from './structuredData.js'
 
 /**
@@ -86,6 +88,12 @@ export function buildRouteGraph(name, deps = {}) {
 
   const extraSchema = []
 
+  if (name === 'home') {
+    // The fact sheet and the term set are what an assistant reads to
+    // describe the business and to map a question onto a real offering.
+    extraSchema.push(factSheetSchema(), definedTermSetSchema())
+  }
+
   if (name === 'gallery' && deps.photos) {
     extraSchema.push(
       imageGallerySchema({
@@ -127,6 +135,12 @@ export function buildRouteGraph(name, deps = {}) {
     description: cfg.description,
     breadcrumb: cfg.breadcrumb,
     faq: cfg.faq,
+    // Voice assistants read the FAQ answers aloud. The fact sheet stays in
+    // the machine-readable layers only — the visible page keeps one FAQ.
+    speakable:
+      name === 'home'
+        ? ['.answer-main']
+        : null,
     extraSchema
   })
 }

@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import siteConfig from './src/config/siteConfig.js'
+import { prerenderPlugin } from './scripts/prerender.mjs'
 
 const ORIGIN = siteConfig.url.replace(/\/+$/, '')
 
@@ -34,16 +35,72 @@ const buildSitemap = (lastmod) =>
     ''
   ].join('\n')
 
+/**
+ * AI / answer-engine crawlers.
+ *
+ * Generative engines answer "gaming truck rental Los Angeles" by fetching
+ * and quoting the pages they can reach, so these are allowed explicitly
+ * rather than relying on the wildcard — it documents the intent and stops
+ * a blanket rule from silently blocking them later.
+ *
+ * Sources: OpenAI (platform.openai.com/docs/bots), Anthropic
+ * (support.anthropic.com), Perplexity (docs.perplexity.ai/guides/bots),
+ * Google (developers.google.com/search/docs/crawling-indexing),
+ * Microsoft (blogs.bing.com/webmaster) and Meta
+ * (developers.facebook.com/docs/sharing/bot).
+ */
+const AI_CRAWLERS = [
+  // OpenAI — ChatGPT search, ChatGPT user requests, model training
+  'OAI-SearchBot',
+  'ChatGPT-User',
+  'GPTBot',
+  // Anthropic — Claude search, Claude user requests, model training
+  'Claude-SearchBot',
+  'Claude-User',
+  'ClaudeBot',
+  // Perplexity
+  'PerplexityBot',
+  'Perplexity-User',
+  // Google — Search, AI Overviews / Gemini grounding, Google-Extended
+  'Googlebot',
+  'Google-Extended',
+  'Google-Other',
+  'Google-Image',
+  'Google-Video',
+  'Googlebot-News',
+  'Googlebot-Image',
+  'Storebot-Google',
+  // Microsoft — Bing index and Microsoft Copilot
+  'Bingbot',
+  // Meta — Meta AI (including agents that read shared links)
+  'meta-externalagent',
+  'facebookexternalhit',
+  // Other AI and dataset crawlers
+  'Amazonbot',
+  'Applebot-Extended',
+  'Bytespider',
+  'CCBot',
+  'cohere-ai',
+  'cohere-training-data-crawler',
+  'Diffbot',
+  'DuckAssistBot',
+  'Omgilibot',
+  'Timpibot',
+  'YouBot'
+]
+
 const buildRobots = () =>
   [
     'User-agent: *',
     'Allow: /',
     '',
-    '# Block anything that is not a real, indexable page.',
+    '# Legacy redirect paths — not indexable pages.',
     'Disallow: /policies',
     'Disallow: /privacy',
     'Disallow: /terms',
     '',
+    '# Answer engines and AI assistants (Generative Engine Optimization).',
+    ...AI_CRAWLERS.flatMap((bot) => [`User-agent: ${bot}`, 'Allow: /', '']),
     `Sitemap: ${ORIGIN}/sitemap.xml`,
     ''
   ].join('\n')
@@ -78,5 +135,5 @@ function seoStaticFiles() {
 }
 
 export default defineConfig({
-  plugins: [vue(), seoStaticFiles()]
+  plugins: [vue(), seoStaticFiles(), prerenderPlugin()]
 })

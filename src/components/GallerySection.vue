@@ -492,7 +492,8 @@ onUnmounted(() => {
 }
 
 .hud-label {
-  color: rgba(255, 255, 255, 0.45);
+  color: #d1d5e5;
+  font-weight: 600;
   margin-right: 0.4rem;
 }
 
@@ -512,7 +513,8 @@ onUnmounted(() => {
 
 .gallery-sub {
   font-size: 1.05rem;
-  color: rgba(255, 255, 255, 0.72);
+  font-weight: 500;
+  color: #e5e7eb;
   max-width: 720px;
   margin: 0 auto 2.2rem;
   line-height: 1.6;
@@ -534,8 +536,8 @@ onUnmounted(() => {
   letter-spacing: 0.15em;
   padding: 0.6rem 1.3rem;
   background: rgba(10, 10, 16, 0.85);
-  color: rgba(255, 255, 255, 0.6);
-  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.85);
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -752,8 +754,9 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
-  font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.76rem;
+  font-weight: 500;
+  color: #e5e7eb;
 }
 
 .tech-loc {
@@ -765,8 +768,9 @@ onUnmounted(() => {
 }
 
 .tech-spec {
-  font-size: 0.68rem;
-  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #d1d5e5;
 }
 
 /* ============================================================

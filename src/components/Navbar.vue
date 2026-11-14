@@ -44,6 +44,16 @@ const navigateToItem = (item) => {
     return
   }
 
+  if (item.hash === 'hero') {
+    if (route.path !== '/') {
+      router.push('/')
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      history.replaceState(null, '', '/')
+    }
+    return
+  }
+
   if (route.path !== '/') {
     router.push({ path: '/', hash: `#${item.hash}` })
   } else {
@@ -65,7 +75,10 @@ const navigateToContact = () => {
 }
 
 const navigateHome = (e) => {
-  e.preventDefault()
+  if (e && e.preventDefault) e.preventDefault()
+  if (isCurtainOpen.value) {
+    toggleCurtain()
+  }
   // Always strip the hash so a page reload doesn't auto-anchor
   // the user to whatever section they were just viewing.
   if (route.path === '/') {
@@ -92,13 +105,13 @@ onUnmounted(() => {
 <template>
   <header class="navbar-top-bar">
     <div class="top-bar-content">
-      <!-- Left Slot: Desktop = Start Your Request CTA | Mobile = Brand Logo -->
+      <!-- Left Slot: Desktop = Phone | Mobile = Brand Logo -->
       <div class="header-left">
-        <!-- Desktop CTA -->
-        <button class="btn-tech-red desktop-only" @click="navigateToContact">
-          <span>START YOUR REQUEST</span>
-          <ChevronRight :size="14" class="btn-icon" />
-        </button>
+        <!-- Desktop Phone (call-ready, E.164 tel: link) -->
+        <a :href="siteConfig.phoneTel" class="phone-link desktop-only">
+          <Phone :size="20" class="phone-icon text-red" />
+          <span class="phone-number">{{ siteConfig.phone }}</span>
+        </a>
 
         <!-- Mobile Brand Logo (Left aligned, clean inside navbar) -->
         <a href="/" class="mobile-brand-logo mobile-only" @click="navigateHome" aria-label="Home">
@@ -106,20 +119,14 @@ onUnmounted(() => {
         </a>
       </div>
 
-      <!-- Center Slot: Desktop Logo Image + Subtext inside trapezoid notch -->
+      <!-- Center Slot: Desktop Logo Image (Prominent, cleanly centered in header) -->
       <div class="header-center desktop-only">
-        <div class="center-hud-notch">
-          <a href="/" class="brand-logo-group" @click="navigateHome">
-            <img src="/logo.webp" alt="ULTIMATE PLAYERS Logo" class="logo-center-img" />
-            <div class="logo-subtext-group" :class="{ hidden: isScrolled || route.path !== '/' }">
-              <span class="subtext-location">{{ siteConfig.location }}</span>
-              <span class="subtext-service">{{ siteConfig.serviceType }}</span>
-            </div>
-          </a>
-        </div>
+        <a href="/" class="brand-logo-group" @click="navigateHome" aria-label="ULTIMATE PLAYERS Home">
+          <img src="/logo.webp" alt="ULTIMATE PLAYERS Logo" class="logo-center-img" />
+        </a>
       </div>
 
-      <!-- Right Slot: Desktop (Social Icons + Phone) | Mobile & Desktop (Hamburger Menu Trigger) -->
+      <!-- Right Slot: Desktop (Social Icons + Start Your Request CTA) | All breakpoints (Hamburger) -->
       <div class="header-right">
         <div class="social-icons-bar desktop-only">
           <a :href="siteConfig.socials.instagram" target="_blank" rel="noopener" class="social-circle" title="Instagram"><Instagram :size="22" /></a>
@@ -135,10 +142,11 @@ onUnmounted(() => {
 
         <div class="header-divider desktop-only"></div>
 
-        <a :href="siteConfig.phoneTel" class="phone-link desktop-only">
-          <Phone :size="20" class="phone-icon text-red" />
-          <span class="phone-number">{{ siteConfig.phone }}</span>
-        </a>
+        <!-- Desktop CTA -->
+        <button class="btn-tech-red desktop-only" @click="navigateToContact">
+          <span>START YOUR REQUEST</span>
+          <ChevronRight :size="14" class="btn-icon" />
+        </button>
 
         <!-- Hamburger button (visible on all breakpoints) -->
         <button 
@@ -156,88 +164,90 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <!-- Drawer Overlay -->
-    <transition name="drawer-slide">
-      <div v-if="isCurtainOpen" class="drawer-overlay" @click.self="toggleCurtain">
-        <!-- Drawer Panel sliding from right -->
-        <div class="drawer-panel">
-          <!-- Subtle grid texture -->
-          <div class="cyber-grid-pattern"></div>
+    <!-- Drawer Overlay (Teleported to body so it always layers above hero, 3D transforms & dock) -->
+    <Teleport to="body">
+      <transition name="drawer-slide">
+        <div v-if="isCurtainOpen" class="drawer-overlay" @click.self="toggleCurtain">
+          <!-- Drawer Panel sliding from right -->
+          <div class="drawer-panel">
+            <!-- Subtle grid texture -->
+            <div class="cyber-grid-pattern"></div>
 
-          <!-- Close button: top-right inside panel -->
-          <button class="close-drawer-btn" @click="toggleCurtain" aria-label="Close menu">
-            <X :size="20" />
-          </button>
-
-          <!-- Brand -->
-          <div class="drawer-brand">
-            <img src="/logo.webp" alt="ULTIMATE PLAYERS" class="drawer-logo" />
-          </div>
-
-          <!-- Vertical numbered menu list -->
-          <nav class="drawer-nav">
-            <div class="drawer-rule"></div>
-
-            <a
-              v-for="(item, index) in menuItems"
-              :key="item.id"
-              href="javascript:void(0)"
-              class="drawer-link"
-              :class="{ 'has-icon': item.icon, 'has-badge': item.badge }"
-              :style="{ '--delay': `${index * 0.06}s` }"
-              @click="navigateToItem(item)"
-            >
-              <span class="link-idx">{{ item.num }}</span>
-              <component v-if="item.icon" :is="item.icon" :size="18" class="link-icon" />
-              <div class="link-body">
-                <span class="link-name">
-                  {{ item.name }}
-                  <span v-if="item.badge" class="link-badge">{{ item.badge }}</span>
-                </span>
-                <span class="link-sub">{{ item.subtitle }}</span>
-              </div>
-              <span class="link-chevron">›</span>
-            </a>
-          </nav>
-
-          <!-- Divider -->
-          <div class="drawer-divider"></div>
-
-          <!-- Call or Text CTA -->
-          <div class="drawer-cta-section">
-            <a :href="siteConfig.phoneTel" class="drawer-call-btn">
-              <Phone :size="18" />
-              <div class="drawer-call-text">
-                <span class="call-label">CALL OR TEXT</span>
-                <span class="call-number">{{ siteConfig.phone }}</span>
-              </div>
-            </a>
-            <button class="drawer-request-btn" @click="navigateToContact">
-              START YOUR REQUEST →
+            <!-- Close button: top-right inside panel -->
+            <button class="close-drawer-btn" @click="toggleCurtain" aria-label="Close menu">
+              <X :size="20" />
             </button>
-          </div>
 
-          <!-- Social Links -->
-          <div class="drawer-socials">
-            <a :href="siteConfig.socials.instagram" target="_blank" rel="noopener" class="drawer-social" title="Instagram"><Instagram :size="18" /></a>
-            <a :href="siteConfig.socials.facebook" target="_blank" rel="noopener" class="drawer-social" title="Facebook"><Facebook :size="18" /></a>
-            <a :href="siteConfig.socials.tiktok" target="_blank" rel="noopener" class="drawer-social" title="TikTok">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 1 1-5.2-1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V5.86a6.37 6.37 0 0 0-1-.08A6.34 6.34 0 1 0 15.82 12V8.9a8.28 8.28 0 0 0 4.77 1.52V7a4.81 4.81 0 0 1-1-.31z"/>
-              </svg>
-            </a>
-            <a :href="siteConfig.socials.youtube" target="_blank" rel="noopener" class="drawer-social" title="YouTube"><Youtube :size="18" /></a>
-            <a :href="siteConfig.socials.yelp" target="_blank" rel="noopener" class="drawer-social" title="Yelp"><Star :size="18" /></a>
-          </div>
+            <!-- Brand -->
+            <div class="drawer-brand">
+              <img src="/logo.webp" alt="ULTIMATE PLAYERS" class="drawer-logo" />
+            </div>
 
-          <!-- Bottom status -->
-          <div class="drawer-status">
-            <span class="pulse-dot"></span>
-            <span>SYSTEM ONLINE</span>
+            <!-- Vertical numbered menu list -->
+            <nav class="drawer-nav">
+              <div class="drawer-rule"></div>
+
+              <a
+                v-for="(item, index) in menuItems"
+                :key="item.id"
+                href="javascript:void(0)"
+                class="drawer-link"
+                :class="{ 'has-icon': item.icon, 'has-badge': item.badge }"
+                :style="{ '--delay': `${index * 0.06}s` }"
+                @click="navigateToItem(item)"
+              >
+                <span class="link-idx">{{ item.num }}</span>
+                <component v-if="item.icon" :is="item.icon" :size="18" class="link-icon" />
+                <div class="link-body">
+                  <span class="link-name">
+                    {{ item.name }}
+                    <span v-if="item.badge" class="link-badge">{{ item.badge }}</span>
+                  </span>
+                  <span class="link-sub">{{ item.subtitle }}</span>
+                </div>
+                <span class="link-chevron">›</span>
+              </a>
+            </nav>
+
+            <!-- Divider -->
+            <div class="drawer-divider"></div>
+
+            <!-- Call or Text CTA -->
+            <div class="drawer-cta-section">
+              <a :href="siteConfig.phoneTel" class="drawer-call-btn">
+                <Phone :size="18" />
+                <div class="drawer-call-text">
+                  <span class="call-label">CALL OR TEXT</span>
+                  <span class="call-number">{{ siteConfig.phone }}</span>
+                </div>
+              </a>
+              <button class="drawer-request-btn" @click="navigateToContact">
+                START YOUR REQUEST →
+              </button>
+            </div>
+
+            <!-- Social Links -->
+            <div class="drawer-socials">
+              <a :href="siteConfig.socials.instagram" target="_blank" rel="noopener" class="drawer-social" title="Instagram"><Instagram :size="18" /></a>
+              <a :href="siteConfig.socials.facebook" target="_blank" rel="noopener" class="drawer-social" title="Facebook"><Facebook :size="18" /></a>
+              <a :href="siteConfig.socials.tiktok" target="_blank" rel="noopener" class="drawer-social" title="TikTok">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 1 1-5.2-1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V5.86a6.37 6.37 0 0 0-1-.08A6.34 6.34 0 1 0 15.82 12V8.9a8.28 8.28 0 0 0 4.77 1.52V7a4.81 4.81 0 0 1-1-.31z"/>
+                </svg>
+              </a>
+              <a :href="siteConfig.socials.youtube" target="_blank" rel="noopener" class="drawer-social" title="YouTube"><Youtube :size="18" /></a>
+              <a :href="siteConfig.socials.yelp" target="_blank" rel="noopener" class="drawer-social" title="Yelp"><Star :size="18" /></a>
+            </div>
+
+            <!-- Bottom status -->
+            <div class="drawer-status">
+              <span class="pulse-dot"></span>
+              <span>SYSTEM ONLINE</span>
+            </div>
           </div>
         </div>
-      </div>
-    </transition>
+      </transition>
+    </Teleport>
   </header>
 </template>
 
@@ -247,9 +257,12 @@ onUnmounted(() => {
   top: 0;
   left: 0;
   width: 100%;
-  background-color: #000000;
-  z-index: 1000;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: rgba(5, 5, 8, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: 10000;
+  border-bottom: 1.5px solid rgba(255, 0, 43, 0.4);
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.8), 0 1px 12px rgba(255, 0, 43, 0.2);
 }
 
 .top-bar-content {
@@ -258,7 +271,7 @@ onUnmounted(() => {
   justify-content: space-between;
   padding: 0 1.5rem;
   width: 100%;
-  height: 80px;
+  height: 88px;
   position: relative;
 }
 
@@ -290,6 +303,11 @@ onUnmounted(() => {
 .btn-tech-red .btn-icon {
   color: #ff002b;
   transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.btn-tech-red span {
+  white-space: nowrap;
 }
 
 .btn-tech-red:hover {
@@ -329,79 +347,45 @@ onUnmounted(() => {
 /* ── Center Logo ── */
 .header-center {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   position: absolute;
   left: 50%;
-  transform: translateX(-50%);
-  top: 0;
-  z-index: 10;
-}
-
-.center-hud-notch {
-  background: #000000;
-  padding: 0.6rem 3.8rem 1rem 3.8rem;
-  clip-path: polygon(0 0, 100% 0, calc(100% - 24px) 100%, 24px 100%);
-  border-bottom: 2px solid rgba(255, 0, 43, 0.75);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.98), 0 0 20px rgba(255, 0, 43, 0.3);
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 40;
+  height: 100%;
+  pointer-events: auto;
 }
 
 .brand-logo-group {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
   text-decoration: none;
+  cursor: pointer;
+  height: 100%;
+  padding: 0.35rem 1.2rem;
 }
 
 .logo-center-img {
-  height: 105px;
+  height: 72px;
   width: auto;
+  max-width: 200px;
   object-fit: contain;
-  transition: transform 0.3s ease;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
   image-rendering: -webkit-optimize-contrast;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.8));
 }
 
 .brand-logo-group:hover .logo-center-img {
   transform: scale(1.06);
+  filter: drop-shadow(0 0 16px rgba(255, 0, 43, 0.65));
 }
 
-.subtext-location {
-  font-size: 0.85rem;
-  font-weight: 900;
-  letter-spacing: 0.22em;
-  color: #ffffff;
-  line-height: 1.1;
-}
-
-.subtext-service {
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  color: #b0b0bb;
-  line-height: 1.1;
-  margin-top: 3px;
-}
-
-.logo-subtext-group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 0.3rem;
-  font-family: var(--font-heading);
-  max-height: 40px;
-  opacity: 1;
-  overflow: hidden;
-  transition:
-    max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 0.25s ease,
-    margin-top 0.35s ease;
-}
-
-.logo-subtext-group.hidden {
-  max-height: 0;
-  opacity: 0;
-  margin-top: 0;
-  pointer-events: none;
+.brand-logo-group:active .logo-center-img {
+  transform: scale(0.97);
 }
 
 /* ── Right Section ── */
@@ -562,8 +546,13 @@ onUnmounted(() => {
 .drawer-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.65);
-  z-index: 9998;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 999999;
   display: flex;
   justify-content: flex-end;
 }
@@ -573,15 +562,16 @@ onUnmounted(() => {
   position: relative;
   width: min(420px, 90vw);
   height: 100%;
+  height: 100dvh;
   background: #060608;
-  border-left: 1px solid rgba(255, 0, 43, 0.35);
+  border-left: 1.5px solid rgba(255, 0, 43, 0.45);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   padding: 5rem 0 2rem;
-  z-index: 9999;
-  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.95);
+  z-index: 1000000;
+  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.98), 0 0 30px rgba(255, 0, 43, 0.2);
 }
 
 /* Subtle grid texture */
@@ -971,6 +961,10 @@ onUnmounted(() => {
   transition: transform 0.2s ease;
 }
 
+.mobile-brand-logo {
+  cursor: pointer;
+}
+
 .mobile-brand-logo:active .mobile-logo-img {
   transform: scale(0.96);
 }
@@ -979,11 +973,26 @@ onUnmounted(() => {
 .header-left {
   position: relative;
   z-index: 25;
+  pointer-events: none;
+}
+
+.header-left > * {
+  pointer-events: auto;
 }
 
 .header-right {
   position: relative;
   z-index: 25;
+}
+
+/* Tablet desktop (993px–1399px): the social cluster would slide under the
+   centered logo, so it steps aside — the icons stay available in the drawer
+   menu. Everything else (phone left / logo center / CTA right) stays intact. */
+@media (max-width: 1399px) and (min-width: 993px) {
+  .social-icons-bar,
+  .header-divider {
+    display: none !important;
+  }
 }
 
 /* Tablet (≤992px) */

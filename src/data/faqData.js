@@ -195,4 +195,52 @@ export const faqs = [
   }
 ]
 
-export default faqs
+/**
+ * Conversational questions, phrased the way a parent actually types them
+ * into an AI assistant, with answers that stand on their own.
+ *
+ * They live in the same accordion as the operational FAQ — one FAQ section
+ * on the page, two phrasings of the same topic.
+ */
+export const commonFaqs = [
+  {
+    id: 8,
+    question: 'How much does it cost to rent a gaming truck in Los Angeles?',
+    answer: 'Gaming truck rentals in Los Angeles start at $450 for the first two hours and $130 for each additional hour. The Standard, Deluxe and Gaming Bus packages are $450; the Elite 10-TV truck is $500. A VR station add-on is $100 for the first two hours and $50 per extra hour.'
+  },
+  {
+    id: 9,
+    question: 'What is the cheapest way to book a gaming truck?',
+    answer: 'The most affordable option is the Standard Gaming Truck at $450 for the first two hours, which seats up to 20 players with 4 TVs inside and 2 outside. A deposit locks the date and the balance is due on the day of the event, so there is no need to pay the full amount upfront.'
+  },
+  {
+    id: 12,
+    question: 'How far in advance should I book a gaming truck?',
+    answer: 'Book as early as you can — dates and time slots are limited and a non-refundable deposit is what actually holds your slot on the calendar. You can reach Ultimate Players on (626) 503-1189 or send an event request through the website, and the team comes back with a custom proposal.'
+  },
+  {
+    id: 13,
+    question: 'Do I need to supply anything for a gaming truck party?',
+    answer: 'No. The crew handles setup and teardown, powers the unit with a quiet self-powered generator, tests every console and controller and manages the game coaching. Some parents add party tables, chairs, linens, balloon décor, a Nerf Wars arena, water guns or a water slide jumper through the party essentials catalogue.'
+  },
+  {
+    id: 14,
+    question: 'Can you provide Nerf Wars, water guns or bounce houses with the truck?',
+    answer: 'Yes. Nerf Wars arenas, water gun battles, water slide jumpers, inflatable jumpers, party tables, chairs, décor and balloon setups are all available as add-ons and are delivered with the truck as one coordinated order.'
+  },
+  {
+    id: 16,
+    question: 'How long does a gaming truck party last?',
+    answer: 'Packages cover the first two hours, and additional hours can be added at $130 per hour. The crew arrives 15 to 20 minutes before your start time to complete setup and equipment testing, so your booked play time begins exactly on schedule.'
+  },
+  {
+    id: 17,
+    question: 'What happens if it rains on my party date?',
+    answer: 'Ask about the weather policy when you request your quote. The team will explain the rescheduling and cancellation terms for your specific date, and all deposit, rescheduling and refund conditions are published in the official policies page.'
+  }
+]
+
+/** Everything rendered in the single FAQ accordion. */
+export const allFaqs = [...faqs, ...commonFaqs]
+
+export default allFaqs

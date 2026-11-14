@@ -435,7 +435,8 @@ const scrollToContact = () => {
 
 .banner-desc {
   font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.65);
+  font-weight: 500;
+  color: #e5e7eb;
 }
 
 .banner-actions {
@@ -477,7 +478,7 @@ const scrollToContact = () => {
 }
 
 .banner-phone {
-  color: rgba(255, 255, 255, 0.75);
+  color: #ffffff;
   font-size: 0.88rem;
   font-weight: 700;
   text-decoration: none;
