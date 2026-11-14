@@ -20,6 +20,7 @@ const isLightboxOpen = ref(false)
 const lightboxIndex = ref(0)
 
 import galleryData from '../data/gallery.json'
+import { galleryAlt } from '../utils/imageAlt.js'
 
 const rawPhotos = galleryData.photos
 const categories = galleryData.categories
@@ -162,7 +163,7 @@ onUnmounted(() => {
     <!-- Dynamic Ambient Blurred Parallax Background -->
     <div 
       class="gallery-ambient-bg"
-      :style="{ backgroundImage: `url(${currentPhoto ? currentPhoto.url : '/galleries/01.jpg'})` }"
+      :style="{ backgroundImage: `url(${currentPhoto ? currentPhoto.webp : '/galleries/01.webp'})` }"
     ></div>
     <div class="gallery-bg-overlay"></div>
 
@@ -246,7 +247,10 @@ onUnmounted(() => {
 
             <!-- Image -->
             <div class="card-img-wrap">
-              <img :src="photo.url" :alt="photo.title" class="kinetic-img" loading="lazy" />
+              <picture>
+                <source :srcset="photo.webp" type="image/webp" />
+                <img :src="photo.url" :alt="galleryAlt(photo)" class="kinetic-img" loading="lazy" decoding="async" />
+              </picture>
               <div class="card-img-overlay"></div>
             </div>
 
@@ -333,11 +337,18 @@ onUnmounted(() => {
 
             <div class="lightbox-main-body">
               <div class="lightbox-img-container">
-                <img
-                  :src="filteredPhotos[lightboxIndex]?.url || '/galleries/01.jpg'"
-                  :alt="filteredPhotos[lightboxIndex]?.title"
-                  class="lightbox-img"
-                />
+                <picture>
+                  <source
+                    :srcset="filteredPhotos[lightboxIndex]?.webp || '/galleries/01.webp'"
+                    type="image/webp"
+                  />
+                  <img
+                    :src="filteredPhotos[lightboxIndex]?.url || '/galleries/01.jpg'"
+                    :alt="galleryAlt(filteredPhotos[lightboxIndex])"
+                    class="lightbox-img"
+                    decoding="async"
+                  />
+                </picture>
 
                 <!-- Minimal HUD overlay (mobile-first): photo is the protagonist.
                      Only shows a small counter (top) and title (bottom). Tap

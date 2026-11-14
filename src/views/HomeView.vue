@@ -9,7 +9,11 @@ import VideoSection from '../components/VideoSection.vue'
 import FAQSection from '../components/FAQSection.vue'
 import ContactSection from '../components/ContactSection.vue'
 import ScrollNav from '../components/ScrollNav.vue'
+import SEOHead from '../components/SEOHead.vue'
+import { routeSeo } from '../data/seoRoutes.js'
 import { initScrollObserver } from '../utils/scrollObserver.js'
+
+const seo = routeSeo.home
 
 onMounted(() => {
   if (!window.location.hash) {
@@ -23,6 +27,13 @@ onMounted(() => {
 
 <template>
   <div>
+    <SEOHead
+      :title="seo.title"
+      :description="seo.description"
+      :path="seo.path"
+      :breadcrumb="seo.breadcrumb"
+      :faq="seo.faq"
+    />
     <ScrollNav />
     <main>
       <HeroSection id="hero" />

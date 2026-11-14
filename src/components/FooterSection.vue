@@ -23,7 +23,7 @@ const navigateToContact = () => {
       <!-- ── MOBILE CTA BLOCK (visible only on mobile at top of footer) ── -->
       <div class="mobile-footer-cta">
         <div class="mobile-cta-brand">
-          <img src="/logo.png" alt="ULTIMATE PLAYERS" class="mobile-cta-logo" />
+          <img src="/logo.webp" alt="ULTIMATE PLAYERS" class="mobile-cta-logo" />
           <div class="mobile-cta-text">
             <span class="mobile-cta-title">ULTIMATE PLAYERS</span>
             <span class="mobile-cta-subtitle">GAMING TRUCK SERVICES · {{ siteConfig.location }}</span>
@@ -71,7 +71,7 @@ const navigateToContact = () => {
         <!-- Brand Info Column -->
         <div class="footer-brand">
           <a href="#" class="brand-logo">
-            <img src="/logo.png" alt="ULTIMATE PLAYERS Logo" class="brand-logo-img" />
+            <img src="/logo.webp" alt="ULTIMATE PLAYERS Logo" class="brand-logo-img" />
           </a>
           <p class="brand-desc">
             The premiere 360 luxury mobile gaming truck &amp; esports party experience delivered directly to your door in {{ siteConfig.address }}.

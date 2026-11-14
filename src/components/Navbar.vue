@@ -102,7 +102,7 @@ onUnmounted(() => {
 
         <!-- Mobile Brand Logo (Left aligned, clean inside navbar) -->
         <a href="/" class="mobile-brand-logo mobile-only" @click="navigateHome" aria-label="Home">
-          <img src="/logo.png" alt="ULTIMATE PLAYERS" class="mobile-logo-img" />
+          <img src="/logo.webp" alt="ULTIMATE PLAYERS" class="mobile-logo-img" />
         </a>
       </div>
 
@@ -110,7 +110,7 @@ onUnmounted(() => {
       <div class="header-center desktop-only">
         <div class="center-hud-notch">
           <a href="/" class="brand-logo-group" @click="navigateHome">
-            <img src="/logo.png" alt="ULTIMATE PLAYERS Logo" class="logo-center-img" />
+            <img src="/logo.webp" alt="ULTIMATE PLAYERS Logo" class="logo-center-img" />
             <div class="logo-subtext-group" :class="{ hidden: isScrolled || route.path !== '/' }">
               <span class="subtext-location">{{ siteConfig.location }}</span>
               <span class="subtext-service">{{ siteConfig.serviceType }}</span>
@@ -171,7 +171,7 @@ onUnmounted(() => {
 
           <!-- Brand -->
           <div class="drawer-brand">
-            <img src="/logo.png" alt="ULTIMATE PLAYERS" class="drawer-logo" />
+            <img src="/logo.webp" alt="ULTIMATE PLAYERS" class="drawer-logo" />
           </div>
 
           <!-- Vertical numbered menu list -->

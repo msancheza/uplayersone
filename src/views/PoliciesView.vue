@@ -17,6 +17,10 @@ import {
 } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 import siteConfig from '../config/siteConfig.js'
+import SEOHead from '../components/SEOHead.vue'
+import { routeSeo } from '../data/seoRoutes.js'
+
+const seo = routeSeo.policies
 
 const router = useRouter()
 
@@ -158,6 +162,13 @@ const policyCategories = [
 
 <template>
   <div class="policies-page">
+      <SEOHead
+        :title="seo.title"
+        :description="seo.description"
+        :path="seo.path"
+        :breadcrumb="seo.breadcrumb"
+      />
+
     
     <!-- Hero Banner -->
     <header class="policies-hero">

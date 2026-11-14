@@ -226,7 +226,7 @@ onUnmounted(() => {
 
 .nav-system-label {
   display: block;
-  font-family: 'Orbitron', 'Rajdhani', sans-serif;
+  font-family: 'Orbitron', monospace;
   font-size: 0.5rem;
   font-weight: 800;
   letter-spacing: 0.22em;
@@ -236,7 +236,7 @@ onUnmounted(() => {
 }
 
 .nav-counter {
-  font-family: 'Orbitron', 'Rajdhani', monospace;
+  font-family: 'Orbitron', monospace;
   font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -354,7 +354,7 @@ onUnmounted(() => {
 }
 
 .nav-item-num {
-  font-family: 'Orbitron', 'Rajdhani', monospace;
+  font-family: 'Orbitron', monospace;
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.04em;
@@ -369,7 +369,7 @@ onUnmounted(() => {
 }
 
 .nav-item-label {
-  font-family: 'Rajdhani', 'Orbitron', sans-serif;
+  font-family: 'Orbitron', monospace;
   font-size: 0.48rem;
   font-weight: 700;
   letter-spacing: 0.1em;

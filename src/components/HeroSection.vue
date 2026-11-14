@@ -2,6 +2,8 @@
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { ChevronUp, ChevronDown, ChevronRight, Gamepad2, Users, Truck, Phone, Tv, Wind, Sparkles } from 'lucide-vue-next'
 import siteConfig from '../config/siteConfig.js'
+import { truckAlt, galleryAlt } from '../utils/imageAlt.js'
+import galleryData from '../data/gallery.json'
 
 const videoRef = ref(null)
 const selectedVehicle = ref(1)
@@ -17,7 +19,8 @@ const vehicles = [
     subtitle: 'GAMING TRUCK',
     displays: '6 DISPLAYS',
     detail: '4 INSIDE / 2 OUTSIDE',
-    image: '/trucks/01.png'
+    image: '/trucks/01.png',
+    webp: '/trucks/01.webp'
   },
   {
     id: 2,
@@ -26,7 +29,8 @@ const vehicles = [
     subtitle: 'GAMING TRUCK',
     displays: '6 DISPLAYS',
     detail: 'ALL INSIDE',
-    image: '/trucks/02.png'
+    image: '/trucks/02.png',
+    webp: '/trucks/02.webp'
   },
   {
     id: 3,
@@ -35,7 +39,8 @@ const vehicles = [
     subtitle: 'GAMING TRUCK',
     displays: '10 DISPLAYS',
     detail: 'ALL INSIDE',
-    image: '/trucks/03.jpg'
+    image: '/trucks/03.jpg',
+    webp: '/trucks/03.webp'
   },
   {
     id: 4,
@@ -44,7 +49,8 @@ const vehicles = [
     subtitle: 'MOBILE GAMING BUS',
     displays: '6 DISPLAYS',
     detail: 'ALL INSIDE',
-    image: '/trucks/04.png'
+    image: '/trucks/04.png',
+    webp: '/trucks/04.webp'
   }
 ]
 
@@ -150,9 +156,15 @@ const visibleGalleryImages = computed(() => {
   if (total === 0) return result
   for (let i = 0; i < 4; i++) {
     const idx = (startIndex.value + i) % total
+    const url = allGalleryImages[idx]
+    const photo = galleryData.photos.find((p) => p.url === url)
     result.push({
       originalIndex: idx,
-      url: allGalleryImages[idx]
+      url,
+      webp: url.replace(/\.(jpg|jpeg|png)$/i, '.webp'),
+      alt: photo
+        ? galleryAlt(photo)
+        : 'Ultimate Players gaming truck interior at a real event in Los Angeles'
     })
   }
   return result
@@ -402,7 +414,10 @@ const navigateToTrucks = (truckId = null) => {
               <div class="vehicle-card-showcase">
                 <div class="showcase-floor"></div>
                 <div class="showcase-floor-grid"></div>
-                <img :src="v.image" :alt="v.title" class="v-img" />
+                <picture>
+                  <source :srcset="v.webp" type="image/webp" />
+                  <img :src="v.image" :alt="truckAlt(v)" class="v-img" fetchpriority="high" decoding="async" />
+                </picture>
                 <span class="v-chip">{{ v.subtitle }}</span>
                 <ChevronRight :size="16" class="v-arrow" />
               </div>
@@ -443,7 +458,10 @@ const navigateToTrucks = (truckId = null) => {
             :class="{ active: activeImageIndex === item.originalIndex }"
             @click="handleUserInteraction(goToGallery)"
           >
-            <img :src="item.url" alt="Gaming Truck Interior" class="thumb-img" />
+            <picture>
+              <source :srcset="item.webp" type="image/webp" />
+              <img :src="item.url" :alt="item.alt" class="thumb-img" loading="lazy" decoding="async" />
+            </picture>
             <div v-if="activeImageIndex === item.originalIndex" class="thumb-target-dot"></div>
           </div>
         </div>
@@ -469,10 +487,11 @@ const navigateToTrucks = (truckId = null) => {
           <h1 class="hero-headline">
             WE BRING <br />
             <span class="text-red-glow">THE ULTIMATE <br />EXPERIENCE.</span>
+            <span class="hero-h1-service">GAMING TRUCK RENTAL · LOS ANGELES</span>
           </h1>
 
           <p class="hero-subtext">
-            High-end gaming trucks. <br />
+            Mobile gaming truck rental in Los Angeles.<br />
             Top consoles. Epic setups. <br />
             Unforgettable parties.
           </p>
@@ -1180,6 +1199,19 @@ const navigateToTrucks = (truckId = null) => {
     0 2px 10px rgba(0, 0, 0, 0.95) !important;
 }
 
+/* Keyword line inside the H1 — carries the primary service + city.
+   Visible on every breakpoint so the mobile-first index sees it too. */
+.hero-h1-service {
+  display: block;
+  margin-top: 1rem;
+  font-family: var(--font-heading);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  color: rgba(255, 255, 255, 0.62);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.95);
+}
+
 .hero-subtext {
   font-size: 1.15rem;
   color: #f0f0f5;
@@ -1482,6 +1514,12 @@ const navigateToTrucks = (truckId = null) => {
     font-size: clamp(2rem, 8.5vw, 3rem);
     line-height: 1.05;
     margin-bottom: 1rem;
+  }
+
+  .hero-h1-service {
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    margin-top: 0.7rem;
   }
 
   .hero-subtext {

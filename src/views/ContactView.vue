@@ -19,6 +19,10 @@ import {
 } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 import siteConfig from '../config/siteConfig.js'
+import SEOHead from '../components/SEOHead.vue'
+import { routeSeo } from '../data/seoRoutes.js'
+
+const seo = routeSeo.contact
 
 const router = useRouter()
 
@@ -59,6 +63,13 @@ const scrollToRequestForm = () => {
 
 <template>
   <div class="contact-page">
+      <SEOHead
+        :title="seo.title"
+        :description="seo.description"
+        :path="seo.path"
+        :breadcrumb="seo.breadcrumb"
+      />
+
     
     <!-- Hero Header -->
     <header class="contact-hero">

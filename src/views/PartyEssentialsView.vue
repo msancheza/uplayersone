@@ -13,9 +13,19 @@ import {
   Check,
   ArrowDown,
   Maximize2,
+  Crosshair,
+  Droplets,
+  Table2,
 } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 import siteConfig from '../config/siteConfig.js'
+import SEOHead from '../components/SEOHead.vue'
+import { routeSeo, buildRouteGraph } from '../data/seoRoutes.js'
+import { serviceListSchema, additiveServiceSchema } from '../data/structuredData.js'
+import { catalog } from '../data/partyCatalog.js'
+import { partyServices } from '../data/partyServices.js'
+
+const seo = routeSeo.partyEssentials
 
 const router = useRouter()
 const goHome = () => router.push('/')
@@ -36,56 +46,44 @@ const categories = [
 const activeCategory = ref('all')
 
 /* -----------------------------------------------------------
+   ADD-ON SERVICES — Nerf Wars, water guns and party seating.
+   These are the highest-intent keywords in the business and
+   are offered alongside any truck or bus booking.
+   ----------------------------------------------------------- */
+const serviceIcons = { Crosshair, Droplets, Table2 }
+
+/* -----------------------------------------------------------
    CATALOG — sourced from /public/supplies. Each card needs
    a real photo, a friendly title, category tag, and a starting
    price label. We only show "Starting at" where the catalog
    is real; we use "Custom Quote" otherwise to stay honest.
    ----------------------------------------------------------- */
-const catalog = [
-  /* BALLOONS */
-  { id: 'b1', category: 'balloons', badge: 'POPULAR', title: 'GAMING BALLOON GARLAND',  subtitle: 'Balloon Décor · Custom Colors',  image: '/supplies/balloon_decor/IMG_2893-1.jpg',  price: 'Starting at $___' },
-  { id: 'b2', category: 'balloons', badge: '',        title: 'THEMED BALLOON ARCH',     subtitle: 'Entryway · Photo Backdrop',    image: '/supplies/balloon_decor/IMG_2929-1.jpg',  price: 'Custom Quote' },
-  { id: 'b3', category: 'balloons', badge: 'NEW',     title: 'ORGANIC BALLOON CLOUD',   subtitle: 'Ceiling Install · Pastel',     image: '/supplies/balloon_decor/IMG_484028129.jpg', price: 'Custom Quote' },
-  { id: 'b4', category: 'balloons', badge: '',        title: 'NUMBER BALLOON SET',      subtitle: 'Ages 1–18 · Gold or Silver',   image: '/supplies/balloon_decor/IMG_4956-1.jpg',  price: 'Starting at $___' },
-  { id: 'b5', category: 'balloons', badge: '',        title: 'CHARACTER BALLOON BOUQUET', subtitle: 'Custom Themes',               image: '/supplies/balloon_decor/IMG_4987.jpg',    price: 'Custom Quote' },
-  { id: 'b6', category: 'balloons', badge: '',        title: 'BALLOON CENTERPIECES',    subtitle: 'Set of 6 · Themed',           image: '/supplies/balloon_decor/IMG_4993.jpg',    price: 'Starting at $___' },
-  { id: 'b7', category: 'balloons', badge: '',        title: 'BIRTHDAY BALLOON WALL',    subtitle: 'Photo-worthy Backdrop',       image: '/supplies/balloon_decor/IMG_5222.jpg',    price: 'Custom Quote' },
-  { id: 'b8', category: 'balloons', badge: 'SUMMER',  title: 'GAMING PARTY BALLOONS',    subtitle: 'Console-themed Setup',        image: '/supplies/balloon_decor/IMG_5503.jpg',    price: 'Starting at $___' },
-  { id: 'b9', category: 'balloons', badge: '',        title: 'CUSTOM COLOR GARLAND',     subtitle: 'Any Palette · 6–10 ft',       image: '/supplies/balloon_decor/IMG_6614.jpg',    price: 'Custom Quote' },
-
-  /* DÉCOR */
-  { id: 'd1', category: 'decor', badge: 'POPULAR', title: 'GLOW NEON SIGN',           subtitle: 'Custom Name or Phrase',     image: '/supplies/decors/E3C6F680-_01-1.jpg',  price: 'Starting at $___' },
-  { id: 'd2', category: 'decor', badge: '',        title: 'PARTY BACKDROP KIT',       subtitle: 'Stand + Drapes + Custom',   image: '/supplies/decors/IMG_3754-1.jpg',     price: 'Starting at $___' },
-  { id: 'd3', category: 'decor', badge: '',        title: 'TABLE DÉCOR SET',          subtitle: 'Plates · Napkins · Cutlery', image: '/supplies/decors/IMG_3755-1.jpg',     price: 'Starting at $___' },
-  { id: 'd4', category: 'decor', badge: 'NEW',     title: 'CUSTOM PHOTO WALL',        subtitle: 'Printed Backdrop',          image: '/supplies/decors/IMG_4842-1.jpg',     price: 'Custom Quote' },
-  { id: 'd5', category: 'decor', badge: '',        title: 'CENTERPIECE BUNDLE',       subtitle: '5 Themed Centerpieces',     image: '/supplies/decors/IMG_4849-1-1.jpg',   price: 'Starting at $___' },
-  { id: 'd6', category: 'decor', badge: '',        title: 'DESSERT TABLE SETUP',      subtitle: 'Linens · Risers · Skirts',  image: '/supplies/decors/IMG_4849.jpg',       price: 'Custom Quote' },
-  { id: 'd7', category: 'decor', badge: '',        title: 'LED UPLIGHT PACK',         subtitle: 'Set of 4 · Color Changing',  image: '/supplies/decors/IMG_4849_01-2.jpg',  price: 'Starting at $___' },
-  { id: 'd8', category: 'decor', badge: '',        title: 'SIGNAGE + WAYFINDING',     subtitle: 'Custom Prints',             image: '/supplies/decors/IMG_5219-1.jpg',     price: 'Starting at $___' },
-  { id: 'd9', category: 'decor', badge: '',        title: 'CONFETTI + BALLOON DROP',  subtitle: 'Surprise Moment',           image: '/supplies/decors/IMG_5219.jpg',       price: 'Custom Quote' },
-
-  /* JUMPERS */
-  { id: 'j1', category: 'jumpers', badge: 'POPULAR', title: 'CLASSIC CASTLE BOUNCE',   subtitle: '13×13 ft · Standard',     image: '/supplies/regular_jumpers/IMG_2030-1.jpg',  price: 'Starting at $___' },
-  { id: 'j2', category: 'jumpers', badge: '',        title: 'GAMING JUMPER',           subtitle: 'Console Theme · 15×15',   image: '/supplies/regular_jumpers/IMG_2245-1.jpg',  price: 'Custom Quote' },
-  { id: 'j3', category: 'jumpers', badge: '',        title: 'OBSTACLE COURSE',         subtitle: 'Dual Lane · 30 ft',       image: '/supplies/regular_jumpers/IMG_2530-1.jpg',  price: 'Starting at $___' },
-  { id: 'j4', category: 'jumpers', badge: 'NEW',     title: 'COMBO BOUNCE + SLIDE',    subtitle: 'All Ages · 18×18',        image: '/supplies/regular_jumpers/IMG_4114-1-1.jpg', price: 'Starting at $___' },
-  { id: 'j5', category: 'jumpers', badge: '',        title: 'SPORTS ARENA',            subtitle: 'Soccer · Basketball',      image: '/supplies/regular_jumpers/IMG_5006-1.jpg',  price: 'Custom Quote' },
-  { id: 'j6', category: 'jumpers', badge: '',        title: 'MINI JUMPER',             subtitle: 'Toddler Safe · Small',    image: '/supplies/regular_jumpers/IMG_5169-1.jpg',  price: 'Starting at $___' },
-  { id: 'j7', category: 'jumpers', badge: '',        title: 'WATER SLIDE COMBO',       subtitle: 'Wet + Dry · 22 ft',       image: '/supplies/regular_jumpers/IMG_6578-1-1.jpg', price: 'Starting at $___' },
-  { id: 'j8', category: 'jumpers', badge: 'SUMMER',  title: 'SPLASH PAD',              subtitle: 'Summer Cooler',           image: '/supplies/water_jumpers/IMG_7959-1.jpg',   price: 'Starting at $___' },
-  { id: 'j9', category: 'jumpers', badge: '',        title: 'INTERACTIVE GAME JUMPER',  subtitle: 'Built-in Games',          image: '/supplies/activity_jumpers/IMG_1666_01-1.jpg', price: 'Custom Quote' },
-  { id: 'j10', category: 'jumpers', badge: '',       title: 'SPORT CHALLENGE',         subtitle: 'Inflatable Arena',        image: '/supplies/activity_jumpers/IMG_2232.jpg',   price: 'Custom Quote' },
-
-  /* PACKAGES — virtual cards (no separate photos in /public/supplies yet) */
-  { id: 'p1', category: 'packages', badge: 'POPULAR', title: 'THE GAMER SETUP',         subtitle: 'Gaming truck + balloon décor',          image: '/supplies/balloon_decor/IMG_2893-1.jpg', price: 'Custom Quote', highlight: true },
-  { id: 'p2', category: 'packages', badge: 'NEW',     title: 'THE ULTIMATE CELEBRATION', subtitle: 'Truck + décor + activity jumper',       image: '/supplies/decors/IMG_4849.jpg',       price: 'Custom Quote', highlight: true },
-  { id: 'p3', category: 'packages', badge: 'SUMMER',  title: 'THE SPLASH PARTY',        subtitle: 'Water jumper + balloons + essentials', image: '/supplies/water_jumpers/IMG_7959.jpg',  price: 'Custom Quote' },
-]
-
 const filteredCatalog = computed(() => {
   if (activeCategory.value === 'all') return catalog
   return catalog.filter((item) => item.category === activeCategory.value)
 })
+
+// Structured data for the rentable catalogue.
+const catalogSchema = computed(() =>
+  serviceListSchema({
+    name: 'Ultimate Players Party Essentials Catalogue',
+    description:
+      'Party rental essentials in Los Angeles — Nerf Wars arenas, water guns, water slide jumpers, inflatable jumpers, party tables, chairs, décor and balloon setups.',
+    items: catalog,
+    path: '/party-essentials'
+  })
+)
+
+// Structured data for the additive services (Nerf Wars, water guns, seating).
+const addOnSchema = computed(() =>
+  additiveServiceSchema({
+    name: 'Ultimate Players Add-On Services',
+    description:
+      'Add-on party services in Los Angeles — Nerf Wars arenas, water gun battles and party tables and chairs, delivered with any gaming truck or gaming bus booking.',
+    services: partyServices,
+    path: '/party-essentials'
+  })
+)
 
 const setCategory = (id) => {
   activeCategory.value = id
@@ -217,7 +215,7 @@ const toggleFaq = (idx) => {
 /* -----------------------------------------------------------
    HERO IMAGE — pick the most representative decor + balloons.
    ----------------------------------------------------------- */
-const heroImage = '/supplies/decors/IMG_4849.jpg'
+const heroImage = '/supplies/decors/IMG_4849.webp'
 
 /* -----------------------------------------------------------
    Entrance reveal — flip cards to visible as soon as the user
@@ -230,7 +228,7 @@ const heroImage = '/supplies/decors/IMG_4849.jpg'
    re-render, which would silently wipe out a class added via
    classList.add() on individual cards.
    ----------------------------------------------------------- */
-const REVEAL_SECTIONS = '.pe-hero, .pe-categories, .pe-catalog, .pe-experience, .pe-how, .pe-faq, .pe-final'
+const REVEAL_SECTIONS = '.pe-hero, .pe-categories, .pe-catalog, .pe-experience, .pe-addons, .pe-how, .pe-faq, .pe-final'
 
 const revealCards = () => {
   const sections = document.querySelectorAll(REVEAL_SECTIONS)
@@ -288,6 +286,14 @@ onUnmounted(() => {
 
 <template>
   <section class="pe-page">
+      <SEOHead
+        :title="seo.title"
+        :description="seo.description"
+        :path="seo.path"
+        :breadcrumb="seo.breadcrumb"
+        :schema="buildRouteGraph('partyEssentials', { catalog, services: partyServices })"
+      />
+
     <!-- 1. HERO -->
     <div class="pe-hero">
       <div class="pe-hero-bg" :style="{ backgroundImage: `url(${heroImage})` }"></div>
@@ -355,7 +361,10 @@ onUnmounted(() => {
           @click="openLightbox(index)"
         >
           <div class="card-img-wrap">
-            <img :src="item.image" :alt="item.title" loading="lazy" />
+            <picture>
+              <source :srcset="item.webp" type="image/webp" />
+              <img :src="item.image" :alt="item.title" loading="lazy" decoding="async" />
+            </picture>
             <div class="card-img-overlay"></div>
             <span v-if="item.badge" class="card-badge">{{ item.badge }}</span>
             <span class="card-expand-hint" aria-hidden="true">
@@ -419,7 +428,55 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <!-- 5. HOW IT WORKS -->
+    <!-- 5. ADD-ON SERVICES -->
+    <div class="pe-addons container">
+      <div class="addon-eyebrow reveal-card">
+        <Sparkles :size="14" class="text-red" />
+        <span>ADD-ON SERVICES</span>
+      </div>
+
+      <h2 class="addon-title reveal-card">
+        LEVEL UP THE <span class="text-red-glow">EXPERIENCE</span>
+      </h2>
+
+      <p class="addon-sub reveal-card">
+        Nerf Wars, water guns and party seating delivered with any gaming truck or
+        gaming bus booking across Los Angeles.
+      </p>
+
+      <div class="addon-grid">
+        <article
+          v-for="svc in partyServices"
+          :key="svc.id"
+          class="addon-card reveal-card"
+        >
+          <div class="addon-card-top">
+            <div class="addon-icon-box">
+              <component :is="serviceIcons[svc.icon]" :size="22" class="text-red" />
+            </div>
+            <span class="addon-num">{{ svc.num }}</span>
+          </div>
+
+          <h3 class="addon-name">{{ svc.title }}</h3>
+          <p class="addon-tagline">{{ svc.tagline }}</p>
+          <p class="addon-desc">{{ svc.description }}</p>
+
+          <ul class="addon-features">
+            <li v-for="f in svc.features" :key="f">
+              <Check :size="14" class="text-red" />
+              <span>{{ f }}</span>
+            </li>
+          </ul>
+
+          <button class="addon-cta" @click="goToBooking">
+            <span>ADD TO MY EVENT</span>
+            <ChevronRight :size="14" />
+          </button>
+        </article>
+      </div>
+    </div>
+
+    <!-- 6. HOW IT WORKS -->
     <div class="pe-how container">
       <div class="how-eyebrow reveal-card">
         <Sparkles :size="14" class="text-red" />
@@ -435,7 +492,7 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <!-- 6. FAQ -->
+    <!-- 7. FAQ -->
     <div class="pe-faq container">
       <div class="faq-eyebrow reveal-card">
         <Sparkles :size="14" class="text-red" />
@@ -464,7 +521,7 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <!-- 7. FINAL CTA -->
+    <!-- 8. FINAL CTA -->
     <div class="pe-final container">
       <div class="final-card reveal-card">
         <div class="final-corner top-left"></div>
@@ -514,11 +571,15 @@ onUnmounted(() => {
 
           <div class="pe-lightbox-body">
             <div class="pe-lightbox-img-wrap">
-              <img
-                :src="lightboxItem.image"
-                :alt="lightboxItem.title"
-                class="pe-lightbox-img"
-              />
+              <picture>
+                <source :srcset="lightboxItem.webp" type="image/webp" />
+                <img
+                  :src="lightboxItem.image"
+                  :alt="lightboxItem.title"
+                  class="pe-lightbox-img"
+                  decoding="async"
+                />
+              </picture>
             </div>
 
             <aside class="pe-lightbox-sidebar">
@@ -605,6 +666,7 @@ onUnmounted(() => {
 .pe-categories.card-in-view .reveal-card,
 .pe-catalog.card-in-view .reveal-card,
 .pe-experience.card-in-view .reveal-card,
+.pe-addons.card-in-view .reveal-card,
 .pe-how.card-in-view .reveal-card,
 .pe-faq.card-in-view .reveal-card,
 .pe-final.card-in-view .reveal-card {
@@ -627,6 +689,7 @@ onUnmounted(() => {
 /* Eyebrow badge */
 .eyebrow-badge,
 .exp-eyebrow,
+.addon-eyebrow,
 .how-eyebrow,
 .faq-eyebrow {
   display: inline-flex;
@@ -1531,5 +1594,151 @@ onUnmounted(() => {
   .pe-lightbox-backdrop { padding: 0.5rem; }
   .pe-lightbox-sidebar { padding: 1.6rem 1.2rem; }
   .lb-title { font-size: 1.3rem; }
+}
+
+/* ================================================================
+   ADD-ON SERVICES — Nerf Wars · Water Guns · Tables & Chairs
+   HUD card language: icon block, numbered index, feature list.
+   ================================================================ */
+.pe-addons {
+  padding: 4rem 1.5rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.addon-title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1.1;
+  margin-bottom: 0.8rem;
+  letter-spacing: 0.02em;
+}
+.addon-sub {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.65);
+  max-width: 640px;
+  margin: 0 auto 2.5rem;
+  line-height: 1.6;
+}
+.addon-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.2rem;
+  text-align: left;
+}
+.addon-card {
+  background: rgba(10, 10, 16, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 1.6rem 1.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  position: relative;
+  transition: border-color 0.25s ease, transform 0.25s ease;
+}
+.addon-card:hover {
+  border-color: rgba(255, 0, 43, 0.5);
+  transform: translateY(-4px);
+}
+.addon-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.2rem;
+}
+.addon-icon-box {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 4px;
+  background: rgba(255, 0, 43, 0.12);
+  border: 1px solid rgba(255, 0, 43, 0.28);
+}
+.addon-num {
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  color: rgba(255, 255, 255, 0.28);
+}
+.addon-name {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  color: #ffffff;
+  margin: 0;
+}
+.addon-tagline {
+  font-family: var(--font-heading);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #ff002b;
+  margin: 0 0 0.2rem;
+}
+.addon-desc {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.62);
+  margin: 0 0 0.4rem;
+}
+.addon-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.addon-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.45;
+}
+.addon-features svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.addon-cta {
+  margin-top: auto;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1rem;
+  background: transparent;
+  border: 1px solid rgba(255, 0, 43, 0.45);
+  border-radius: 3px;
+  color: #ff002b;
+  font-family: var(--font-heading);
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.addon-cta:hover {
+  background: #ff002b;
+  border-color: #ff002b;
+  color: #ffffff;
+}
+
+@media (max-width: 900px) {
+  .addon-grid {
+    grid-template-columns: 1fr;
+    max-width: 460px;
+    margin: 0 auto;
+  }
+  .pe-addons {
+    padding: 3rem 1.25rem;
+  }
 }
 </style>

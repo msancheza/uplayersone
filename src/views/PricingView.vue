@@ -18,91 +18,13 @@ import {
 } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 import siteConfig from '../config/siteConfig.js'
+import { packages } from '../data/packages.js'
+import SEOHead from '../components/SEOHead.vue'
+import { routeSeo } from '../data/seoRoutes.js'
+
+const seo = routeSeo.pricing
 
 const router = useRouter()
-
-const packages = [
-  {
-    id: 1,
-    name: 'Standard Gaming Truck',
-    num: '01',
-    basePrice: 450,
-    baseDuration: 'First 2 Hours',
-    extraHourPrice: 130,
-    tvs: '4 Inside · 2 Outside',
-    tvCount: 6,
-    features: ['A/C Units', 'Stadium Seating', 'Surround System', 'LED Lights'],
-    consoles: [
-      '2× Nintendo Switch',
-      '1× PlayStation 4',
-      '1× PlayStation 5',
-      '1× Xbox One S',
-      '1× Xbox Series X'
-    ],
-    popular: false,
-    tag: 'OUTDOOR & INDOOR'
-  },
-  {
-    id: 2,
-    name: 'Deluxe Gaming Truck',
-    num: '02',
-    basePrice: 450,
-    baseDuration: 'First 2 Hours',
-    extraHourPrice: 130,
-    tvs: '6 TVs All Inside',
-    tvCount: 6,
-    features: ['A/C Units', 'Stadium Seating', 'Surround System', 'LED Lights'],
-    consoles: [
-      '2× Nintendo Switch',
-      '1× PlayStation 4',
-      '1× PlayStation 5',
-      '1× Xbox One S',
-      '1× Xbox Series X'
-    ],
-    popular: true,
-    tag: 'MOST POPULAR'
-  },
-  {
-    id: 3,
-    name: 'Gaming Bus',
-    num: '03',
-    basePrice: 450,
-    baseDuration: 'First 2 Hours',
-    extraHourPrice: 130,
-    tvs: '6 TVs All Inside',
-    tvCount: 6,
-    features: ['Stadium Seating'],
-    consoles: [
-      '2× Nintendo Switch',
-      '1× PlayStation 4',
-      '1× PlayStation 5',
-      '1× Xbox',
-      '1× Xbox Series X'
-    ],
-    popular: false,
-    tag: 'MOBILE BUS'
-  },
-  {
-    id: 4,
-    name: 'Elite Gaming Truck',
-    num: '04',
-    basePrice: 500,
-    baseDuration: 'First 2 Hours',
-    extraHourPrice: 130,
-    tvs: '10 TVs All Inside',
-    tvCount: 10,
-    features: ['A/C Units', 'Stadium Seating', 'Surround System', 'LED Lights'],
-    consoles: [
-      '2× Nintendo Switch',
-      '3× PlayStation 4',
-      '1× PlayStation 5',
-      '3× Xbox One S',
-      '1× Xbox Series X'
-    ],
-    popular: false,
-    tag: 'ULTIMATE 10 TVS'
-  }
-]
 
 const goHome = () => {
   router.push('/')
@@ -115,6 +37,13 @@ const goToBooking = () => {
 
 <template>
   <div class="pricing-page">
+      <SEOHead
+        :title="seo.title"
+        :description="seo.description"
+        :path="seo.path"
+        :breadcrumb="seo.breadcrumb"
+      />
+
     
     <!-- Hero Header Banner -->
     <header class="pricing-hero">

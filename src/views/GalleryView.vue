@@ -3,11 +3,28 @@ import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { ChevronLeft, ChevronRight, X, Sparkles, Maximize2, MapPin, Tv, Gamepad2, ArrowLeft, LayoutGrid, Rows3 } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 import galleryData from '../data/gallery.json'
+import SEOHead from '../components/SEOHead.vue'
+import { routeSeo, buildRouteGraph } from '../data/seoRoutes.js'
+import { imageGallerySchema } from '../data/structuredData.js'
+import { galleryAlt } from '../utils/imageAlt.js'
+
+const seo = routeSeo.gallery
 
 const router = useRouter()
 
 const rawPhotos = galleryData.photos
 const categories = galleryData.categories
+
+// Structured data for the photo archive.
+const gallerySchema = computed(() =>
+  imageGallerySchema({
+    name: 'Ultimate Players Live Event Gallery',
+    description:
+      'Real event photography from Ultimate Players gaming truck and gaming bus rentals across Los Angeles — birthdays, tournaments, corporate activations and community parties.',
+    photos: rawPhotos,
+    path: '/gallery'
+  })
+)
 
 const activeFilter = ref('all')
 const viewMode = ref('masonry')
@@ -167,10 +184,18 @@ onUnmounted(() => {
 
 <template>
   <div class="gallery-page">
+      <SEOHead
+        :title="seo.title"
+        :description="seo.description"
+        :path="seo.path"
+        :breadcrumb="seo.breadcrumb"
+        :schema="buildRouteGraph('gallery', { photos: rawPhotos })"
+      />
+
 
     <!-- ═══════════ HERO HEADER ═══════════ -->
     <header class="gv-hero">
-      <div class="gv-hero-bg" :style="{ backgroundImage: `url(${filteredPhotos[0]?.url || '/galleries/01.jpg'})` }"></div>
+      <div class="gv-hero-bg" :style="{ backgroundImage: `url(${filteredPhotos[0]?.webp || '/galleries/01.webp'})` }"></div>
       <div class="gv-hero-overlay"></div>
 
       <div class="gv-hero-content">
@@ -264,7 +289,18 @@ onUnmounted(() => {
           @click="openLightbox(index)"
         >
           <div class="gv-tile-frame">
-            <img :src="photo.url" :alt="photo.title" class="gv-img" loading="lazy" />
+            <picture>
+              <source :srcset="photo.webp" type="image/webp" />
+              <img
+                :src="photo.url"
+                :alt="galleryAlt(photo)"
+                class="gv-img"
+                loading="lazy"
+                decoding="async"
+                :width="photo.width"
+                :height="photo.height"
+              />
+            </picture>
 
             <div class="gv-tile-shade"></div>
 
@@ -350,7 +386,10 @@ onUnmounted(() => {
 
             <div class="gv-lb-body">
               <div class="gv-lb-media">
-                <img :src="currentPhoto.url" :alt="currentPhoto.title" class="gv-lb-img" />
+                <picture>
+                  <source :srcset="currentPhoto.webp" type="image/webp" />
+                  <img :src="currentPhoto.url" :alt="galleryAlt(currentPhoto)" class="gv-lb-img" decoding="async" />
+                </picture>
 
                 <!-- Minimal HUD — mobile hero -->
                 <div class="gv-lb-hud">

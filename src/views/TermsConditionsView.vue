@@ -15,6 +15,10 @@ import {
 } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 import siteConfig from '../config/siteConfig.js'
+import SEOHead from '../components/SEOHead.vue'
+import { routeSeo } from '../data/seoRoutes.js'
+
+const seo = routeSeo.terms
 
 const router = useRouter()
 
@@ -25,6 +29,13 @@ const goHome = () => {
 
 <template>
   <div class="legal-page">
+      <SEOHead
+        :title="seo.title"
+        :description="seo.description"
+        :path="seo.path"
+        :breadcrumb="seo.breadcrumb"
+      />
+
     
     <!-- Hero Banner -->
     <header class="legal-hero">

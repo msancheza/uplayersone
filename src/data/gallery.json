@@ -26,7 +26,10 @@
       "location": "LOS ANGELES, CA",
       "tag": "BIRTHDAY PARTY",
       "specs": "6 TVs Inside · Stadium Seating",
-      "description": "Full interior stadium seating with custom neon lighting and climate control for the ultimate birthday celebration."
+      "description": "Full interior stadium seating with custom neon lighting and climate control for the ultimate birthday celebration.",
+      "webp": "/galleries/01.webp",
+      "width": 1440,
+      "height": 1440
     },
     {
       "id": 2,
@@ -36,7 +39,10 @@
       "location": "PASADENA, CA",
       "tag": "TOURNAMENT",
       "specs": "Multi-Display Battle Royale",
-      "description": "High-octane tournament gaming setup with synchronized displays and pro controllers."
+      "description": "High-octane tournament gaming setup with synchronized displays and pro controllers.",
+      "webp": "/galleries/02.webp",
+      "width": 1200,
+      "height": 1200
     },
     {
       "id": 3,
@@ -46,7 +52,10 @@
       "location": "BURBANK, CA",
       "tag": "BIRTHDAY PARTY",
       "specs": "Mobile Gaming Bus · 6 TVs",
-      "description": "Spacious walk-through luxury gaming bus setup delivering curb-side birthday party entertainment."
+      "description": "Spacious walk-through luxury gaming bus setup delivering curb-side birthday party entertainment.",
+      "webp": "/galleries/03.webp",
+      "width": 1440,
+      "height": 1440
     },
     {
       "id": 4,
@@ -56,7 +65,10 @@
       "location": "GLENDALE, CA",
       "tag": "CORPORATE",
       "specs": "Executive VIP Experience",
-      "description": "Engaging corporate celebration and team bonding with multiplayer party games and dual exterior screens."
+      "description": "Engaging corporate celebration and team bonding with multiplayer party games and dual exterior screens.",
+      "webp": "/galleries/04.webp",
+      "width": 1440,
+      "height": 1440
     },
     {
       "id": 5,
@@ -66,7 +78,10 @@
       "location": "LONG BEACH, CA",
       "tag": "VIP PARTY",
       "specs": "10 TVs · Elite Gaming Truck",
-      "description": "Our premier 10-screen setup accommodating massive groups with simultaneous multiplayer action."
+      "description": "Our premier 10-screen setup accommodating massive groups with simultaneous multiplayer action.",
+      "webp": "/galleries/05.webp",
+      "width": 1440,
+      "height": 1440
     },
     {
       "id": 6,
@@ -76,7 +91,10 @@
       "location": "TORRANCE, CA",
       "tag": "COMPETITIVE",
       "specs": "8-Player Local Multiplayer",
-      "description": "Side-by-side racing battles on 4K high-refresh displays with vibrant neon backlighting."
+      "description": "Side-by-side racing battles on 4K high-refresh displays with vibrant neon backlighting.",
+      "webp": "/galleries/875.webp",
+      "width": 1200,
+      "height": 628
     },
     {
       "id": 7,
@@ -86,7 +104,10 @@
       "location": "SANTA MONICA, CA",
       "tag": "NIGHT PARTY",
       "specs": "Surround Sound + Neon Glow",
-      "description": "Dynamic RGB LED ambient lighting and powerful audio systems for immersive evening gaming."
+      "description": "Dynamic RGB LED ambient lighting and powerful audio systems for immersive evening gaming.",
+      "webp": "/galleries/876.webp",
+      "width": 1200,
+      "height": 840
     },
     {
       "id": 8,
@@ -96,7 +117,10 @@
       "location": "IRVINE, CA",
       "tag": "COMMUNITY",
       "specs": "All-Age Supervised Gaming",
-      "description": "Certified Game Coaches managing rotations for school carnivals, fundraisers, and reward days."
+      "description": "Certified Game Coaches managing rotations for school carnivals, fundraisers, and reward days.",
+      "webp": "/galleries/877.webp",
+      "width": 900,
+      "height": 1200
     },
     {
       "id": 9,
@@ -106,7 +130,10 @@
       "location": "ANAHEIM, CA",
       "tag": "TOURNAMENT",
       "specs": "Pro Gaming Bracket Setup",
-      "description": "Competitive Super Smash Bros tournament setup with zero-lag monitors and tournament brackets."
+      "description": "Competitive Super Smash Bros tournament setup with zero-lag monitors and tournament brackets.",
+      "webp": "/galleries/878.webp",
+      "width": 1200,
+      "height": 900
     },
     {
       "id": 10,
@@ -116,7 +143,10 @@
       "location": "ALHAMBRA, CA",
       "tag": "BIRTHDAY",
       "specs": "Climate Controlled Interior",
-      "description": "Comfortable, climate-controlled trailer interior equipped with the latest PlayStation 5 and Xbox consoles."
+      "description": "Comfortable, climate-controlled trailer interior equipped with the latest PlayStation 5 and Xbox consoles.",
+      "webp": "/galleries/88.webp",
+      "width": 1200,
+      "height": 800
     },
     {
       "id": 11,
@@ -126,7 +156,10 @@
       "location": "DOWNTOWN LA, CA",
       "tag": "CORPORATE",
       "specs": "Corporate Event Setup",
-      "description": "Delivering high-end mobile entertainment for company picnics, product launches, and employee appreciation."
+      "description": "Delivering high-end mobile entertainment for company picnics, product launches, and employee appreciation.",
+      "webp": "/galleries/881.webp",
+      "width": 900,
+      "height": 1200
     },
     {
       "id": 12,
@@ -136,7 +169,10 @@
       "location": "BEVERLY HILLS, CA",
       "tag": "VIP BIRTHDAY",
       "specs": "Custom Ambient LEDs · PS5 & Switch",
-      "description": "Sleek cyberpunk-inspired interior with custom leather seating and top-tier gaming hardware."
+      "description": "Sleek cyberpunk-inspired interior with custom leather seating and top-tier gaming hardware.",
+      "webp": "/galleries/882.webp",
+      "width": 900,
+      "height": 1200
     },
     {
       "id": 13,
@@ -146,7 +182,10 @@
       "location": "PASADENA, CA",
       "tag": "BIRTHDAY",
       "specs": "Dedicated Game Coach on Site",
-      "description": "Stress-free party experience with enthusiastic coaches guiding gameplay, switching titles, and managing players."
+      "description": "Stress-free party experience with enthusiastic coaches guiding gameplay, switching titles, and managing players.",
+      "webp": "/galleries/883.webp",
+      "width": 900,
+      "height": 1200
     },
     {
       "id": 14,
@@ -156,7 +195,10 @@
       "location": "WEST HOLLYWOOD, CA",
       "tag": "TOURNAMENT",
       "specs": "High-Refresh 4K Displays",
-      "description": "Adrenaline-pumping Rocket League 3v3 team competitions on ultra-responsive displays."
+      "description": "Adrenaline-pumping Rocket League 3v3 team competitions on ultra-responsive displays.",
+      "webp": "/galleries/884.webp",
+      "width": 1200,
+      "height": 1200
     },
     {
       "id": 15,
@@ -166,7 +208,10 @@
       "location": "SAN GABRIEL, CA",
       "tag": "COMMUNITY & CORP",
       "specs": "Dual Weatherproof Outdoor Displays",
-      "description": "External entertainment station featuring Just Dance and outdoor multiplayer titles under awning cover."
+      "description": "External entertainment station featuring Just Dance and outdoor multiplayer titles under awning cover.",
+      "webp": "/galleries/90.webp",
+      "width": 1200,
+      "height": 800
     },
     {
       "id": 16,
@@ -176,7 +221,10 @@
       "location": "ARCADIA, CA",
       "tag": "BIRTHDAY",
       "specs": "Outdoor TV Station + Wireless Audio",
-      "description": "Active outdoor party gaming allowing larger crowds to participate simultaneously in rhythm and party games."
+      "description": "Active outdoor party gaming allowing larger crowds to participate simultaneously in rhythm and party games.",
+      "webp": "/galleries/92.webp",
+      "width": 1200,
+      "height": 800
     },
     {
       "id": 17,
@@ -186,7 +234,10 @@
       "location": "MONTEREY PARK, CA",
       "tag": "TOURNAMENT",
       "specs": "Network Linked Consoles",
-      "description": "Locally networked console matrix enabling seamless LAN-party style gaming competitions."
+      "description": "Locally networked console matrix enabling seamless LAN-party style gaming competitions.",
+      "webp": "/galleries/94.webp",
+      "width": 900,
+      "height": 1200
     },
     {
       "id": 18,
@@ -196,7 +247,10 @@
       "location": "CULVER CITY, CA",
       "tag": "CORPORATE",
       "specs": "Custom Branding & Media Capable",
-      "description": "Mobile gaming activation ideal for media events, studio promotions, and corporate marketing."
+      "description": "Mobile gaming activation ideal for media events, studio promotions, and corporate marketing.",
+      "webp": "/galleries/96.webp",
+      "width": 1200,
+      "height": 800
     },
     {
       "id": 19,
@@ -206,7 +260,10 @@
       "location": "EL MONTE, CA",
       "tag": "BIRTHDAY PARTY",
       "specs": "Co-op Multiplayer World",
-      "description": "Collaborative crafting and adventure sessions tailored for younger kids and creative squads."
+      "description": "Collaborative crafting and adventure sessions tailored for younger kids and creative squads.",
+      "webp": "/galleries/960.webp",
+      "width": 583,
+      "height": 1200
     },
     {
       "id": 20,
@@ -216,7 +273,10 @@
       "location": "INGLEWOOD, CA",
       "tag": "TOURNAMENT",
       "specs": "4K Sports Simulation Display",
-      "description": "Gridiron showdowns on huge 4K screens with immersive stadium sound."
+      "description": "Gridiron showdowns on huge 4K screens with immersive stadium sound.",
+      "webp": "/galleries/961.webp",
+      "width": 1200,
+      "height": 675
     },
     {
       "id": 21,
@@ -226,7 +286,10 @@
       "location": "WALNUT, CA",
       "tag": "BIRTHDAY",
       "specs": "Fast Action Group Gaming",
-      "description": "Exciting group gameplay featuring favorite fan-made minigames and obstacle courses."
+      "description": "Exciting group gameplay featuring favorite fan-made minigames and obstacle courses.",
+      "webp": "/galleries/962.webp",
+      "width": 1200,
+      "height": 628
     },
     {
       "id": 22,
@@ -236,7 +299,10 @@
       "location": "DIAMOND BAR, CA",
       "tag": "COMMUNITY EVENT",
       "specs": "Multi-Trailer Deployment",
-      "description": "Deploying our fleet across city parks, block parties, and large-scale charity gatherings."
+      "description": "Deploying our fleet across city parks, block parties, and large-scale charity gatherings.",
+      "webp": "/galleries/964.webp",
+      "width": 1200,
+      "height": 900
     },
     {
       "id": 23,
@@ -246,7 +312,10 @@
       "location": "ROWLAND HEIGHTS, CA",
       "tag": "TEEN BIRTHDAY",
       "specs": "High-Definition Headsets & Screens",
-      "description": "Squad-based battle arena with surround sound and customized party playlists."
+      "description": "Squad-based battle arena with surround sound and customized party playlists.",
+      "webp": "/galleries/965.webp",
+      "width": 1200,
+      "height": 800
     },
     {
       "id": 24,
@@ -256,7 +325,10 @@
       "location": "MONROVIA, CA",
       "tag": "TOURNAMENT",
       "specs": "Multi-Console Basketball League",
-      "description": "Fast-paced basketball tournaments with instant replay and spectator cheering areas."
+      "description": "Fast-paced basketball tournaments with instant replay and spectator cheering areas.",
+      "webp": "/galleries/966.webp",
+      "width": 1200,
+      "height": 800
     },
     {
       "id": 25,
@@ -266,7 +338,10 @@
       "location": "SANTA CLARITA, CA",
       "tag": "CORPORATE",
       "specs": "Tech & VR Showcase Unit",
-      "description": "High-tech lounge offering attendees a break with cutting-edge gaming and virtual reality."
+      "description": "High-tech lounge offering attendees a break with cutting-edge gaming and virtual reality.",
+      "webp": "/galleries/967.webp",
+      "width": 1200,
+      "height": 900
     },
     {
       "id": 26,
@@ -276,7 +351,10 @@
       "location": "GLENDORA, CA",
       "tag": "FAMILY BIRTHDAY",
       "specs": "Nintendo Switch All-Stars",
-      "description": "Family-friendly minigames keeping kids, parents, and friends laughing and competing together."
+      "description": "Family-friendly minigames keeping kids, parents, and friends laughing and competing together.",
+      "webp": "/galleries/968.webp",
+      "width": 1200,
+      "height": 800
     },
     {
       "id": 27,
@@ -286,7 +364,10 @@
       "location": "CHINO HILLS, CA",
       "tag": "TOURNAMENT",
       "specs": "Synchronized Displays & Pro Audio",
-      "description": "Tactical trio competitions with crisp visual clarity and lag-free gameplay."
+      "description": "Tactical trio competitions with crisp visual clarity and lag-free gameplay.",
+      "webp": "/galleries/971.webp",
+      "width": 583,
+      "height": 1200
     },
     {
       "id": 28,
@@ -296,7 +377,10 @@
       "location": "WHITTIER, CA",
       "tag": "COMMUNITY & YOUTH",
       "specs": "Curated Family-Safe Game Library",
-      "description": "Safe, wholesome, and thrilling mobile gaming experience curated strictly to host preferences."
+      "description": "Safe, wholesome, and thrilling mobile gaming experience curated strictly to host preferences.",
+      "webp": "/galleries/972.webp",
+      "width": 1200,
+      "height": 583
     },
     {
       "id": 29,
@@ -306,7 +390,10 @@
       "location": "COVINA, CA",
       "tag": "BIRTHDAY & VR",
       "specs": "Oculus Quest 2 VR Headsets Included",
-      "description": "Step into the virtual world with immersive 360-degree VR gaming guided by experienced game coaches."
+      "description": "Step into the virtual world with immersive 360-degree VR gaming guided by experienced game coaches.",
+      "webp": "/galleries/98.webp",
+      "width": 1200,
+      "height": 800
     },
     {
       "id": 30,
@@ -316,7 +403,10 @@
       "location": "CALIFORNIA",
       "tag": "BIRTHDAY & VR",
       "specs": "Oculus Quest 2 VR Headsets Included",
-      "description": "Step into the virtual world with immersive 360-degree VR gaming guided by experienced game coaches."
+      "description": "Step into the virtual world with immersive 360-degree VR gaming guided by experienced game coaches.",
+      "webp": "/galleries/22433.webp",
+      "width": 2048,
+      "height": 1536
     },
     {
       "id": 31,
@@ -326,7 +416,10 @@
       "location": "CALIFORNIA",
       "tag": "BIRTHDAY & VR",
       "specs": "Oculus Quest 2 VR Headsets Included",
-      "description": "Step into the virtual world with immersive 360-degree VR gaming guided by experienced game coaches."
+      "description": "Step into the virtual world with immersive 360-degree VR gaming guided by experienced game coaches.",
+      "webp": "/galleries/22436.webp",
+      "width": 1536,
+      "height": 2048
     },
     {
       "id": 32,
@@ -336,7 +429,10 @@
       "location": "CALIFORNIA",
       "tag": "BIRTHDAY & VR",
       "specs": "Oculus Quest 2 VR Headsets Included",
-      "description": "Step into the virtual world with immersive 360-degree VR gaming guided by experienced game coaches."
+      "description": "Step into the virtual world with immersive 360-degree VR gaming guided by experienced game coaches.",
+      "webp": "/galleries/22437.webp",
+      "width": 1536,
+      "height": 2048
     },
     {
       "id": 33,
@@ -346,7 +442,10 @@
       "location": "CALIFORNIA",
       "tag": "BIRTHDAY & VR",
       "specs": "Oculus Quest 2 VR Headsets Included",
-      "description": "Step into the virtual world with immersive 360-degree VR gaming guided by experienced game coaches."
+      "description": "Step into the virtual world with immersive 360-degree VR gaming guided by experienced game coaches.",
+      "webp": "/galleries/22906.webp",
+      "width": 1179,
+      "height": 1415
     },
     {
       "id": 34,
@@ -356,7 +455,10 @@
       "location": "CALIFORNIA",
       "tag": "BIRTHDAY & VR",
       "specs": "Oculus Quest 2 VR Headsets Included",
-      "description": "Step into the virtual world with immersive 360-degree VR gaming guided by experienced game coaches."
+      "description": "Step into the virtual world with immersive 360-degree VR gaming guided by experienced game coaches.",
+      "webp": "/galleries/4509.webp",
+      "width": 2048,
+      "height": 1433
     },
     {
       "id": 35,
@@ -366,7 +468,10 @@
       "location": "CALIFORNIA",
       "tag": "BIRTHDAY & VR",
       "specs": "Oculus Quest 2 VR Headsets Included",
-      "description": "Step into the virtual world with immersive 360-degree VR gaming guided by experienced game coaches."
+      "description": "Step into the virtual world with immersive 360-degree VR gaming guided by experienced game coaches.",
+      "webp": "/galleries/7109.webp",
+      "width": 1536,
+      "height": 2048
     },
     {
       "id": 36,
@@ -376,7 +481,10 @@
       "location": "CALIFORNIA",
       "tag": "BIRTHDAY & VR",
       "specs": "Oculus Quest 2 VR Headsets Included",
-      "description": "Step into the virtual world with immersive 360-degree VR gaming guided by experienced game coaches."
+      "description": "Step into the virtual world with immersive 360-degree VR gaming guided by experienced game coaches.",
+      "webp": "/galleries/7111.webp",
+      "width": 1536,
+      "height": 2048
     },
     {
       "id": 37,
@@ -386,7 +494,10 @@
       "location": "CALIFORNIA",
       "tag": "BIRTHDAY & VR",
       "specs": "Oculus Quest 2 VR Headsets Included",
-      "description": "Step into the virtual world with immersive 360-degree VR gaming guided by experienced game coaches."
+      "description": "Step into the virtual world with immersive 360-degree VR gaming guided by experienced game coaches.",
+      "webp": "/galleries/19604.webp",
+      "width": 2048,
+      "height": 1536
     },
     {
       "id": 38,
@@ -396,7 +507,10 @@
       "location": "CALIFORNIA",
       "tag": "BIRTHDAY & VR",
       "specs": "Oculus Quest 2 VR Headsets Included",
-      "description": "Step into the virtual world with immersive 360-degree VR gaming guided by experienced game coaches."
+      "description": "Step into the virtual world with immersive 360-degree VR gaming guided by experienced game coaches.",
+      "webp": "/galleries/19607.webp",
+      "width": 2048,
+      "height": 1536
     },
     {
       "id": 39,
@@ -406,7 +520,10 @@
       "location": "CALIFORNIA",
       "tag": "BIRTHDAY & VR",
       "specs": "Oculus Quest 2 VR Headsets Included",
-      "description": "Step into the virtual world with immersive 360-degree VR gaming guided by experienced game coaches."
+      "description": "Step into the virtual world with immersive 360-degree VR gaming guided by experienced game coaches.",
+      "webp": "/galleries/22905.webp",
+      "width": 1179,
+      "height": 1529
     },
     {
       "id": 40,
@@ -416,7 +533,10 @@
       "location": "CALIFORNIA",
       "tag": "BIRTHDAY & VR",
       "specs": "Oculus Quest 2 VR Headsets Included",
-      "description": "Step into the virtual world with immersive 360-degree VR gaming guided by experienced game coaches."
+      "description": "Step into the virtual world with immersive 360-degree VR gaming guided by experienced game coaches.",
+      "webp": "/galleries/22906.webp",
+      "width": 1179,
+      "height": 1415
     }
   ]
 }
