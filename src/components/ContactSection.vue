@@ -761,7 +761,6 @@ const handleSubmit = () => {
 @media (max-width: 768px) {
   .request-builder-section {
     padding: 5rem 0 6rem;
-    overflow-x: hidden;
   }
 
   /* Reserve right space so content never sits under the ScrollNav

@@ -165,7 +165,6 @@ const scrollToContact = () => {
   color: #111116;
   padding: 7rem 0 6.5rem;
   position: relative;
-  overflow: hidden;
 }
 
 /* Red accent stripe at top transition */

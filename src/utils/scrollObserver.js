@@ -38,6 +38,9 @@ export function initScrollObserver() {
   const parallaxElements = document.querySelectorAll('[data-parallax]')
 
   const handleScroll = () => {
+    // Disable parallax calculations on mobile viewports to prevent iOS Safari momentum scroll hitches
+    if (typeof window !== 'undefined' && window.innerWidth <= 768) return
+
     if (!ticking) {
       window.requestAnimationFrame(() => {
         const windowHeight = window.innerHeight
