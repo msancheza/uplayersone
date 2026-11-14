@@ -17,7 +17,14 @@ let observers = []
 
 const scrollTo = (id) => {
   const el = document.getElementById(id)
-  if (el) el.scrollIntoView({ behavior: 'smooth' })
+  if (!el) return
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768
+  const navOffset = isMobile ? 70 : 92
+  const top = el.getBoundingClientRect().top + window.pageYOffset - navOffset
+  window.scrollTo({
+    top: Math.max(0, top),
+    behavior: 'smooth'
+  })
 }
 
 const getActiveIndex = () => sections.findIndex(s => s.id === activeSection.value)
@@ -107,6 +114,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
+  pointer-events: none;
 }
 
 /* ============================================================
@@ -145,6 +153,7 @@ onUnmounted(() => {
   padding: 7px 0;
   /* wide enough for label + dot */
   width: 90px;
+  pointer-events: auto;
 }
 
 /* The dot itself */
@@ -248,6 +257,7 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
     justify-content: center;
+    pointer-events: auto;
   }
 
   .mobile-dot {

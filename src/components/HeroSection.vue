@@ -58,43 +58,39 @@ import { useSelectedTruck } from '../composables/useSelectedTruck.js'
 const router = useRouter()
 const { setSelectedTruckId } = useSelectedTruck()
 
-// Navigate from the "POWERFUL CONSOLES" hero card to the OUR FLEET
-// section (#prices).
+// Smooth scroll helper that respects fixed header offset across desktop and mobile
+const smoothScrollTo = (targetId) => {
+  const el = document.getElementById(targetId)
+  if (!el) return
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768
+  const navOffset = isMobile ? 70 : 92
+  const rect = el.getBoundingClientRect()
+  const targetTop = rect.top + window.pageYOffset - navOffset
+
+  window.scrollTo({
+    top: Math.max(0, targetTop),
+    behavior: 'smooth'
+  })
+}
+
+// Navigate from the "POWERFUL CONSOLES" hero card to the OUR FLEET section (#prices).
 const goToFleet = () => {
   const onHome = router.currentRoute.value.path === '/' || router.currentRoute.value.path === ''
   if (onHome) {
-    const el = document.getElementById('prices')
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      history.replaceState(null, '', '#prices')
-      return
-    }
+    smoothScrollTo('prices')
+  } else {
+    router.push({ path: '/', hash: '#prices' })
   }
-  router.push({ path: '/', hash: '#prices' }).then(() => {
-    setTimeout(() => {
-      const el = document.getElementById('prices')
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }, 150)
-  })
 }
 
 // Navigate from the "PERFECT FOR ANY EVENT" hero card to the EVENTS section (#events).
 const goToEvents = () => {
   const onHome = router.currentRoute.value.path === '/' || router.currentRoute.value.path === ''
   if (onHome) {
-    const el = document.getElementById('events')
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      history.replaceState(null, '', '#events')
-      return
-    }
+    smoothScrollTo('events')
+  } else {
+    router.push({ path: '/', hash: '#events' })
   }
-  router.push({ path: '/', hash: '#events' }).then(() => {
-    setTimeout(() => {
-      const el = document.getElementById('events')
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }, 150)
-  })
 }
 
 const hoveredVehicle = ref(null)
@@ -127,8 +123,12 @@ onUnmounted(() => {
 })
 
 const navigateToContact = () => {
-  const el = document.getElementById('contact')
-  if (el) el.scrollIntoView({ behavior: 'smooth' })
+  const onHome = router.currentRoute.value.path === '/' || router.currentRoute.value.path === ''
+  if (onHome) {
+    smoothScrollTo('contact')
+  } else {
+    router.push({ path: '/', hash: '#contact' })
+  }
 }
 
 const navigateToTrucks = (truckId = null) => {
@@ -136,8 +136,12 @@ const navigateToTrucks = (truckId = null) => {
     selectedVehicle.value = truckId
     setSelectedTruckId(truckId)
   }
-  const el = document.getElementById('prices')
-  if (el) el.scrollIntoView({ behavior: 'smooth' })
+  const onHome = router.currentRoute.value.path === '/' || router.currentRoute.value.path === ''
+  if (onHome) {
+    smoothScrollTo('prices')
+  } else {
+    router.push({ path: '/', hash: '#prices' })
+  }
 }
 </script>
 
@@ -1001,6 +1005,7 @@ const navigateToTrucks = (truckId = null) => {
   }
 
   .hero-dashboard-container {
+    transform: none !important;
     padding: 5.5rem 1rem 1rem 1rem;
     gap: 1rem;
     height: auto;

@@ -62,22 +62,21 @@ const observeTruckCards = () => {
   cards.forEach((card) => truckObserver.observe(card))
 }
 
-// When the hero clicks a vehicle card it sets selectedTruckId, then
-// navigates to #prices. Once the trucks grid is mounted, scroll the
-// chosen card into view so it lands centered, then re-trigger the
-// cascade so it feels intentional.
+// When the hero clicks a vehicle card, it sets selectedTruckId.
+// On desktop screens, gently ensure the chosen card is in view.
+// In mobile, we avoid secondary programmatic scrolls to prevent touch-scroll lock.
 watch(selectedTruckId, async (newId) => {
   if (newId === null) return
-  await nextTick()
-  setTimeout(() => {
-    const el = document.querySelector(`[data-truck-id="${newId}"]`)
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }
-    // Replay the entrance animation after the scroll lands.
-    observeTruckCards()
-  }, 600)
-}, { immediate: true })
+  if (typeof window !== 'undefined' && window.innerWidth > 768) {
+    await nextTick()
+    setTimeout(() => {
+      const el = document.querySelector(`[data-truck-id="${newId}"]`)
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+      }
+    }, 350)
+  }
+})
 
 onMounted(() => {
   nextTick(() => {
