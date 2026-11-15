@@ -1,0 +1,340 @@
+/* ============================================================
+   BOOKING FORM — shared feedback styles
+   Imported by the two booking forms (home section + /contact page)
+   inside their <style scoped> blocks, so both screens behave
+   identically without duplicating the rules.
+   ============================================================ */
+
+/* Honeypot: invisible to people, reachable for bots. */
+.hp-field {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* ── Inline field error state ── */
+.has-error input,
+.has-error textarea,
+.has-error select {
+  border-color: #ff002b !important;
+  background: rgba(255, 0, 43, 0.06) !important;
+  box-shadow: 0 0 12px rgba(255, 0, 43, 0.3) !important;
+}
+
+.field-error {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-heading);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #ff6b85;
+  animation: field-error-in 0.25s ease both;
+}
+
+@keyframes field-error-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Friendly error banner — no technical detail reaches the visitor ── */
+.form-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.2rem 1.4rem;
+  background: rgba(255, 0, 43, 0.1);
+  border: 1px solid rgba(255, 0, 43, 0.5);
+  border-left: 4px solid #ff002b;
+  border-radius: 5px;
+}
+
+.alert-icon-wrap {
+  color: #ff002b;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.alert-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.alert-title {
+  font-family: var(--font-heading);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: #ff002b;
+}
+
+.alert-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1.55;
+}
+
+.alert-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.35rem;
+}
+
+.alert-retry-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: #ff002b;
+  color: #ffffff;
+  border: none;
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  padding: 0.6rem 1.1rem;
+  cursor: pointer;
+  clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+  transition: all 0.2s ease;
+}
+
+.alert-retry-btn:hover {
+  background: #d60024;
+  box-shadow: 0 0 18px rgba(255, 0, 43, 0.6);
+}
+
+.alert-call-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+  text-decoration: none;
+  opacity: 0.85;
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.alert-call-link:hover {
+  color: #ff002b;
+  opacity: 1;
+}
+
+/* Banner slide-in */
+.banner-slide-enter-active,
+.banner-slide-leave-active {
+  transition: opacity 0.28s ease, transform 0.28s ease;
+}
+
+.banner-slide-enter-from,
+.banner-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* ── Sending state ── */
+.btn-submit-request:disabled,
+.btn-submit-contact:disabled {
+  background: #7a0018;
+  cursor: progress;
+  transform: none;
+  box-shadow: none;
+}
+
+.spin-icon {
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.submit-status-live {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-heading);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: #ff002b;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ff002b;
+  animation: status-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(255, 0, 43, 0.5); }
+  50% { opacity: 0.65; box-shadow: 0 0 0 6px rgba(255, 0, 43, 0); }
+}
+
+/* ── Success: transmission badge ── */
+.success-transmit-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--font-heading);
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.24em;
+  color: #ff002b;
+  background: rgba(255, 0, 43, 0.1);
+  border: 1px solid rgba(255, 0, 43, 0.35);
+  border-radius: 3px;
+  padding: 0.4rem 1rem;
+}
+
+.transmit-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ff002b;
+  box-shadow: 0 0 10px rgba(255, 0, 43, 0.9);
+  animation: transmit-blink 1.4s ease-in-out infinite;
+}
+
+@keyframes transmit-blink {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.7); }
+}
+
+/* ── Success: reference code ── */
+.success-reference-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  width: 100%;
+  max-width: 500px;
+  padding: 1.1rem 1.5rem;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px dashed rgba(255, 0, 43, 0.45);
+  border-radius: 4px;
+}
+
+.ref-label {
+  font-family: var(--font-heading);
+  font-size: 0.56rem;
+  font-weight: 900;
+  letter-spacing: 0.22em;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.ref-value {
+  font-family: var(--font-mono, 'Courier New', monospace);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #ff002b;
+  text-shadow: 0 0 16px rgba(255, 0, 43, 0.5);
+}
+
+.ref-hint {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* ── Success: what happens next ── */
+.next-steps-block {
+  width: 100%;
+  max-width: 500px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.next-steps-label {
+  font-family: var(--font-heading);
+  font-size: 0.6rem;
+  font-weight: 900;
+  letter-spacing: 0.22em;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.next-steps-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.next-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.5;
+}
+
+.step-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ff002b;
+  box-shadow: 0 0 8px rgba(255, 0, 43, 0.7);
+  flex-shrink: 0;
+  margin-top: 0.5rem;
+}
+
+/* ── Success: actions ── */
+.success-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.4rem;
+}
+
+.success-call-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #ff002b;
+  color: #ffffff;
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  padding: 0.85rem 1.5rem;
+  text-decoration: none;
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  transition: all 0.25s ease;
+}
+
+.success-call-btn:hover {
+  background: #d60024;
+  box-shadow: 0 0 26px rgba(255, 0, 43, 0.7);
+  transform: translateY(-2px);
+}
+
+.btn-reset-form,
+.btn-start-another {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}

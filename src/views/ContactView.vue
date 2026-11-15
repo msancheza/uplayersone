@@ -1,5 +1,4 @@
 <script setup>
-import { ref } from 'vue'
 import {
   ArrowLeft,
   Sparkles,
@@ -16,34 +15,40 @@ import {
   Truck,
   HelpCircle,
   Rocket,
+  AlertTriangle,
+  Loader2,
+  RotateCcw,
+  PhoneCall
 } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 import siteConfig from '../config/siteConfig.js'
 import SEOHead from '../components/SEOHead.vue'
 import { routeSeo } from '../data/seoRoutes.js'
+import { useBookingRequest } from '../composables/useBookingRequest.js'
 
 const seo = routeSeo.contact
 
 const router = useRouter()
 
-const form = ref({
-  eventDate: '',
-  timeFrame: 'Afternoon (1:00 PM – 5:00 PM)',
-  zipCode: '',
-  truckType: 'Deluxe Gaming Truck (6 TVs Inside · Most Popular)',
-  eventType: 'Birthday Party',
-  addOculus: false,
-  name: '',
-  email: '',
-  phone: '',
-  notes: ''
-})
+const {
+  form,
+  errorMessage,
+  errorKind,
+  reference,
+  isSending,
+  isSuccess,
+  isError,
+  errorFor,
+  handleBlur,
+  submit,
+  reset,
+  minDate,
+  maxNotesLength
+} = useBookingRequest()
 
-const submitted = ref(false)
-
-const handleSubmit = () => {
-  if (form.value.name && form.value.email && form.value.phone && form.value.eventDate && form.value.zipCode) {
-    submitted.value = true
+const handleSubmit = async () => {
+  const sent = await submit()
+  if (sent) {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 }
@@ -223,7 +228,7 @@ const scrollToRequestForm = () => {
 
             <!-- Right Column: The Form -->
             <div class="booking-form-col">
-              <div v-if="!submitted" id="start-event-request-form" class="form-card-box">
+              <div v-if="!isSuccess" id="start-event-request-form" class="form-card-box">
                 
                 <div class="form-title-bar">
                   <div>
@@ -235,8 +240,19 @@ const scrollToRequestForm = () => {
                   </div>
                 </div>
 
-                <form @submit.prevent="handleSubmit" class="main-contact-form">
-                  
+                <form @submit.prevent="handleSubmit" class="main-contact-form" novalidate>
+
+                  <!-- Honeypot: hidden from people, fills only for bots -->
+                  <input
+                    type="text"
+                    name="website"
+                    tabindex="-1"
+                    autocomplete="off"
+                    aria-hidden="true"
+                    class="hp-field"
+                    v-model="form.website"
+                  />
+
                   <!-- Step 1 -->
                   <div class="form-step-group">
                     <div class="step-header">
@@ -245,9 +261,21 @@ const scrollToRequestForm = () => {
                     </div>
 
                     <div class="form-row form-row-3">
-                      <div class="input-field">
+                      <div class="input-field" :class="{ 'has-error': errorFor('eventDate') }">
                         <label>Event Date *</label>
-                        <input v-model="form.eventDate" type="date" required />
+                        <input
+                          v-model="form.eventDate"
+                          type="date"
+                          required
+                          :min="minDate"
+                          data-field="eventDate"
+                          :aria-invalid="!!errorFor('eventDate')"
+                          :aria-describedby="errorFor('eventDate') ? 'cv-err-eventDate' : null"
+                          @blur="handleBlur('eventDate')"
+                        />
+                        <span v-if="errorFor('eventDate')" id="cv-err-eventDate" class="field-error" role="alert">
+                          {{ errorFor('eventDate') }}
+                        </span>
                       </div>
                       <div class="input-field">
                         <label>Time Slot *</label>
@@ -258,9 +286,23 @@ const scrollToRequestForm = () => {
                           <option>Flexible / All Day Event</option>
                         </select>
                       </div>
-                      <div class="input-field">
+                      <div class="input-field" :class="{ 'has-error': errorFor('zipCode') }">
                         <label>Zip Code *</label>
-                        <input v-model="form.zipCode" type="text" placeholder="e.g. 91803" maxlength="10" required />
+                        <input
+                          v-model="form.zipCode"
+                          type="text"
+                          inputmode="numeric"
+                          placeholder="e.g. 91803"
+                          maxlength="10"
+                          required
+                          data-field="zipCode"
+                          :aria-invalid="!!errorFor('zipCode')"
+                          :aria-describedby="errorFor('zipCode') ? 'cv-err-zipCode' : null"
+                          @blur="handleBlur('zipCode')"
+                        />
+                        <span v-if="errorFor('zipCode')" id="cv-err-zipCode" class="field-error" role="alert">
+                          {{ errorFor('zipCode') }}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -323,33 +365,114 @@ const scrollToRequestForm = () => {
                     </div>
 
                     <div class="form-row">
-                      <div class="input-field">
+                      <div class="input-field" :class="{ 'has-error': errorFor('name') }">
                         <label>Your Full Name *</label>
-                        <input v-model="form.name" type="text" placeholder="e.g. Michael Miller" required />
+                        <input
+                          v-model="form.name"
+                          type="text"
+                          autocomplete="name"
+                          placeholder="e.g. Michael Miller"
+                          required
+                          data-field="name"
+                          :aria-invalid="!!errorFor('name')"
+                          :aria-describedby="errorFor('name') ? 'cv-err-name' : null"
+                          @blur="handleBlur('name')"
+                        />
+                        <span v-if="errorFor('name')" id="cv-err-name" class="field-error" role="alert">
+                          {{ errorFor('name') }}
+                        </span>
                       </div>
-                      <div class="input-field">
+                      <div class="input-field" :class="{ 'has-error': errorFor('phone') }">
                         <label>Phone Number *</label>
-                        <input v-model="form.phone" type="tel" placeholder="(626) 503-1189" required />
+                        <input
+                          v-model="form.phone"
+                          type="tel"
+                          autocomplete="tel"
+                          placeholder="(626) 503-1189"
+                          required
+                          data-field="phone"
+                          :aria-invalid="!!errorFor('phone')"
+                          :aria-describedby="errorFor('phone') ? 'cv-err-phone' : null"
+                          @blur="handleBlur('phone')"
+                        />
+                        <span v-if="errorFor('phone')" id="cv-err-phone" class="field-error" role="alert">
+                          {{ errorFor('phone') }}
+                        </span>
                       </div>
                     </div>
 
-                    <div class="input-field">
+                    <div class="input-field" :class="{ 'has-error': errorFor('email') }">
                       <label>Email Address *</label>
-                      <input v-model="form.email" type="email" placeholder="michael@example.com" required />
+                      <input
+                        v-model="form.email"
+                        type="email"
+                        autocomplete="email"
+                        placeholder="michael@example.com"
+                        required
+                        data-field="email"
+                        :aria-invalid="!!errorFor('email')"
+                        :aria-describedby="errorFor('email') ? 'cv-err-email' : null"
+                        @blur="handleBlur('email')"
+                      />
+                      <span v-if="errorFor('email')" id="cv-err-email" class="field-error" role="alert">
+                        {{ errorFor('email') }}
+                      </span>
                     </div>
 
-                    <div class="input-field">
+                    <div class="input-field" :class="{ 'has-error': errorFor('notes') }">
                       <label>Additional Notes or Questions (Optional)</label>
-                      <textarea v-model="form.notes" rows="3" placeholder="Tell us about expected guest count, specific games, or location access..."></textarea>
+                      <textarea
+                        v-model="form.notes"
+                        rows="3"
+                        :maxlength="maxNotesLength"
+                        placeholder="Tell us about expected guest count, specific games, or location access..."
+                        data-field="notes"
+                        :aria-invalid="!!errorFor('notes')"
+                        :aria-describedby="errorFor('notes') ? 'cv-err-notes' : null"
+                        @blur="handleBlur('notes')"
+                      ></textarea>
+                      <span v-if="errorFor('notes')" id="cv-err-notes" class="field-error" role="alert">
+                        {{ errorFor('notes') }}
+                      </span>
                     </div>
                   </div>
 
-                  <div class="form-submit-container">
-                    <button type="submit" class="btn-submit-contact">
-                      <span>SUBMIT EVENT REQUEST</span>
-                      <ChevronRight :size="18" />
+                  <!-- Friendly error banner — never shows a technical reason -->
+                  <Transition name="banner-slide">
+                    <div v-if="isError && errorMessage" class="form-alert" role="alert">
+                      <div class="alert-icon-wrap">
+                        <AlertTriangle :size="20" />
+                      </div>
+                      <div class="alert-body">
+                        <strong class="alert-title">
+                          {{ errorKind === 'validation' ? 'A FEW DETAILS NEED FIXING' : "WE COULDN'T SEND THAT" }}
+                        </strong>
+                        <span class="alert-text">{{ errorMessage }}</span>
+                        <div class="alert-actions">
+                          <button type="button" class="alert-retry-btn" @click="handleSubmit">
+                            <RotateCcw :size="14" />
+                            <span>TRY AGAIN</span>
+                          </button>
+                          <a :href="siteConfig.phoneTel" class="alert-call-link">
+                            <PhoneCall :size="14" />
+                            <span>CALL {{ siteConfig.phone }}</span>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </Transition>
+
+                  <div class="form-submit-container" :class="{ 'is-sending': isSending }">
+                    <button type="submit" class="btn-submit-contact" :disabled="isSending">
+                      <Loader2 v-if="isSending" :size="18" class="spin-icon" />
+                      <span>{{ isSending ? 'SENDING YOUR REQUEST' : 'SUBMIT EVENT REQUEST' }}</span>
+                      <ChevronRight v-if="!isSending" :size="18" />
                     </button>
-                    <span class="secure-note">
+                    <span v-if="isSending" class="submit-status-live">
+                      <span class="status-dot"></span>
+                      TRANSMITTING TO THE DISPATCH DESK...
+                    </span>
+                    <span v-else class="secure-note">
                       <Lock :size="12" class="text-red" /> No credit card required. Our coordinator will contact you promptly.
                     </span>
                   </div>
@@ -359,14 +482,25 @@ const scrollToRequestForm = () => {
 
               <!-- Success View -->
               <div v-else class="form-success-panel">
+                <div class="success-transmit-badge">
+                  <span class="transmit-dot"></span>
+                  <span>TRANSMISSION COMPLETE</span>
+                </div>
                 <div class="success-icon-badge">
                   <CheckCircle2 :size="48" class="text-red" />
                 </div>
                 <h3>REQUEST RECEIVED!</h3>
                 <p class="success-intro">
-                  Thank you, <strong>{{ form.name }}</strong>! Our team is reviewing availability for 
+                  Thank you, <strong>{{ form.name }}</strong>! Our team is reviewing availability for
                   <strong>{{ form.eventDate }}</strong> in zip code <strong>{{ form.zipCode }}</strong>.
                 </p>
+
+                <div v-if="reference" class="success-reference-box">
+                  <span class="ref-label">YOUR REFERENCE</span>
+                  <span class="ref-value">{{ reference }}</span>
+                  <span class="ref-hint">Quote this code if you call us about this event.</span>
+                </div>
+
                 <div class="success-summary">
                   <div class="sum-item">
                     <span>Vehicle:</span>
@@ -385,12 +519,39 @@ const scrollToRequestForm = () => {
                     <strong>Oculus Quest 2 VR Included</strong>
                   </div>
                 </div>
+
+                <div class="next-steps-block">
+                  <span class="next-steps-label">WHAT HAPPENS NEXT</span>
+                  <ol class="next-steps-list">
+                    <li class="next-step">
+                      <span class="step-dot"></span>
+                      <span class="step-text">We confirm availability for your date and ZIP code.</span>
+                    </li>
+                    <li class="next-step">
+                      <span class="step-dot"></span>
+                      <span class="step-text">You receive a custom quote by email.</span>
+                    </li>
+                    <li class="next-step">
+                      <span class="step-dot"></span>
+                      <span class="step-text">A deposit locks the date — the balance is due on the day.</span>
+                    </li>
+                  </ol>
+                </div>
+
                 <p class="followup-msg">
                   We will reach out shortly by phone ({{ form.phone }}) and email ({{ form.email }}) with your confirmed schedule and custom quote.
                 </p>
-                <button class="btn-reset-form" @click="submitted = false">
-                  ← Submit Another Inquire
-                </button>
+
+                <div class="success-actions">
+                  <a :href="siteConfig.phoneTel" class="success-call-btn">
+                    <PhoneCall :size="16" />
+                    <span>CALL {{ siteConfig.phone }}</span>
+                  </a>
+                  <button class="btn-reset-form" @click="reset">
+                    <RotateCcw :size="14" />
+                    <span>Submit Another Inquire</span>
+                  </button>
+                </div>
               </div>
 
             </div>
@@ -406,6 +567,8 @@ const scrollToRequestForm = () => {
 </template>
 
 <style scoped>
+/* Shared booking-form feedback styles (validation, sending, success). */
+@import '../styles/booking-form.css';
 /* ============================================================
    CONTACT PAGE WRAPPER
    ============================================================ */

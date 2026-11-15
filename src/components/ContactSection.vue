@@ -1,34 +1,39 @@
 <script setup>
-import { ref } from 'vue'
 import {
   CheckCircle2,
   Glasses,
   Sparkles,
   ChevronRight,
   Phone,
+  AlertTriangle,
+  Loader2,
+  RotateCcw,
+  CalendarCheck,
+  PhoneCall,
+  MailCheck
 } from 'lucide-vue-next'
 import CustomSelect from './CustomSelect.vue'
 import siteConfig from '../config/siteConfig.js'
+import { useBookingRequest } from '../composables/useBookingRequest.js'
 
-const form = ref({
-  eventDate: '',
-  timeFrame: 'Afternoon (1:00 PM – 5:00 PM)',
-  zipCode: '',
-  truckType: 'Deluxe Gaming Truck (6 TVs Inside · Most Popular)',
-  eventType: 'Birthday Party',
-  addOculus: false,
-  name: '',
-  email: '',
-  phone: '',
-  notes: ''
-})
+const {
+  form,
+  errorMessage,
+  errorKind,
+  reference,
+  isSending,
+  isSuccess,
+  isError,
+  errorFor,
+  handleBlur,
+  submit,
+  reset,
+  minDate,
+  maxNotesLength
+} = useBookingRequest()
 
-const submitted = ref(false)
-
-const handleSubmit = () => {
-  if (form.value.name && form.value.email && form.value.phone && form.value.eventDate && form.value.zipCode) {
-    submitted.value = true
-  }
+const handleSubmit = async () => {
+  await submit()
 }
 </script>
 
@@ -53,7 +58,7 @@ const handleSubmit = () => {
 
         <!-- Full-width Form Card -->
         <div class="form-card-wrapper tilt-card">
-          <div v-if="!submitted" class="builder-form-inner">
+          <div v-if="!isSuccess" class="builder-form-inner">
 
             <div class="form-header-bar">
               <div class="form-header-left">
@@ -70,8 +75,19 @@ const handleSubmit = () => {
                 </a>
               </div>
             </div>
-            <form @submit.prevent="handleSubmit" class="configurator-form">
-              
+            <form @submit.prevent="handleSubmit" class="configurator-form" novalidate>
+
+              <!-- Honeypot: hidden from people, fills only for bots -->
+              <input
+                type="text"
+                name="website"
+                tabindex="-1"
+                autocomplete="off"
+                aria-hidden="true"
+                class="hp-field"
+                v-model="form.website"
+              />
+
               <!-- SECTION 1: Event Logistics -->
               <div class="form-section-block">
                 <div class="block-label-row">
@@ -80,9 +96,21 @@ const handleSubmit = () => {
                 </div>
 
                 <div class="form-row form-row-3">
-                  <div class="form-group">
+                  <div class="form-group" :class="{ 'has-error': errorFor('eventDate') }">
                     <label>Preferred Date *</label>
-                    <input v-model="form.eventDate" type="date" required />
+                    <input
+                      v-model="form.eventDate"
+                      type="date"
+                      required
+                      :min="minDate"
+                      data-field="eventDate"
+                      :aria-invalid="!!errorFor('eventDate')"
+                      :aria-describedby="errorFor('eventDate') ? 'err-eventDate' : null"
+                      @blur="handleBlur('eventDate')"
+                    />
+                    <span v-if="errorFor('eventDate')" id="err-eventDate" class="field-error" role="alert">
+                      {{ errorFor('eventDate') }}
+                    </span>
                   </div>
 
                   <div class="form-group">
@@ -98,9 +126,23 @@ const handleSubmit = () => {
                     />
                   </div>
 
-                  <div class="form-group">
+                  <div class="form-group" :class="{ 'has-error': errorFor('zipCode') }">
                     <label>Event Zip Code *</label>
-                    <input v-model="form.zipCode" type="text" placeholder="e.g. 91803" maxlength="10" required />
+                    <input
+                      v-model="form.zipCode"
+                      type="text"
+                      inputmode="numeric"
+                      placeholder="e.g. 91803"
+                      maxlength="10"
+                      required
+                      data-field="zipCode"
+                      :aria-invalid="!!errorFor('zipCode')"
+                      :aria-describedby="errorFor('zipCode') ? 'err-zipCode' : null"
+                      @blur="handleBlur('zipCode')"
+                    />
+                    <span v-if="errorFor('zipCode')" id="err-zipCode" class="field-error" role="alert">
+                      {{ errorFor('zipCode') }}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -171,34 +213,116 @@ const handleSubmit = () => {
                 </div>
 
                 <div class="form-row">
-                  <div class="form-group">
+                  <div class="form-group" :class="{ 'has-error': errorFor('name') }">
                     <label>Full Name *</label>
-                    <input v-model="form.name" type="text" placeholder="e.g. Alex Smith" required />
+                    <input
+                      v-model="form.name"
+                      type="text"
+                      autocomplete="name"
+                      placeholder="e.g. Alex Smith"
+                      required
+                      data-field="name"
+                      :aria-invalid="!!errorFor('name')"
+                      :aria-describedby="errorFor('name') ? 'err-name' : null"
+                      @blur="handleBlur('name')"
+                    />
+                    <span v-if="errorFor('name')" id="err-name" class="field-error" role="alert">
+                      {{ errorFor('name') }}
+                    </span>
                   </div>
-                  <div class="form-group">
+
+                  <div class="form-group" :class="{ 'has-error': errorFor('phone') }">
                     <label>Phone Number *</label>
-                    <input v-model="form.phone" type="tel" placeholder="(626) 503-1189" required />
+                    <input
+                      v-model="form.phone"
+                      type="tel"
+                      autocomplete="tel"
+                      placeholder="(626) 503-1189"
+                      required
+                      data-field="phone"
+                      :aria-invalid="!!errorFor('phone')"
+                      :aria-describedby="errorFor('phone') ? 'err-phone' : null"
+                      @blur="handleBlur('phone')"
+                    />
+                    <span v-if="errorFor('phone')" id="err-phone" class="field-error" role="alert">
+                      {{ errorFor('phone') }}
+                    </span>
                   </div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" :class="{ 'has-error': errorFor('email') }">
                   <label>Email Address *</label>
-                  <input v-model="form.email" type="email" placeholder="alex.smith@email.com" required />
+                  <input
+                    v-model="form.email"
+                    type="email"
+                    autocomplete="email"
+                    placeholder="alex.smith@email.com"
+                    required
+                    data-field="email"
+                    :aria-invalid="!!errorFor('email')"
+                    :aria-describedby="errorFor('email') ? 'err-email' : null"
+                    @blur="handleBlur('email')"
+                  />
+                  <span v-if="errorFor('email')" id="err-email" class="field-error" role="alert">
+                    {{ errorFor('email') }}
+                  </span>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" :class="{ 'has-error': errorFor('notes') }">
                   <label>Additional Details or Questions (Optional)</label>
-                  <textarea v-model="form.notes" rows="2" placeholder="Tell us about the number of guests, specific game requests, or location access details..."></textarea>
+                  <textarea
+                    v-model="form.notes"
+                    rows="2"
+                    :maxlength="maxNotesLength"
+                    placeholder="Tell us about the number of guests, specific game requests, or location access details..."
+                    data-field="notes"
+                    :aria-invalid="!!errorFor('notes')"
+                    :aria-describedby="errorFor('notes') ? 'err-notes' : null"
+                    @blur="handleBlur('notes')"
+                  ></textarea>
+                  <span v-if="errorFor('notes')" id="err-notes" class="field-error" role="alert">
+                    {{ errorFor('notes') }}
+                  </span>
                 </div>
               </div>
 
+              <!-- Friendly error banner — never shows a technical reason -->
+              <Transition name="banner-slide">
+                <div v-if="isError && errorMessage" class="form-alert" role="alert">
+                  <div class="alert-icon-wrap">
+                    <AlertTriangle :size="20" />
+                  </div>
+                  <div class="alert-body">
+                    <strong class="alert-title">
+                      {{ errorKind === 'validation' ? 'A FEW DETAILS NEED FIXING' : "WE COULDN'T SEND THAT" }}
+                    </strong>
+                    <span class="alert-text">{{ errorMessage }}</span>
+                    <div class="alert-actions">
+                      <button type="button" class="alert-retry-btn" @click="handleSubmit">
+                        <RotateCcw :size="14" />
+                        <span>TRY AGAIN</span>
+                      </button>
+                      <a :href="siteConfig.phoneTel" class="alert-call-link">
+                        <PhoneCall :size="14" />
+                        <span>CALL {{ siteConfig.phone }}</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </Transition>
+
               <!-- Submit Button -->
-              <div class="submit-wrapper">
-                <button type="submit" class="btn-submit-request">
-                  <span>GET MY CUSTOM QUOTE</span>
-                  <ChevronRight :size="18" />
+              <div class="submit-wrapper" :class="{ 'is-sending': isSending }">
+                <button type="submit" class="btn-submit-request" :disabled="isSending">
+                  <Loader2 v-if="isSending" :size="18" class="spin-icon" />
+                  <span>{{ isSending ? 'SENDING YOUR REQUEST' : 'GET MY CUSTOM QUOTE' }}</span>
+                  <ChevronRight v-if="!isSending" :size="18" />
                 </button>
-                <span class="submit-micro-reassurance">
+                <span v-if="isSending" class="submit-status-live">
+                  <span class="status-dot"></span>
+                  TRANSMITTING TO THE DISPATCH DESK...
+                </span>
+                <span v-else class="submit-micro-reassurance">
                   No payment or credit card required. We will check schedule availability and send you a custom proposal.
                 </span>
               </div>
@@ -206,17 +330,28 @@ const handleSubmit = () => {
             </form>
           </div>
 
-          <!-- Post-Submit Confirmation (Fulfills task.txt #4) -->
+          <!-- Post-Submit Confirmation -->
           <div v-else class="post-submit-success">
+            <div class="success-transmit-badge">
+              <span class="transmit-dot"></span>
+              <span>TRANSMISSION COMPLETE</span>
+            </div>
+
             <div class="success-shield-icon">
               <CheckCircle2 :size="48" class="text-red" />
             </div>
-            
+
             <h3 class="success-header-title">REQUEST SUBMITTED!</h3>
-            
+
             <p class="success-official-msg">
-              "Thanks! We received your request. Our team is checking availability for your date and location. We’ll get back to you A.S.A.P. with details and pricing."
+              "Thanks! We received your request. Our team is checking availability for your date and location. We'll get back to you A.S.A.P. with details and pricing."
             </p>
+
+            <div v-if="reference" class="success-reference-box">
+              <span class="ref-label">YOUR REFERENCE</span>
+              <span class="ref-value">{{ reference }}</span>
+              <span class="ref-hint">Quote this code if you call us about this event.</span>
+            </div>
 
             <div class="summary-details-box">
               <div class="summary-row">
@@ -241,9 +376,34 @@ const handleSubmit = () => {
               </div>
             </div>
 
-            <button class="btn-start-another" @click="submitted = false">
-              ← Configure Another Event Request
-            </button>
+            <div class="next-steps-block">
+              <span class="next-steps-label">WHAT HAPPENS NEXT</span>
+              <ol class="next-steps-list">
+                <li class="next-step">
+                  <span class="step-dot"></span>
+                  <span class="step-text">We confirm availability for your date and ZIP code.</span>
+                </li>
+                <li class="next-step">
+                  <span class="step-dot"></span>
+                  <span class="step-text">You receive a custom quote by email.</span>
+                </li>
+                <li class="next-step">
+                  <span class="step-dot"></span>
+                  <span class="step-text">A deposit locks the date — the balance is due on the day.</span>
+                </li>
+              </ol>
+            </div>
+
+            <div class="success-actions">
+              <a :href="siteConfig.phoneTel" class="success-call-btn">
+                <PhoneCall :size="16" />
+                <span>CALL {{ siteConfig.phone }}</span>
+              </a>
+              <button class="btn-start-another" @click="reset">
+                <RotateCcw :size="14" />
+                <span>Configure Another Event Request</span>
+              </button>
+            </div>
           </div>
 
         </div>
@@ -254,6 +414,8 @@ const handleSubmit = () => {
 </template>
 
 <style scoped>
+/* Shared booking-form feedback styles (validation, sending, success). */
+@import '../styles/booking-form.css';
 /* ============================================================
    SECTION WRAPPER
    ============================================================ */

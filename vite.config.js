@@ -1,7 +1,8 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import siteConfig from './src/config/siteConfig.js'
 import { prerenderPlugin } from './scripts/prerender.mjs'
+import { handleBookingSubmission } from './server/booking-email.js'
 
 const ORIGIN = siteConfig.url.replace(/\/+$/, '')
 
@@ -134,6 +135,86 @@ function seoStaticFiles() {
   }
 }
 
-export default defineConfig({
-  plugins: [vue(), seoStaticFiles(), prerenderPlugin()]
+/**
+ * Dev-only mirror of the Vercel function.
+ *
+ * In production `api/send-booking.js` answers POST /api/send-booking, but
+ * `vite dev` has no serverless runtime — so the same shared handler is
+ * mounted as middleware. Both paths read UPRESEND_API / EMAIL_NOTIFS from
+ * the server environment; the browser never sees them.
+ */
+function bookingApiPlugin(env) {
+  const handle = async (req, res) => {
+    if (req.method !== 'POST') {
+      res.statusCode = 405
+      res.setHeader('Allow', 'POST')
+      res.setHeader('Content-Type', 'application/json')
+      res.end(
+        JSON.stringify({
+          ok: false,
+          code: 'method_not_allowed',
+          message: 'This endpoint only accepts form submissions.'
+        })
+      )
+      return
+    }
+
+    const chunks = []
+    for await (const chunk of req) chunks.push(chunk)
+
+    let body = {}
+    try {
+      body = JSON.parse(Buffer.concat(chunks).toString('utf8') || '{}')
+    } catch {
+      body = {}
+    }
+
+    try {
+      const result = await handleBookingSubmission({
+        body,
+        env,
+        ip: req.socket?.remoteAddress || ''
+      })
+      res.statusCode = result.status
+      res.setHeader('Content-Type', 'application/json')
+      res.end(JSON.stringify(result.body))
+    } catch (error) {
+      console.error('[booking] unexpected error', error)
+      res.statusCode = 500
+      res.setHeader('Content-Type', 'application/json')
+      res.end(
+        JSON.stringify({
+          ok: false,
+          code: 'server_error',
+          message:
+            'Something went wrong on our side. Please try again in a moment, or call us and we will set up your event personally.',
+          // Dev only: the browser never reads this field.
+          debug: String(error?.stack || error)
+        })
+      )
+    }
+  }
+
+  return {
+    name: 'booking-api-dev',
+    apply: 'serve',
+    configureServer(server) {
+      server.middlewares.use('/api/send-booking', handle)
+    },
+    // `vite preview` serves the production build; mounting the same handler
+    // there makes the local preview behave like the Vercel deployment.
+    configurePreviewServer(server) {
+      server.middlewares.use('/api/send-booking', handle)
+    }
+  }
+}
+
+export default defineConfig(({ mode }) => {
+  // Loaded with an empty prefix on purpose: the booking credentials are
+  // server-side only and must never be exposed to the client bundle.
+  const serverEnv = loadEnv(mode, process.cwd(), '')
+
+  return {
+    plugins: [vue(), seoStaticFiles(), prerenderPlugin(), bookingApiPlugin(serverEnv)]
+  }
 })

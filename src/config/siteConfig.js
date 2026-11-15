@@ -76,7 +76,7 @@ export const siteConfig = {
   // the <a href="tel:…"> click-to-call and SMS links.
   phoneRaw: '+16265031189',
   phoneTel: 'tel:+16265031189',
-  email: 'info@uplayersone.com',
+  email: 'info@ultimateplayersone.com',
   address: 'Los Angeles, CA & Surrounding Areas',
   workingHours: 'Mon - Sun: 8:00 AM - 10:00 PM',
 
