@@ -35,8 +35,17 @@ const parseBody = (req) => {
 }
 
 export default async function handler(req, res) {
+  // GET returns the public Turnstile site key so the browser can render
+  // the widget without the secret ever leaving the server.
+  if (req.method === 'GET') {
+    return res.status(200).json({
+      ok: true,
+      siteKey: process.env.TURNSTILE_SITE_KEY || ''
+    })
+  }
+
   if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST')
+    res.setHeader('Allow', 'GET, POST')
     return res.status(405).json({
       ok: false,
       code: 'method_not_allowed',

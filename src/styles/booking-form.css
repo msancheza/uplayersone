@@ -5,6 +5,74 @@
    identically without duplicating the rules.
    ============================================================ */
 
+/* ── Field helper text + character counter ── */
+.field-hint {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
+  line-height: 1.4;
+}
+
+.field-counter {
+  align-self: flex-end;
+  font-family: var(--font-mono, 'Courier New', monospace);
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* ============================================================
+   FORM POLISH — HUD accent line, focus glow, button sheen
+   ============================================================ */
+
+/* Glowing accent line along the top of the form card */
+.form-card-wrapper::before,
+.form-card-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 14%;
+  right: 14%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 0, 43, 0.85), transparent);
+  box-shadow: 0 0 14px rgba(255, 0, 43, 0.55);
+  pointer-events: none;
+}
+
+/* Layered focus glow on the inputs */
+.configurator-form .form-group input:focus,
+.configurator-form .form-group textarea:focus,
+.main-contact-form .input-field input:focus,
+.main-contact-form .input-field textarea:focus,
+.main-contact-form .input-field select:focus {
+  border-color: #ff002b;
+  background: rgba(255, 0, 43, 0.05);
+  box-shadow: 0 0 0 3px rgba(255, 0, 43, 0.12), 0 0 18px rgba(255, 0, 43, 0.32);
+}
+
+/* Slow sheen sweeping the primary button */
+.btn-submit-request,
+.btn-submit-contact {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-submit-request::after,
+.btn-submit-contact::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 32%, rgba(255, 255, 255, 0.26) 50%, transparent 68%);
+  transform: translateX(-130%);
+  animation: btn-sheen 4.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes btn-sheen {
+  0%, 62% { transform: translateX(-130%); }
+  86%, 100% { transform: translateX(130%); }
+}
+
 /* Honeypot: invisible to people, reachable for bots. */
 .hp-field {
   position: absolute !important;

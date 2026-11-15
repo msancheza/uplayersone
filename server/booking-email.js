@@ -11,6 +11,7 @@
  */
 
 const RESEND_ENDPOINT = 'https://api.resend.com/emails'
+const TURNSTILE_VERIFY_URL = 'https://challenges.cloudflare.com/turnstile/v0/siteverify'
 
 /**
  * Resend's onboarding sender. It works on a fresh account (it only
@@ -104,8 +105,12 @@ export function validateBookingPayload(input = {}) {
   const phoneDigits = phone.replace(/\D/g, '')
   if (!phone) {
     errors.phone = 'We need a phone number to confirm your date.'
-  } else if (phoneDigits.length < 10 || phoneDigits.length > 15) {
-    errors.phone = 'Please enter a full phone number, including the area code.'
+  } else if (phoneDigits.length > 11) {
+    errors.phone = 'That number is too long — 10 digits is enough.'
+  } else if (phoneDigits.length < 10) {
+    errors.phone = 'Please enter a 10-digit number, including the area code.'
+  } else if (phoneDigits.length === 11 && !phoneDigits.startsWith('1')) {
+    errors.phone = 'Please check the country code — 10 digits is enough.'
   }
 
   if (!eventDate) {
@@ -353,6 +358,39 @@ export async function sendBookingEmail({ payload, apiKey, to, from, reference })
   return { ok: true, id: result.payload?.id, status: result.status }
 }
 
+/**
+ * Verifies a Cloudflare Turnstile token.
+ *
+ * The secret key never leaves the server: the browser only receives the
+ * public site key and a single-use token it has to send back with the
+ * form submission.
+ */
+export async function verifyTurnstile({ token, secret, ip }) {
+  if (!secret) return { ok: true, skipped: true }
+  if (!token) return { ok: false, codes: ['missing-input-response'] }
+
+  const payload = new URLSearchParams({ secret, response: token })
+  if (ip) payload.set('remoteip', ip)
+
+  try {
+    const response = await fetch(TURNSTILE_VERIFY_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: payload.toString(),
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS)
+    })
+
+    const data = await response.json().catch(() => null)
+    return {
+      ok: Boolean(data?.success),
+      codes: data?.['error-codes'] ?? []
+    }
+  } catch (error) {
+    console.error('[booking] turnstile verification failed', error)
+    return { ok: false, codes: ['verification-unreachable'] }
+  }
+}
+
 export function checkRateLimit(ip) {
   if (!ip) return { allowed: true }
   const now = Date.now()
@@ -410,6 +448,33 @@ export async function handleBookingSubmission({ body = {}, env = {}, ip = '' } =
         code: 'validation_failed',
         message: 'Please check the highlighted fields and try again.',
         errors
+      }
+    }
+  }
+
+  // Turnstile is enforced only when BOTH keys are configured, so a
+  // missing env var can never leave the form unusable. The field
+  // validation runs first on purpose: a visitor who mistyped an email
+  // must not lose the Turnstile token while fixing it.
+  const turnstileSecret = env.TURNSTILE_SECRET_KEY
+  const turnstileSiteKey = env.TURNSTILE_SITE_KEY
+  if (turnstileSecret && turnstileSiteKey) {
+    const verification = await verifyTurnstile({
+      token: body?.turnstileToken,
+      secret: turnstileSecret,
+      ip
+    })
+
+    if (!verification.ok) {
+      console.warn('[booking] turnstile rejected the submission', verification.codes)
+      return {
+        status: 403,
+        body: {
+          ok: false,
+          code: 'turnstile_failed',
+          message:
+            'We could not verify that you are human. Please refresh the page and try again, or call us and we will set up your event personally.'
+        }
       }
     }
   }

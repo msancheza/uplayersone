@@ -1,4 +1,5 @@
 <script setup>
+import { ref } from 'vue'
 import {
   CheckCircle2,
   Glasses,
@@ -13,8 +14,12 @@ import {
   MailCheck
 } from 'lucide-vue-next'
 import CustomSelect from './CustomSelect.vue'
+import BookingDatePicker from './BookingDatePicker.vue'
+import TurnstileWidget from './TurnstileWidget.vue'
 import siteConfig from '../config/siteConfig.js'
 import { useBookingRequest } from '../composables/useBookingRequest.js'
+
+const turnstileRef = ref(null)
 
 const {
   form,
@@ -26,11 +31,15 @@ const {
   isError,
   errorFor,
   handleBlur,
+  handlePhoneInput,
+  setTurnstileToken,
   submit,
   reset,
   minDate,
   maxNotesLength
-} = useBookingRequest()
+} = useBookingRequest({
+  onTurnstileInvalid: () => turnstileRef.value?.reset()
+})
 
 const handleSubmit = async () => {
   await submit()
@@ -98,14 +107,12 @@ const handleSubmit = async () => {
                 <div class="form-row form-row-3">
                   <div class="form-group" :class="{ 'has-error': errorFor('eventDate') }">
                     <label>Preferred Date *</label>
-                    <input
+                    <BookingDatePicker
                       v-model="form.eventDate"
-                      type="date"
-                      required
                       :min="minDate"
+                      placeholder="Select your event date"
+                      :error="!!errorFor('eventDate')"
                       data-field="eventDate"
-                      :aria-invalid="!!errorFor('eventDate')"
-                      :aria-describedby="errorFor('eventDate') ? 'err-eventDate' : null"
                       @blur="handleBlur('eventDate')"
                     />
                     <span v-if="errorFor('eventDate')" id="err-eventDate" class="field-error" role="alert">
@@ -234,18 +241,24 @@ const handleSubmit = async () => {
                   <div class="form-group" :class="{ 'has-error': errorFor('phone') }">
                     <label>Phone Number *</label>
                     <input
-                      v-model="form.phone"
+                      :value="form.phone"
                       type="tel"
+                      inputmode="tel"
                       autocomplete="tel"
                       placeholder="(626) 503-1189"
+                      maxlength="14"
                       required
                       data-field="phone"
                       :aria-invalid="!!errorFor('phone')"
-                      :aria-describedby="errorFor('phone') ? 'err-phone' : null"
+                      :aria-describedby="errorFor('phone') ? 'err-phone' : 'hint-phone'"
+                      @input="handlePhoneInput"
                       @blur="handleBlur('phone')"
                     />
                     <span v-if="errorFor('phone')" id="err-phone" class="field-error" role="alert">
                       {{ errorFor('phone') }}
+                    </span>
+                    <span v-else id="hint-phone" class="field-hint">
+                      10 digits, area code included — we only use it for your quote.
                     </span>
                   </div>
                 </div>
@@ -283,6 +296,7 @@ const handleSubmit = async () => {
                   <span v-if="errorFor('notes')" id="err-notes" class="field-error" role="alert">
                     {{ errorFor('notes') }}
                   </span>
+                  <span v-else class="field-counter">{{ form.notes.length }}/{{ maxNotesLength }}</span>
                 </div>
               </div>
 
@@ -294,7 +308,13 @@ const handleSubmit = async () => {
                   </div>
                   <div class="alert-body">
                     <strong class="alert-title">
-                      {{ errorKind === 'validation' ? 'A FEW DETAILS NEED FIXING' : "WE COULDN'T SEND THAT" }}
+                      {{
+                        errorKind === 'validation'
+                          ? 'A FEW DETAILS NEED FIXING'
+                          : errorKind === 'turnstile'
+                            ? 'WE NEED ONE MORE CHECK'
+                            : "WE COULDN'T SEND THAT"
+                      }}
                     </strong>
                     <span class="alert-text">{{ errorMessage }}</span>
                     <div class="alert-actions">
@@ -310,6 +330,12 @@ const handleSubmit = async () => {
                   </div>
                 </div>
               </Transition>
+
+              <!-- Cloudflare Turnstile — silent unless it needs to challenge -->
+              <TurnstileWidget
+                ref="turnstileRef"
+                @token="setTurnstileToken"
+              />
 
               <!-- Submit Button -->
               <div class="submit-wrapper" :class="{ 'is-sending': isSending }">

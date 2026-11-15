@@ -26,6 +26,24 @@ const todayIso = () => {
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
 }
 
+/**
+ * Formats a US phone number as the visitor types: (626) 503-1189.
+ * A leading country code (+1 / 1…) is accepted and dropped.
+ */
+export const formatPhone = (value) => {
+  const digits = String(value ?? '').replace(/\D/g, '').slice(0, 11)
+  if (!digits) return ''
+
+  const local = digits.length === 11 && digits.startsWith('1') ? digits.slice(1) : digits
+  const area = local.slice(0, 3)
+  const middle = local.slice(3, 6)
+  const end = local.slice(6, 10)
+
+  if (local.length <= 3) return `(${area}`
+  if (local.length <= 6) return `(${area}) ${middle}`
+  return `(${area}) ${middle}-${end}`
+}
+
 const validators = {
   name(value) {
     const trimmed = value.trim()
@@ -43,8 +61,10 @@ const validators = {
     const trimmed = value.trim()
     if (!trimmed) return 'We need a phone number to confirm your date.'
     const digits = trimmed.replace(/\D/g, '')
-    if (digits.length < 10 || digits.length > 15) {
-      return 'Please enter a full phone number, including the area code.'
+    if (digits.length > 11) return 'That number is too long — 10 digits is enough.'
+    if (digits.length < 10) return 'Please enter a 10-digit number, including the area code.'
+    if (digits.length === 11 && !digits.startsWith('1')) {
+      return 'Please check the country code — 10 digits is enough.'
     }
     return ''
   },
@@ -68,7 +88,12 @@ const validators = {
 
 const FIELD_ORDER = ['eventDate', 'timeFrame', 'zipCode', 'truckType', 'eventType', 'name', 'email', 'phone', 'notes']
 
-export function useBookingRequest({ endpoint = '/api/send-booking', defaults = {} } = {}) {
+export function useBookingRequest({
+  endpoint = '/api/send-booking',
+  defaults = {},
+  /** Called when Turnstile rejects a submission so the widget can reset. */
+  onTurnstileInvalid
+} = {}) {
   const form = reactive({
     eventDate: '',
     timeFrame: 'Afternoon (1:00 PM – 5:00 PM)',
@@ -90,8 +115,10 @@ export function useBookingRequest({ endpoint = '/api/send-booking', defaults = {
   const status = ref('idle')
   const errorMessage = ref('')
   const reference = ref('')
-  /** 'validation' → the visitor must fix a field. 'delivery' → the request could not be sent. */
+  /** 'validation' → the visitor must fix a field. 'delivery' → the request could not be sent. 'turnstile' → the human check failed. */
   const errorKind = ref('')
+  /** Cloudflare Turnstile token — single use, sent with the submission. */
+  const turnstileToken = ref('')
 
   const isSending = computed(() => status.value === 'sending')
   const isSuccess = computed(() => status.value === 'success')
@@ -114,6 +141,42 @@ export function useBookingRequest({ endpoint = '/api/send-booking', defaults = {
     validateField(field)
   }
 
+  /**
+   * Formats the phone number while it is being typed. The field is bound
+   * with :value + @input instead of v-model so the caret can follow the
+   * digits the visitor already typed instead of jumping to the end.
+   */
+  const handlePhoneInput = (event) => {
+    const el = event.target
+    const caretBefore = el.selectionStart ?? el.value.length
+    const digitsBefore = el.value.slice(0, caretBefore).replace(/\D/g, '').length
+
+    const formatted = formatPhone(el.value)
+    el.value = formatted
+
+    if (formatted) {
+      let seen = 0
+      let caret = formatted.length
+      for (let i = 0; i < formatted.length; i += 1) {
+        if (/\d/.test(formatted[i])) {
+          seen += 1
+          if (seen === digitsBefore) {
+            caret = i + 1
+            break
+          }
+        }
+      }
+      try {
+        el.setSelectionRange(caret, caret)
+      } catch {
+        /* selection is not supported on every input type */
+      }
+    }
+
+    form.phone = formatted
+    if (touched.phone) validateField('phone')
+  }
+
   const validateAll = () => {
     let firstInvalid = null
     FIELD_ORDER.forEach((field) => {
@@ -130,6 +193,10 @@ export function useBookingRequest({ endpoint = '/api/send-booking', defaults = {
     if (!el) return
     el.scrollIntoView({ behavior: 'smooth', block: 'center' })
     if (typeof el.focus === 'function') el.focus({ preventScroll: true })
+  }
+
+  const setTurnstileToken = (token) => {
+    turnstileToken.value = token || ''
   }
 
   const submit = async () => {
@@ -151,7 +218,7 @@ export function useBookingRequest({ endpoint = '/api/send-booking', defaults = {
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form })
+        body: JSON.stringify({ ...form, turnstileToken: turnstileToken.value })
       })
 
       let data = null
@@ -169,8 +236,14 @@ export function useBookingRequest({ endpoint = '/api/send-booking', defaults = {
           })
         }
         errorMessage.value = data?.message || FRIENDLY_FALLBACK
-        errorKind.value = data?.code === 'validation_failed' ? 'validation' : 'delivery'
+        errorKind.value =
+          data?.code === 'validation_failed'
+            ? 'validation'
+            : data?.code === 'turnstile_failed'
+              ? 'turnstile'
+              : 'delivery'
         status.value = 'error'
+        if (data?.code === 'turnstile_failed') onTurnstileInvalid?.()
         return false
       }
 
@@ -191,6 +264,7 @@ export function useBookingRequest({ endpoint = '/api/send-booking', defaults = {
     errorMessage.value = ''
     errorKind.value = ''
     reference.value = ''
+    turnstileToken.value = ''
     status.value = 'idle'
     Object.assign(form, {
       eventDate: '',
@@ -222,6 +296,8 @@ export function useBookingRequest({ endpoint = '/api/send-booking', defaults = {
     errorMessage,
     errorKind,
     reference,
+    turnstileToken,
+    setTurnstileToken,
     isSending,
     isSuccess,
     isError,
@@ -229,6 +305,7 @@ export function useBookingRequest({ endpoint = '/api/send-booking', defaults = {
     errorFor,
     validateField,
     handleBlur,
+    handlePhoneInput,
     validateAll,
     submit,
     reset,

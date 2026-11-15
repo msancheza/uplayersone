@@ -145,9 +145,17 @@ function seoStaticFiles() {
  */
 function bookingApiPlugin(env) {
   const handle = async (req, res) => {
+    // GET → the public Turnstile site key (the secret stays server-side).
+    if (req.method === 'GET') {
+      res.statusCode = 200
+      res.setHeader('Content-Type', 'application/json')
+      res.end(JSON.stringify({ ok: true, siteKey: env.TURNSTILE_SITE_KEY || '' }))
+      return
+    }
+
     if (req.method !== 'POST') {
       res.statusCode = 405
-      res.setHeader('Allow', 'POST')
+      res.setHeader('Allow', 'GET, POST')
       res.setHeader('Content-Type', 'application/json')
       res.end(
         JSON.stringify({

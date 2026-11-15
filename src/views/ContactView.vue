@@ -1,4 +1,5 @@
 <script setup>
+import { ref } from 'vue'
 import {
   ArrowLeft,
   Sparkles,
@@ -23,12 +24,16 @@ import {
 import { useRouter } from 'vue-router'
 import siteConfig from '../config/siteConfig.js'
 import SEOHead from '../components/SEOHead.vue'
+import BookingDatePicker from '../components/BookingDatePicker.vue'
+import TurnstileWidget from '../components/TurnstileWidget.vue'
 import { routeSeo } from '../data/seoRoutes.js'
 import { useBookingRequest } from '../composables/useBookingRequest.js'
 
 const seo = routeSeo.contact
 
 const router = useRouter()
+
+const turnstileRef = ref(null)
 
 const {
   form,
@@ -40,11 +45,15 @@ const {
   isError,
   errorFor,
   handleBlur,
+  handlePhoneInput,
+  setTurnstileToken,
   submit,
   reset,
   minDate,
   maxNotesLength
-} = useBookingRequest()
+} = useBookingRequest({
+  onTurnstileInvalid: () => turnstileRef.value?.reset()
+})
 
 const handleSubmit = async () => {
   const sent = await submit()
@@ -263,14 +272,12 @@ const scrollToRequestForm = () => {
                     <div class="form-row form-row-3">
                       <div class="input-field" :class="{ 'has-error': errorFor('eventDate') }">
                         <label>Event Date *</label>
-                        <input
+                        <BookingDatePicker
                           v-model="form.eventDate"
-                          type="date"
-                          required
                           :min="minDate"
+                          placeholder="Select your event date"
+                          :error="!!errorFor('eventDate')"
                           data-field="eventDate"
-                          :aria-invalid="!!errorFor('eventDate')"
-                          :aria-describedby="errorFor('eventDate') ? 'cv-err-eventDate' : null"
                           @blur="handleBlur('eventDate')"
                         />
                         <span v-if="errorFor('eventDate')" id="cv-err-eventDate" class="field-error" role="alert">
@@ -385,18 +392,24 @@ const scrollToRequestForm = () => {
                       <div class="input-field" :class="{ 'has-error': errorFor('phone') }">
                         <label>Phone Number *</label>
                         <input
-                          v-model="form.phone"
+                          :value="form.phone"
                           type="tel"
+                          inputmode="tel"
                           autocomplete="tel"
                           placeholder="(626) 503-1189"
+                          maxlength="14"
                           required
                           data-field="phone"
                           :aria-invalid="!!errorFor('phone')"
-                          :aria-describedby="errorFor('phone') ? 'cv-err-phone' : null"
+                          :aria-describedby="errorFor('phone') ? 'cv-err-phone' : 'cv-hint-phone'"
+                          @input="handlePhoneInput"
                           @blur="handleBlur('phone')"
                         />
                         <span v-if="errorFor('phone')" id="cv-err-phone" class="field-error" role="alert">
                           {{ errorFor('phone') }}
+                        </span>
+                        <span v-else id="cv-hint-phone" class="field-hint">
+                          10 digits, area code included — we only use it for your quote.
                         </span>
                       </div>
                     </div>
@@ -434,6 +447,7 @@ const scrollToRequestForm = () => {
                       <span v-if="errorFor('notes')" id="cv-err-notes" class="field-error" role="alert">
                         {{ errorFor('notes') }}
                       </span>
+                      <span v-else class="field-counter">{{ form.notes.length }}/{{ maxNotesLength }}</span>
                     </div>
                   </div>
 
@@ -445,7 +459,13 @@ const scrollToRequestForm = () => {
                       </div>
                       <div class="alert-body">
                         <strong class="alert-title">
-                          {{ errorKind === 'validation' ? 'A FEW DETAILS NEED FIXING' : "WE COULDN'T SEND THAT" }}
+                          {{
+                            errorKind === 'validation'
+                              ? 'A FEW DETAILS NEED FIXING'
+                              : errorKind === 'turnstile'
+                                ? 'WE NEED ONE MORE CHECK'
+                                : "WE COULDN'T SEND THAT"
+                          }}
                         </strong>
                         <span class="alert-text">{{ errorMessage }}</span>
                         <div class="alert-actions">
@@ -461,6 +481,12 @@ const scrollToRequestForm = () => {
                       </div>
                     </div>
                   </Transition>
+
+                  <!-- Cloudflare Turnstile — silent unless it needs to challenge -->
+                  <TurnstileWidget
+                    ref="turnstileRef"
+                    @token="setTurnstileToken"
+                  />
 
                   <div class="form-submit-container" :class="{ 'is-sending': isSending }">
                     <button type="submit" class="btn-submit-contact" :disabled="isSending">
@@ -920,6 +946,7 @@ const scrollToRequestForm = () => {
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.95), inset 0 0 25px rgba(255, 0, 43, 0.05);
   border-radius: 8px;
   padding: 2.5rem;
+  position: relative;
 }
 
 @media (max-width: 600px) {
