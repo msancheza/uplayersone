@@ -120,7 +120,15 @@ const navigateToContact = () => {
       <div class="footer-bottom">
         <p>© 2018 ULTIMATEPLAYERSONE. All rights reserved.</p>
         <p class="built-with">
-          Designed with <Heart :size="14" class="heart-icon" /> for gamers worldwide.
+          <a
+            href="https://www.functionalworlds.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="built-with-link"
+          >
+            Designed with <Heart :size="14" class="heart-icon" /> for gamers worldwide.
+            <span class="sr-only"> — the design studio behind this site (opens in a new tab)</span>
+          </a>
         </p>
       </div>
     </div>
@@ -271,6 +279,37 @@ const navigateToContact = () => {
   align-items: center;
   gap: 0.4rem;
   color: #d1d5e5;
+}
+
+/* Design credit → the studio behind the site */
+.built-with-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.built-with-link:hover {
+  color: var(--primary-red);
+}
+
+.built-with-link:hover .heart-icon {
+  filter: drop-shadow(0 0 9px rgba(255, 0, 43, 0.95));
+}
+
+/* Visually hidden, still read by screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .heart-icon {

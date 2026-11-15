@@ -6,6 +6,7 @@ import {
   Sparkles,
   ChevronRight,
   Phone,
+  Lock,
   AlertTriangle,
   Loader2,
   RotateCcw,
@@ -354,6 +355,13 @@ const handleSubmit = async () => {
               </div>
 
             </form>
+
+            <!-- Data reassurance -->
+            <p class="data-reassurance">
+              <Lock :size="12" class="reassurance-icon" />
+              <span>Your details are used only to respond to this quote request — we never sell your information.</span>
+              <RouterLink to="/privacy-policy" class="reassurance-link">Privacy Policy</RouterLink>
+            </p>
           </div>
 
           <!-- Post-Submit Confirmation -->
