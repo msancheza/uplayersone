@@ -2,6 +2,7 @@
 import { Instagram, Facebook, Youtube, Heart, Phone, ChevronRight, Star } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 import siteConfig from '../config/siteConfig.js'
+import HiblikIcon from './HiblikIcon.vue'
 
 const router = useRouter()
 const currentYear = new Date().getFullYear()
@@ -55,6 +56,7 @@ const navigateToContact = () => {
           </a>
           <a :href="siteConfig.socials.youtube" target="_blank" rel="noopener" class="msocial" title="YouTube"><Youtube :size="18" /></a>
           <a :href="siteConfig.socials.yelp" target="_blank" rel="noopener" class="msocial" title="Yelp"><Star :size="18" /></a>
+          <a :href="siteConfig.socials.hiblik" target="_blank" rel="noopener" class="msocial" title="HiBlik"><HiblikIcon :size="18" /></a>
         </div>
 
         <div class="mobile-nav-links">
@@ -86,6 +88,7 @@ const navigateToContact = () => {
             </a>
             <a :href="siteConfig.socials.youtube" target="_blank" rel="noopener" class="social-btn" title="YouTube"><Youtube :size="18" /></a>
             <a :href="siteConfig.socials.yelp" target="_blank" rel="noopener" class="social-btn" title="Yelp"><Star :size="18" /></a>
+          <a :href="siteConfig.socials.hiblik" target="_blank" rel="noopener" class="social-btn" title="HiBlik"><HiblikIcon :size="16" /></a>
           </div>
         </div>
 

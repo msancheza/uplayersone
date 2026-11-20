@@ -2,6 +2,7 @@
 import { ChevronRight, Phone, Instagram, Facebook, Youtube, Star } from 'lucide-vue-next'
 import { useRouter, useRoute } from 'vue-router'
 import siteConfig from '../config/siteConfig.js'
+import HiblikIcon from './HiblikIcon.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -55,6 +56,9 @@ const navigateToContact = () => {
         </a>
         <a :href="siteConfig.socials.yelp" target="_blank" rel="noopener" class="dock-social-item" title="Yelp">
           <Star :size="18" />
+        </a>
+        <a :href="siteConfig.socials.hiblik" target="_blank" rel="noopener" class="dock-social-item" title="HiBlik">
+          <HiblikIcon :size="18" />
         </a>
       </div>
     </div>

@@ -86,7 +86,9 @@ export const siteConfig = {
     facebook: 'https://www.facebook.com/UltimatePlayersOne/',
     tiktok: 'https://tiktok.com/@ultimateplayersone',
     youtube: 'https://youtube.com/@uplayersone',
-    yelp: 'https://www.yelp.com/biz/ultimate-players-alhambra-3'
+    yelp: 'https://www.yelp.com/biz/ultimate-players-alhambra-3',
+    // HiBlik — the Ultimate Players stand on the HiBlik network.
+    hiblik: 'https://hiblik.com/stands/ultimate-players-one-b7e09e6a'
   },
 
   // Absolute URLs for social preview images. Resolved against `url`.

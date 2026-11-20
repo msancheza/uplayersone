@@ -3,6 +3,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { X, Sparkles, DollarSign, HelpCircle, Mail, ChevronRight, Instagram, Facebook, Youtube, Gamepad2, Tag, FileText, Camera, Phone, Package, Star } from 'lucide-vue-next'
 import siteConfig from '../config/siteConfig.js'
+import HiblikIcon from './HiblikIcon.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -129,15 +130,16 @@ onUnmounted(() => {
       <!-- Right Slot: Desktop (Social Icons + Start Your Request CTA) | All breakpoints (Hamburger) -->
       <div class="header-right">
         <div class="social-icons-bar desktop-only">
-          <a :href="siteConfig.socials.instagram" target="_blank" rel="noopener" class="social-circle" title="Instagram"><Instagram :size="22" /></a>
-          <a :href="siteConfig.socials.facebook" target="_blank" rel="noopener" class="social-circle" title="Facebook"><Facebook :size="22" /></a>
+          <a :href="siteConfig.socials.instagram" target="_blank" rel="noopener" class="social-circle" title="Instagram"><Instagram :size="20" /></a>
+          <a :href="siteConfig.socials.facebook" target="_blank" rel="noopener" class="social-circle" title="Facebook"><Facebook :size="20" /></a>
           <a :href="siteConfig.socials.tiktok" target="_blank" rel="noopener" class="social-circle" title="TikTok">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
               <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 1 1-5.2-1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V5.86a6.37 6.37 0 0 0-1-.08A6.34 6.34 0 1 0 15.82 12V8.9a8.28 8.28 0 0 0 4.77 1.52V7a4.81 4.81 0 0 1-1-.31z"/>
             </svg>
           </a>
-          <a :href="siteConfig.socials.youtube" target="_blank" rel="noopener" class="social-circle" title="YouTube"><Youtube :size="22" /></a>
-          <a :href="siteConfig.socials.yelp" target="_blank" rel="noopener" class="social-circle" title="Yelp"><Star :size="22" /></a>
+          <a :href="siteConfig.socials.youtube" target="_blank" rel="noopener" class="social-circle" title="YouTube"><Youtube :size="20" /></a>
+          <a :href="siteConfig.socials.yelp" target="_blank" rel="noopener" class="social-circle" title="Yelp"><Star :size="20" /></a>
+          <a :href="siteConfig.socials.hiblik" target="_blank" rel="noopener" class="social-circle" title="HiBlik"><HiblikIcon :size="24" /></a>
         </div>
 
         <div class="header-divider desktop-only"></div>
@@ -237,6 +239,7 @@ onUnmounted(() => {
               </a>
               <a :href="siteConfig.socials.youtube" target="_blank" rel="noopener" class="drawer-social" title="YouTube"><Youtube :size="18" /></a>
               <a :href="siteConfig.socials.yelp" target="_blank" rel="noopener" class="drawer-social" title="Yelp"><Star :size="18" /></a>
+              <a :href="siteConfig.socials.hiblik" target="_blank" rel="noopener" class="drawer-social" title="HiBlik"><HiblikIcon :size="18" /></a>
             </div>
 
             <!-- Bottom status -->
@@ -400,12 +403,12 @@ onUnmounted(() => {
 .social-icons-bar {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
+  gap: 0.5rem;
 }
 
 .social-circle {
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.08);
   border: 2px solid rgba(255, 255, 255, 0.75);
